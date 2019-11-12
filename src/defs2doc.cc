@@ -33,14 +33,14 @@ bool is_answer_variable(Variable *v) {
 }
 
 
-string fix(string str) {
+std::string fix(std::string str) {
         gsub("&", "&amp;", str);
         gsub("<", "&lt;", str);
         gsub(">", "&gt;", str);
         gsub("\n", "</para><para>", str);
         return str;
 }
-string fixcat(string str) {
+std::string fixcat(std::string str) {
         gsub(" ", "-", str);
         gsub(".", "", str);
         gsub("&", "", str);
@@ -50,15 +50,15 @@ string fixcat(string str) {
 }
 
 struct tree_struct {
-        string item;
-        list<tree_struct> items;
-        list<tree_struct>::iterator it;
-        list<tree_struct>::reverse_iterator rit;
-        vector<void*> objects;
+        std::string item;
+        std::list<tree_struct> items;
+        std::list<tree_struct>::iterator it;
+        std::list<tree_struct>::reverse_iterator rit;
+        std::vector<void*> objects;
         tree_struct *parent;
         void sort() {
                 items.sort();
-                for(list<tree_struct>::iterator it = items.begin(); it != items.end(); ++it) {
+                for(std::list<tree_struct>::iterator it = items.begin(); it != items.end(); ++it) {
                         it->sort();
                 }
         }
@@ -68,18 +68,18 @@ struct tree_struct {
 };
 
 tree_struct function_cats, unit_cats, variable_cats;
-vector<void*> ia_units, ia_variables, ia_functions;
+std::vector<void*> ia_units, ia_variables, ia_functions;
 
 void generate_units_tree_struct() {
         size_t cat_i, cat_i_prev;
         bool b;
-        string str, cat, cat_sub;
+        std::string str, cat, cat_sub;
         Unit *u = NULL;
         unit_cats.items.clear();
         unit_cats.objects.clear();
         unit_cats.parent = NULL;
         ia_units.clear();
-        list<tree_struct>::iterator it;
+        std::list<tree_struct>::iterator it;
         for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
                 if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
                         tree_struct *item = &unit_cats;
@@ -88,7 +88,7 @@ void generate_units_tree_struct() {
                                 cat_i = cat.find("/"); cat_i_prev = 0;
                                 b = false;
                                 while(true) {
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
                                         } else {
                                                 cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
@@ -110,7 +110,7 @@ void generate_units_tree_struct() {
                                                 item = &*it;
                                                 item->item = cat_sub;
                                         }
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 break;
                                         }
                                         cat_i_prev = cat_i + 1;
@@ -137,13 +137,13 @@ void generate_variables_tree_struct() {
 
         size_t cat_i, cat_i_prev;
         bool b;
-        string str, cat, cat_sub;
+        std::string str, cat, cat_sub;
         Variable *v = NULL;
         variable_cats.items.clear();
         variable_cats.objects.clear();
         variable_cats.parent = NULL;
         ia_variables.clear();
-        list<tree_struct>::iterator it;
+        std::list<tree_struct>::iterator it;
         for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
                 if(CALCULATOR->variables[i]->isActive()) {
                         tree_struct *item = &variable_cats;
@@ -152,7 +152,7 @@ void generate_variables_tree_struct() {
                                 cat_i = cat.find("/"); cat_i_prev = 0;
                                 b = false;
                                 while(true) {
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
                                         } else {
                                                 cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
@@ -174,7 +174,7 @@ void generate_variables_tree_struct() {
                                                 item = &*it;
                                                 item->item = cat_sub;
                                         }
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 break;
                                         }
                                         cat_i_prev = cat_i + 1;
@@ -201,13 +201,13 @@ void generate_functions_tree_struct() {
 
         size_t cat_i, cat_i_prev;
         bool b;
-        string str, cat, cat_sub;
+        std::string str, cat, cat_sub;
         MathFunction *f = NULL;
         function_cats.items.clear();
         function_cats.objects.clear();
         function_cats.parent = NULL;
         ia_functions.clear();
-        list<tree_struct>::iterator it;
+        std::list<tree_struct>::iterator it;
 
         for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
                 if(CALCULATOR->functions[i]->isActive()) {
@@ -217,7 +217,7 @@ void generate_functions_tree_struct() {
                                 cat_i = cat.find("/"); cat_i_prev = 0;
                                 b = false;
                                 while(true) {
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
                                         } else {
                                                 cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
@@ -239,7 +239,7 @@ void generate_functions_tree_struct() {
                                                 item = &*it;
                                                 item->item = cat_sub;
                                         }
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 break;
                                         }
                                         cat_i_prev = cat_i + 1;
@@ -265,13 +265,13 @@ void generate_functions_tree_struct() {
 
 void print_function(MathFunction *f) {
 
-                string str;
+                std::string str;
                 fputs("<varlistentry>\n", ffile);
                 fprintf(ffile, "<term><emphasis>%s</emphasis></term>\n", f->title(false).c_str());
                 fputs("<listitem>\n", ffile);
                 Argument *arg;
                 Argument default_arg;
-                string str2;
+                std::string str2;
                 const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
                 str = ename->name;
                 int iargs = f->maxargs();
@@ -407,7 +407,7 @@ void print_function(MathFunction *f) {
 }
 
 void print_variable(Variable *v) {
-                string value, str;
+                std::string value, str;
                 fputs("<row valign=\"top\">\n", vfile);
                 fprintf(vfile, "<entry><para>%s</para></entry>\n", v->title().c_str());
                 bool b_first = true;
@@ -434,7 +434,7 @@ void print_variable(Variable *v) {
                                         value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()));
                                         if(is_relative) {value += ")";}
                                 }
-                                if(((KnownVariable*) v)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos && value.length() > 40) {
+                                if(((KnownVariable*) v)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == std::string::npos && value.length() > 40) {
                                         value = value.substr(0, 30);
                                         value += "...";
                                 }
@@ -476,7 +476,7 @@ void print_variable(Variable *v) {
                                 value = _("default assumptions");
                         }
                 }
-                if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == string::npos) {
+                if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == std::string::npos) {
                         if(v == CALCULATOR->v_pi || v == CALCULATOR->v_e || v == CALCULATOR->v_euler || v == CALCULATOR->v_catalan) {
                                 value += " (";
                                 value += _("variable precision");
@@ -493,7 +493,7 @@ void print_variable(Variable *v) {
 
 void print_unit(Unit *u) {
                 if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return;
-                string str, base_unit, relation;
+                std::string str, base_unit, relation;
                 fputs("<row valign=\"top\">\n", ufile);
                 fprintf(ufile, "<entry><para>%s</para></entry>\n", u->title().c_str());
                 bool b_first = true;
@@ -535,7 +535,7 @@ void print_unit(Unit *u) {
                                                 relation += fix(CALCULATOR->localizeExpression(au->uncertainty()));
                                                 if(is_relative) {relation += ")";}
                                         }
-                                        if(u->isApproximate() && !is_relative && relation.find(SIGN_PLUSMINUS) == string::npos) {
+                                        if(u->isApproximate() && !is_relative && relation.find(SIGN_PLUSMINUS) == std::string::npos) {
                                                 relation += " (";
                                                 relation += _("approximate");
                                                 relation += ")";
@@ -570,11 +570,11 @@ int main(int, char *[]) {
         vfile = fopen("appendixb.xml", "w+");
         ufile = fopen("appendixc.xml", "w+");
 
-        string str;
+        std::string str;
 
         CALCULATOR->loadExchangeRates();
 
-        string ans_str = _("ans");
+        std::string ans_str = _("ans");
         vans[0] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str, m_undefined, _("Last Answer"), false));
         vans[0]->addName(_("answer"));
         vans[0]->addName(ans_str + "1");

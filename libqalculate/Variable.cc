@@ -100,7 +100,7 @@ const Number *Assumptions::max() const {
 }
 
 
-Variable::Variable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
+Variable::Variable(std::string cat_, std::string name_, std::string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, name_, title_, "", is_local, is_builtin, is_active) {
         setChanged(false);
 }
 Variable::Variable() : ExpressionItem() {}
@@ -111,7 +111,7 @@ void Variable::set(const ExpressionItem *item) {
 }
 
 
-UnknownVariable::UnknownVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+UnknownVariable::UnknownVariable(std::string cat_, std::string name_, std::string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
         setChanged(false);
         o_assumption = NULL;
         mstruct = NULL;
@@ -249,7 +249,7 @@ bool UnknownVariable::representsScalar() {
         return CALCULATOR->defaultAssumptions()->isScalar();
 }
 
-KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+KnownVariable::KnownVariable(std::string cat_, std::string name_, const MathStructure &o, std::string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
         mstruct = new MathStructure(o); mstruct_alt = NULL;
         setApproximate(mstruct->isApproximate());
         setPrecision(mstruct->precision());
@@ -261,7 +261,7 @@ KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, 
         calculated_precision = -1;
         setChanged(false);
 }
-KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
+KnownVariable::KnownVariable(std::string cat_, std::string name_, std::string expression_, std::string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
         mstruct = NULL; mstruct_alt = NULL;
         calculated_precision = -1;
         suncertainty = "";
@@ -287,14 +287,14 @@ ExpressionItem *KnownVariable::copy() const {
 bool KnownVariable::isExpression() const {
         return b_expression;
 }
-string KnownVariable::expression() const {
+std::string KnownVariable::expression() const {
         return sexpression;
 }
-string KnownVariable::uncertainty(bool *is_relative) const {
+std::string KnownVariable::uncertainty(bool *is_relative) const {
         if(is_relative) *is_relative = b_relative_uncertainty;
         return suncertainty;
 }
-string KnownVariable::unit() const {
+std::string KnownVariable::unit() const {
         return sunit;
 }
 void KnownVariable::set(const ExpressionItem *item) {
@@ -328,7 +328,7 @@ void KnownVariable::set(const MathStructure &o) {
         setApproximate(o.isApproximate());
         setChanged(true);
 }
-void KnownVariable::set(string expression_) {
+void KnownVariable::set(std::string expression_) {
         if(mstruct) delete mstruct;
         if(mstruct_alt) delete mstruct_alt;
         mstruct = NULL;
@@ -339,7 +339,7 @@ void KnownVariable::set(string expression_) {
         calculated_precision = -1;
         setChanged(true);
 }
-void KnownVariable::setUncertainty(string standard_uncertainty, bool is_relative) {
+void KnownVariable::setUncertainty(std::string standard_uncertainty, bool is_relative) {
         if(mstruct) delete mstruct;
         if(mstruct_alt) delete mstruct_alt;
         mstruct = NULL;
@@ -351,7 +351,7 @@ void KnownVariable::setUncertainty(string standard_uncertainty, bool is_relative
         if(!suncertainty.empty()) setApproximate(true);
         setChanged(true);
 }
-void KnownVariable::setUnit(string unit_expression) {
+void KnownVariable::setUnit(std::string unit_expression) {
         if(mstruct) delete mstruct;
         if(mstruct_alt) delete mstruct_alt;
         mstruct = NULL;
@@ -444,10 +444,10 @@ const MathStructure &KnownVariable::get() {
                         b_number = true;
                 } else {
                         size_t i = sexpression.rfind(')');
-                        if(i != string::npos && i > 2 && (i == sexpression.length() - 1 || (i < sexpression.length() - 2 && (sexpression[i + 1] == 'E' || sexpression[i + 1] == 'e')))) {
+                        if(i != std::string::npos && i > 2 && (i == sexpression.length() - 1 || (i < sexpression.length() - 2 && (sexpression[i + 1] == 'E' || sexpression[i + 1] == 'e')))) {
                                 size_t i2 = sexpression.rfind('(');
-                                if(i2 != string::npos && i2 < i - 1) {
-                                        if(sexpression.find_first_not_of(NUMBER_ELEMENTS SPACES, sexpression[0] == '-' || sexpression[0] == '+' ? 1 : 0) == i2 && sexpression.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == sexpression.length() - 1 || sexpression.find_first_not_of(NUMBER_ELEMENTS SPACES, sexpression[i + 2] == '-' || sexpression[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+                                if(i2 != std::string::npos && i2 < i - 1) {
+                                        if(sexpression.find_first_not_of(NUMBER_ELEMENTS SPACES, sexpression[0] == '-' || sexpression[0] == '+' ? 1 : 0) == i2 && sexpression.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == sexpression.length() - 1 || sexpression.find_first_not_of(NUMBER_ELEMENTS SPACES, sexpression[i + 2] == '-' || sexpression[i + 2] == '+' ? i + 3 : i + 2) == std::string::npos)) {
                                                 b_number = true;
                                         }
                                 }
@@ -520,7 +520,7 @@ bool KnownVariable::representsBoolean() {return get().representsBoolean();}
 bool KnownVariable::representsNonMatrix() {return get().representsNonMatrix();}
 bool KnownVariable::representsScalar() {return get().representsScalar();}
 
-DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
+DynamicVariable::DynamicVariable(std::string cat_, std::string name_, std::string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
         mstruct = NULL; mstruct_alt = NULL;
         calculated_precision = -1;
         always_recalculate = false;
@@ -549,7 +549,7 @@ void DynamicVariable::set(const ExpressionItem *item) {
         ExpressionItem::set(item);
 }
 void DynamicVariable::set(const MathStructure&) {}
-void DynamicVariable::set(string) {}
+void DynamicVariable::set(std::string) {}
 const MathStructure &DynamicVariable::get() {
         MathStructure *m = mstruct;
         if(!always_recalculate && !CALCULATOR->usesIntervalArithmetic()) m = mstruct_alt;

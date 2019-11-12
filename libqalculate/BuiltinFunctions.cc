@@ -40,7 +40,7 @@
 #define RATIONAL_POLYNOMIAL_ARGUMENT(i)				Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); setArgumentDefinition(i, arg_poly##i);
 #define RATIONAL_POLYNOMIAL_ARGUMENT_HV(i)			Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); arg_poly##i->setHandleVector(true); setArgumentDefinition(i, arg_poly##i);
 
-extern string format_and_print(const MathStructure &mstruct);
+extern std::string format_and_print(const MathStructure &mstruct);
 extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
 extern bool replace_intervals_f(MathStructure &mstruct);
 
@@ -871,7 +871,7 @@ int CircularShiftFunction::calculate(MathStructure &mstruct, const MathStructure
         po.base = BASE_BINARY;
         po.base_display = BASE_DISPLAY_NORMAL;
         po.binary_bits = bits;
-        string str = nr.print(po);
+        std::string str = nr.print(po);
         remove_blanks(str);
         if(str.length() < bits) return 0;
         if(nr_n.isNegative()) {
@@ -2074,7 +2074,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
                 if(mstruct.number().isRational() && mstruct.number().isPositive()) {
                         if(mstruct.number().isInteger()) {
                                 if(mstruct.number().isLessThanOrEqualTo(PRIMES[NR_OF_PRIMES - 1])) {
-                                        vector<Number> factors;
+                                        std::vector<Number> factors;
                                         mstruct.number().factorize(factors);
                                         if(factors.size() > 1) {
                                                 mstruct.clear(true);
@@ -4707,7 +4707,7 @@ MinFunction::MinFunction() : MathFunction("min", 1) {
 int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
         ComparisonResult cmp;
         const MathStructure *min = NULL;
-        vector<const MathStructure*> unsolveds;
+        std::vector<const MathStructure*> unsolveds;
         bool b = false;
         for(size_t index = 0; index < vargs[0].size(); index++) {
                 if(min == NULL) {
@@ -4750,7 +4750,7 @@ MaxFunction::MaxFunction() : MathFunction("max", 1) {
 int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
         ComparisonResult cmp;
         const MathStructure *max = NULL;
-        vector<const MathStructure*> unsolveds;
+        std::vector<const MathStructure*> unsolveds;
         bool b = false;
         for(size_t index = 0; index < vargs[0].size(); index++) {
                 if(max == NULL) {
@@ -4796,8 +4796,8 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
         }
         size_t n = 0;
         bool b;
-        vector<const MathStructure*> vargs_nodup;
-        vector<size_t> is;
+        std::vector<const MathStructure*> vargs_nodup;
+        std::vector<size_t> is;
         const MathStructure *value = NULL;
         for(size_t index_c = 0; index_c < vargs[0].size(); index_c++) {
                 b = true;
@@ -4931,7 +4931,7 @@ bool RandPoissonFunction::representsReal(const MathStructure&, bool) const {retu
 bool RandPoissonFunction::representsInteger(const MathStructure &vargs, bool) const {return true;}
 bool RandPoissonFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 
-int calender_to_id(const string &str) {
+int calender_to_id(const std::string &str) {
         if(str == "1" || equalsIgnoreCase(str, "gregorian") || equalsIgnoreCase(str, _("gregorian"))) return CALENDAR_GREGORIAN;
         if(str == "8" || equalsIgnoreCase(str, "milankovic") || equalsIgnoreCase(str, "milanković") || equalsIgnoreCase(str, _("milankovic"))) return CALENDAR_MILANKOVIC;
         if(str == "7" || equalsIgnoreCase(str, "julian") || equalsIgnoreCase(str, _("julian"))) return CALENDAR_JULIAN;
@@ -5314,7 +5314,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
         if(vargs[1].isVector()) return 0;
         Number nbase;
         int idigits = 0;
-        string sdigits;
+        std::string sdigits;
         if(vargs.size() > 2) sdigits = vargs[2].symbol();
         if(sdigits.empty() || sdigits == "0" || sdigits == "auto") idigits = 0;
         else if(sdigits == "1") idigits = 1;
@@ -5344,13 +5344,13 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                 if(mstruct.isNumber() && idigits == 0) {
                         nbase = mstruct.number();
                 } else {
-                        string number = vargs[0].symbol();
+                        std::string number = vargs[0].symbol();
                         size_t i_dot = number.length();
-                        vector<Number> digits;
+                        std::vector<Number> digits;
                         bool b_minus = false;
                         if(idigits < 0) {
-                                unordered_map<string, long int> vdigits;
-                                string schar;
+                                std::unordered_map<std::string, long int> vdigits;
+                                std::string schar;
                                 long int v = 0;
                                 for(size_t i = 0; i < sdigits.length(); v++) {
                                         size_t l = 1;
@@ -5363,7 +5363,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                 for(size_t i = 0; i < number.length();) {
                                         size_t l = 1;
                                         while(i + l < number.length() && number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
-                                        unordered_map<string, long int>::iterator it = vdigits.find(number.substr(i, l));
+                                        std::unordered_map<std::string, long int>::iterator it = vdigits.find(number.substr(i, l));
                                         if(it == vdigits.end()) {
                                                 if(l == 1 && (number[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && number[i] == '.'))) {
                                                         if(i_dot == number.length()) i_dot = digits.size();
@@ -5393,7 +5393,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                         } else if(number[i] == '-' && digits.empty()) {
                                                 b_minus = !b_minus;
                                         } else {
-                                                string str_char = number.substr(i, 1);
+                                                std::string str_char = number.substr(i, 1);
                                                 while(i + 1 < number.length() && number[i + 1] < 0 && number[i + 1] && (unsigned char) number[i + 1] < 0xC0) {
                                                         i++;
                                                         str_char += number[i];
@@ -5413,14 +5413,14 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                                 Number nrd;
                                                 if(is_in(NUMBERS, number[i])) {
                                                         size_t i2 = number.find_first_not_of(NUMBERS, i);
-                                                        if(i2 == string::npos) i2 = number.length();
+                                                        if(i2 == std::string::npos) i2 = number.length();
                                                         nrd.set(number.substr(i, i2 - i));
                                                         i = i2 - 1;
                                                         b_esc = true;
                                                 } else if(number[i] == 'x' && i < number.length() - 1 && is_in(NUMBERS "ABCDEFabcdef", number[i + 1])) {
                                                         i++;
                                                         size_t i2 = number.find_first_not_of(NUMBERS "ABCDEFabcdef", i);
-                                                        if(i2 == string::npos) i2 = number.length();
+                                                        if(i2 == std::string::npos) i2 = number.length();
                                                         ParseOptions po;
                                                         po.base = BASE_HEXADECIMAL;
                                                         nrd.set(number.substr(i, i2 - i), po);
@@ -5503,7 +5503,7 @@ RomanFunction::RomanFunction() : MathFunction("roman", 1) {
         setArgumentDefinition(1, new TextArgument());
 }
 int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-        if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of("0" SIGNS) != string::npos) {
+        if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == std::string::npos && vargs[0].symbol().find_first_not_of("0" SIGNS) != std::string::npos) {
                 CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
                 PrintOptions po; po.base = BASE_ROMAN_NUMERALS;
                 mstruct.eval(eo);
@@ -5519,7 +5519,7 @@ BijectiveFunction::BijectiveFunction() : MathFunction("bijective", 1) {
         setArgumentDefinition(1, new TextArgument());
 }
 int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-        if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of(SIGNS) != string::npos) {
+        if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == std::string::npos && vargs[0].symbol().find_first_not_of(SIGNS) != std::string::npos) {
                 CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
                 PrintOptions po; po.base = BASE_BIJECTIVE_26;
                 mstruct.eval(eo);
@@ -5539,7 +5539,7 @@ int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
         if(vargs[0].symbol().empty()) {
                 return false;
         }
-        const string &str = vargs[0].symbol();
+        const std::string &str = vargs[0].symbol();
         mstruct.clear();
         for(size_t i = 0; i < str.length(); i++) {
                 long int c = (unsigned char) str[i];
@@ -5581,7 +5581,7 @@ CharFunction::CharFunction() : MathFunction("char", 1) {
 int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 
         long int v = vargs[0].number().lintValue();
-        string str;
+        std::string str;
         if(v <= 0x7f) {
                 str = (char) v;
         } else if(v <= 0x7ff) {
@@ -5609,7 +5609,7 @@ ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) 
         setArgumentDefinition(2, new TextArgument());
 }
 int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-        string str;
+        std::string str;
         for(size_t i = 0; i < vargs.size(); i++) {
                 str += vargs[i].symbol();
         }
@@ -6322,7 +6322,7 @@ LoadFunction::LoadFunction() : MathFunction("load", 1, 3) {
         setDefaultValue(3, ",");
 }
 int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-        string delim = vargs[2].symbol();
+        std::string delim = vargs[2].symbol();
         if(delim == "tab") {
                 delim = "\t";
         }
@@ -6339,7 +6339,7 @@ ExportFunction::ExportFunction() : MathFunction("export", 2, 3) {
         setDefaultValue(3, ",");
 }
 int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
-        string delim = vargs[2].symbol();
+        std::string delim = vargs[2].symbol();
         if(delim == "tab") {
                 delim = "\t";
         }
@@ -6796,7 +6796,7 @@ bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure
         MathStructure m;
         Number u;
         nvalue.clear();
-        vector<Number> v;
+        std::vector<Number> v;
         Number i(1, 1);
         while(i <= n) {
                 if(CALCULATOR->aborted()) {
@@ -7052,7 +7052,7 @@ int numerical_integration_part(const MathStructure &minteg, const MathStructure 
                         if(numerical_integration(minteg, nvalue, x_var, eo, nr.lowerEndPoint(), nr.upperEndPoint(), 1002, type)) {nvalue.setApproximate(); return -1;}
                         return 0;
                 }
-                vector<Number> parts;
+                std::vector<Number> parts;
                 nr.splitInterval(depth == 0 ? 5 : 5, parts);
                 nvalue.clear();
                 Number n_i;
@@ -7463,7 +7463,7 @@ int IntegrateFunction::calculate(MathStructure &mstruct, const MathStructure &va
                         return -1;
                 }
                 if((eo.approximation == APPROXIMATION_TRY_EXACT || (eo.approximation == APPROXIMATION_APPROXIMATE && mstruct.isApproximate())) && (!b || mstruct.containsFunction(this, true) > 0)) {
-                        vector<CalculatorMessage> blocked_messages;
+                        std::vector<CalculatorMessage> blocked_messages;
                         CALCULATOR->endTemporaryStopMessages(false, &blocked_messages);
                         CALCULATOR->beginTemporaryStopMessages();
                         MathStructure mbak_integ(mstruct);
@@ -7988,7 +7988,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
         AssumptionSign as = ASSUMPTION_SIGN_UNKNOWN;
         AssumptionType at = ASSUMPTION_TYPE_NUMBER;
         MathStructure msave;
-        string strueforall;
+        std::string strueforall;
 
         while(true) {
 
@@ -8230,7 +8230,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
                 } else if(mstruct.isLogicalOr()) {
                         MathStructure mcopy(mstruct);
                         MathStructure *mtruefor = NULL;
-                        vector<MathStructure*> mconditions;
+                        std::vector<MathStructure*> mconditions;
                         for(size_t i = 0; i < mstruct.size(); ) {
                                 MathStructure *mcondition = NULL;
                                 bool b_and = false;
@@ -8306,7 +8306,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
                                         delete mconditions[0];
                                 }
                         } else {
-                                string sconditions;
+                                std::string sconditions;
                                 for(size_t i = 0; i < mconditions.size(); i++) {
                                         if(mconditions[i]) {
                                                 mconditions[i]->format(po);
@@ -8347,9 +8347,9 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 
         if(vargs[1].size() < 1) return 1;
 
-        vector<bool> eleft;
+        std::vector<bool> eleft;
         eleft.resize(vargs[0].size(), true);
-        vector<size_t> eorder;
+        std::vector<size_t> eorder;
         bool b = false;
         for(size_t i = 0; i < vargs[1].size(); i++) {
                 b = false;
@@ -8848,8 +8848,8 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                 eo2.expand = eo.expand;
         }
         CALCULATOR->endTemporaryStopIntervalArithmetic();
-        vector<MathStructure> x_vectors, y_vectors;
-        vector<PlotDataParameters*> dpds;
+        std::vector<MathStructure> x_vectors, y_vectors;
+        std::vector<PlotDataParameters*> dpds;
         if(mstruct.isMatrix() && mstruct.columns() == 2) {
                 MathStructure x_vector, y_vector;
                 mstruct.columnToVector(1, x_vector);

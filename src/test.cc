@@ -53,8 +53,8 @@ void test_integration5(const MathStructure &mstruct, const Number &a, const Numb
                 po.max_decimals = prec;
                 po.min_decimals = po.max_decimals;
                 po.use_max_decimals = true;
-                string str1 = mstruct2.print(po);
-                string str2 = mstruct3.print(po);
+                std::string str1 = mstruct2.print(po);
+                std::string str2 = mstruct3.print(po);
                 if(str1 != str2) {
                         cout << "Integration test: " << mstruct.print(CALCULATOR->messagePrintOptions()) << "; " << a << "->" << b << endl;
                         display_errors();
@@ -86,13 +86,13 @@ void test_integration6(const MathStructure &mstruct, const Number &a, const Numb
         mstruct3.replace(x_var, a);
         mstruct3.eval(eo);
         display_errors();
-        string str1 = mstruct3.print(CALCULATOR->messagePrintOptions());
+        std::string str1 = mstruct3.print(CALCULATOR->messagePrintOptions());
         cout << str1 << endl;
         mstruct3 = mstruct;
         mstruct3.replace(x_var, a);
         mstruct3.eval(eo);
         display_errors();
-        string str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
+        std::string str2 = mstruct3.print(CALCULATOR->messagePrintOptions());
         cout << str2 << endl;
         if(str1 != str2) cout << "!!!" << endl;
         mstruct3 = mstruct2;
@@ -243,7 +243,7 @@ void test_intervals(bool use_interval) {
         PrintOptions po;
         //po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 
-        vector<Number> nrs;
+        std::vector<Number> nrs;
 
         nrs.push_back(nr_plus_inf);
         nrs.push_back(nr_minus_inf);
@@ -888,14 +888,14 @@ void test_intervals(bool use_interval) {
 
 }
 
-string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1 = 10, int length_factor2 = 5, bool allow_units = false, bool allow_variables = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false, int num_ratio = 2, bool num_ratio_den = false);
+std::string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1 = 10, int length_factor2 = 5, bool allow_units = false, bool allow_variables = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false, int num_ratio = 2, bool num_ratio_den = false);
 
 
-string rnd_unit() {
+std::string rnd_unit() {
         int r = rand() % CALCULATOR->units.size();
         Unit *u = CALCULATOR->units[r];
         if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return ((CompositeUnit*) u)->print(false, true);
-        string str;
+        std::string str;
         if(rand() % 3 == 0) {
                 r = rand() % CALCULATOR->prefixes.size();
                 str += CALCULATOR->prefixes[r]->name();
@@ -908,7 +908,7 @@ string rnd_unit() {
         return str;
 }
 
-string rnd_var() {
+std::string rnd_var() {
         /*if(rand() % 2 == 1) return "e";
         else return "pi";*/
         while(true) {
@@ -919,8 +919,8 @@ string rnd_var() {
 }
 
 
-string rnd_number(bool use_par = true, bool only_integers = false, bool only_positive = false, bool allow_complex = true, bool allow_interval = false) {
-        string str;
+std::string rnd_number(bool use_par = true, bool only_integers = false, bool only_positive = false, bool allow_complex = true, bool allow_interval = false) {
+        std::string str;
         bool par = false;
         bool dot = only_integers;
         bool started = false;
@@ -936,14 +936,14 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
                 started = true;
         }
         if(allow_complex && !only_integers && rand() % 10 == 0) {str += 'i'; par = true;}
-        else if(allow_interval && rand() % 2 == 0 && str.find(".") == string::npos) {str += "+/-4E-8"; /*str += rnd_number(false, true, true, false, false);*/}
+        else if(allow_interval && rand() % 2 == 0 && str.find(".") == std::string::npos) {str += "+/-4E-8"; /*str += rnd_number(false, true, true, false, false);*/}
         if(par && use_par) {str += ')'; str.insert(0, "(");}
         return str;
 }
 
-string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int allow_unit = false, int allow_variable = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false, int num_ratio = 2, bool num_ratio_den = false) {
+std::string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int allow_unit = false, int allow_variable = false, bool allow_interval = false, bool allow_complex = true, bool only_integers = false, int num_ratio = 2, bool num_ratio_den = false) {
         int r = rand() % num_ratio + 1;
-        string str;
+        std::string str;
         if((num_ratio_den ? (r != 1) : (r == 1)) || (!allow_unknown && !allow_function && !allow_unit && !allow_variable)) {
                 str = rnd_number(true, only_integers, false, allow_complex, allow_interval);
         } else {
@@ -1031,9 +1031,9 @@ string rnd_item(int &par, bool allow_function = true, int allow_unknown = 1, int
         }
         return str;
 }
-string rnd_operator(int &par, bool allow_pow = true) {
+std::string rnd_operator(int &par, bool allow_pow = true) {
         int r = rand() % (par ? 10 : 5) + 1;
-        string str;
+        std::string str;
         if(par > 0 && r > 5) {
                 par--;
                 str = ")";
@@ -1057,9 +1057,9 @@ string rnd_operator(int &par, bool allow_pow = true) {
         return "";
 }
 
-string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1, int length_factor2, bool allow_unit, bool allow_variable, bool allow_interval, bool allow_complex, bool only_integers, int num_ratio, bool num_ratio_den) {
+std::string rnd_expression(int allow_unknowns, bool allow_functions, int length_factor1, int length_factor2, bool allow_unit, bool allow_variable, bool allow_interval, bool allow_complex, bool only_integers, int num_ratio, bool num_ratio_den) {
         int par = 0;
-        string str;
+        std::string str;
         while(str.empty() || rand() % ((length_factor1 - (int) str.length() / length_factor2 < 2) ? 2 : (length_factor1 - (int) str.length() / length_factor2)) != 0) {
                 str += rnd_item(par, allow_functions, allow_unknowns, allow_unit, allow_variable, allow_interval, allow_complex, only_integers);
                 str += rnd_operator(par);
@@ -1079,7 +1079,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
         bool b_iv = CALCULATOR->usesIntervalArithmetic();
         IntervalCalculation ic = eo.interval_calculation;
         cerr << "A0" << endl;
-        string str = rnd_expression(allow_unknowns, allow_functions, 6, 4, allow_unit, allow_variable, allow_interval);
+        std::string str = rnd_expression(allow_unknowns, allow_functions, 6, 4, allow_unit, allow_variable, allow_interval);
         cerr << "A2:" << str << endl;
         PrintOptions po; po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS; po.use_max_decimals = true; po.max_decimals = 2; po.min_exp = 1;
         MathStructure mp, m1, m2, m3, m4;
@@ -1209,10 +1209,10 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 
                                 po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
                                 if(m1 != m2) {
-                                        string si1 = m1.number().imaginaryPart().print(po);
-                                        string si2 = m2.number().imaginaryPart().print(po);
-                                        string sr1 = m1.number().realPart().print(po);
-                                        string sr2 = m2.number().realPart().print(po);
+                                        std::string si1 = m1.number().imaginaryPart().print(po);
+                                        std::string si2 = m2.number().imaginaryPart().print(po);
+                                        std::string sr1 = m1.number().realPart().print(po);
+                                        std::string sr2 = m2.number().realPart().print(po);
                                         if(si1 != si2 && si1 == "0") {
                                                 nr = m2.number().imaginaryPart();
                                                 nr.abs();
@@ -1372,7 +1372,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
                 }
         }
 
-        string str2 = rnd_expression(allow_unknowns, allow_functions, 5, 4, allow_unit, allow_variable, allow_interval);
+        std::string str2 = rnd_expression(allow_unknowns, allow_functions, 5, 4, allow_unit, allow_variable, allow_interval);
         str.insert(0, "(");
         str += ") / (";
         str += str2;
@@ -1501,10 +1501,10 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 
                                 po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
                                 if(m1 != m2) {
-                                        string si1 = m1.number().imaginaryPart().print(po);
-                                        string si2 = m2.number().imaginaryPart().print(po);
-                                        string sr1 = m1.number().realPart().print(po);
-                                        string sr2 = m2.number().realPart().print(po);
+                                        std::string si1 = m1.number().imaginaryPart().print(po);
+                                        std::string si2 = m2.number().imaginaryPart().print(po);
+                                        std::string sr1 = m1.number().realPart().print(po);
+                                        std::string sr2 = m2.number().realPart().print(po);
                                         if(si1 != si2 && si1 == "0") {
                                                 nr = m2.number().imaginaryPart();
                                                 nr.abs();
@@ -1780,12 +1780,12 @@ int main(int argc, char *argv[]) {
         nr.set("-22.49");
         CALCULATOR->setCustomOutputBase(Number("-10"));
         po.base = BASE_CUSTOM;
-                string str = nr.print(po);
+                std::string str = nr.print(po);
                 po.base = BASE_DECIMAL;
-                string expr = "base(";
+                std::string expr = "base(";
                 expr += str;
                 expr += ",-10)";
-                string str2 = CALCULATOR->calculateAndPrint(expr, 0, evalops, po);
+                std::string str2 = CALCULATOR->calculateAndPrint(expr, 0, evalops, po);
                 cout << nr << ":" << str << ":" << str2 << endl;
                 if(nr.print(po) != str2) sleep(1);
                 display_errors();
@@ -1794,7 +1794,7 @@ int main(int argc, char *argv[]) {
         //return 0;
 
         MathStructure mp;
-        string str;
+        std::string str;
         Number a, b;
         for(size_t i = 0; i < 10000;) {
                 str = rnd_expression(10, true, 6, 4, false, false, false, 5, false);
@@ -1819,7 +1819,7 @@ int main(int argc, char *argv[]) {
         //CALCULATOR->useIntervalArithmetic();
 
         for(size_t i = 0; i <= 50000; i++) {
-                /*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
+                /*std::string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
                 cout << str << endl;
                 MathStructure mstruct;
                 CALCULATOR->calculate(&mstruct, str, 10000, evalops);
@@ -1835,7 +1835,7 @@ int main(int argc, char *argv[]) {
         return 0;
 
         for(size_t i2 = 0; i2 <= 100000; i2++) {
-                string str;
+                std::string str;
                 size_t n = rand() % 100;
                 for(size_t i = 0; i <= n; i++) {
                         str += (char) (rand() % (126 - 32) + 32);

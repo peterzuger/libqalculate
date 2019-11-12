@@ -150,9 +150,9 @@ class MathStructure {
                 bool b_approx;
                 int i_precision;
 
-                vector<MathStructure*> v_subs;
-                vector<size_t> v_order;
-                string s_sym;
+                std::vector<MathStructure*> v_subs;
+                std::vector<size_t> v_order;
+                std::string s_sym;
                 Number o_number;
                 Variable *o_variable;
 
@@ -196,7 +196,7 @@ class MathStructure {
                 * @param sym Symbolic/text value.
                 * @param force_symbol Do not check for undefined or date value.
                 */
-                MathStructure(string sym, bool force_symbol = false);
+                MathStructure(std::string sym, bool force_symbol = false);
                 /** Create a new date and time structure.
                 *
                 * @param sym Date and time value.
@@ -267,7 +267,7 @@ class MathStructure {
                 * @param preserve_precision Preserve the current precision.
                 * @param force_symbol Do not check for undefined or date value.
                 */
-                void set(string sym, bool preserve_precision = false, bool force_symbol = false);
+                void set(std::string sym, bool preserve_precision = false, bool force_symbol = false);
                 /** Set the structure to a date and time value.
                 *
                 * @param o The new data and time value.
@@ -349,7 +349,7 @@ class MathStructure {
                 void operator = (int i);
                 void operator = (Unit *u);
                 void operator = (Variable *v);
-                void operator = (string sym);
+                void operator = (std::string sym);
                 //@}
 
                 /** @name Functions to keep track of referrers */
@@ -368,7 +368,7 @@ class MathStructure {
 
                 /** @name Functions for symbols */
                 //@{
-                const string &symbol() const;
+                const std::string &symbol() const;
                 //@}
 
                 /** @name Functions for date and time */
@@ -581,11 +581,11 @@ class MathStructure {
                 void operator -= (Variable *v);
                 void operator ^= (Variable *v);
 
-                void operator *= (string sym);
-                void operator /= (string sym);
-                void operator += (string sym);
-                void operator -= (string sym);
-                void operator ^= (string sym);
+                void operator *= (std::string sym);
+                void operator /= (std::string sym);
+                void operator += (std::string sym);
+                void operator -= (std::string sym);
+                void operator ^= (std::string sym);
 
                 //@}
 
@@ -619,11 +619,11 @@ class MathStructure {
                 void multiply(Unit *u, bool append = false);
                 void divide(Unit *u, bool append = false);
                 void raise(Unit *u);
-                void add(string sym, bool append = false);
-                void subtract(string sym, bool append = false);
-                void multiply(string sym, bool append = false);
-                void divide(string sym, bool append = false);
-                void raise(string sym);
+                void add(std::string sym, bool append = false);
+                void subtract(std::string sym, bool append = false);
+                void multiply(std::string sym, bool append = false);
+                void divide(std::string sym, bool append = false);
+                void raise(std::string sym);
                 void add_nocopy(MathStructure *o, MathOperation op, bool append = false);
                 void add_nocopy(MathStructure *o, bool append = false);
                 void subtract_nocopy(MathStructure *o, bool append = false);
@@ -640,7 +640,7 @@ class MathStructure {
                 void transform(StructureType mtype, int i);
                 void transform(StructureType mtype, Unit *u);
                 void transform(StructureType mtype, Variable *v);
-                void transform(StructureType mtype, string sym);
+                void transform(StructureType mtype, std::string sym);
                 void transform_nocopy(StructureType mtype, MathStructure *o);
                 void transform(StructureType mtype);
                 void transform(MathFunction *o);
@@ -655,7 +655,7 @@ class MathStructure {
                 bool equals(int i) const;
                 bool equals(Unit *u) const;
                 bool equals(Variable *v) const;
-                bool equals(string sym) const;
+                bool equals(std::string sym) const;
 
                 ComparisonResult compare(const MathStructure &o) const;
                 ComparisonResult compareApproximately(const MathStructure &o, const EvaluationOptions &eo = default_evaluation_options) const;
@@ -667,7 +667,7 @@ class MathStructure {
                 bool operator == (int i) const;
                 bool operator == (Unit *u) const;
                 bool operator == (Variable *v) const;
-                bool operator == (string sym) const;
+                bool operator == (std::string sym) const;
 
                 bool operator != (const MathStructure &o) const;
 
@@ -745,7 +745,7 @@ class MathStructure {
 
                 int neededMultiplicationSign(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool par, bool par_prev, bool flat_division = true, bool flat_power = true) const;
 
-                string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
+                std::string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
                 //@}
 
 
@@ -841,7 +841,7 @@ class MathStructure {
                 /** @name Differentiation and integration */
                 //@{
                 bool differentiate(const MathStructure &x_var, const EvaluationOptions &eo);
-                int integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, int use_abs = 1, bool definite_integral = false, bool try_abs = true, int max_part_depth = 5, vector<MathStructure*> *parent_parts = NULL);
+                int integrate(const MathStructure &x_var, const EvaluationOptions &eo, bool simplify_first = true, int use_abs = 1, bool definite_integral = false, bool try_abs = true, int max_part_depth = 5, std::vector<MathStructure*> *parent_parts = NULL);
                 //@}
 
                 /** @name Functions for polynomials */
@@ -904,6 +904,6 @@ class MathStructure {
 
 };
 
-ostream& operator << (ostream &os, const MathStructure&);
+std::ostream& operator << (std::ostream &os, const MathStructure&);
 
 #endif

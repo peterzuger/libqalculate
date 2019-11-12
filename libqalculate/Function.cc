@@ -24,10 +24,10 @@
 
 class MathFunction_p {
         public:
-                unordered_map<size_t, Argument*> argdefs;
+                std::unordered_map<size_t, Argument*> argdefs;
 };
 
-MathFunction::MathFunction(string name_, int argc_, int max_argc_, string cat_, string title_, string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
+MathFunction::MathFunction(std::string name_, int argc_, int max_argc_, std::string cat_, std::string title_, std::string descr_, bool is_active) : ExpressionItem(cat_, name_, title_, descr_, false, true, is_active) {
         priv = new MathFunction_p;
         argc = argc_;
         if(max_argc_ < 0 || argc < 0) {
@@ -85,13 +85,13 @@ int MathFunction::subtype() const {
         return SUBTYPE_FUNCTION;
 }
 
-string MathFunction::example(bool raw_format, string name_string) const {
+std::string MathFunction::example(bool raw_format, std::string name_string) const {
         if(raw_format) return sexample;
-        string str = sexample;
+        std::string str = sexample;
         gsub("$name", name_string.empty() ? name() : name_string, str);
         return CALCULATOR->localizeExpression(str);
 }
-void MathFunction::setExample(string new_example) {
+void MathFunction::setExample(std::string new_example) {
         sexample = new_example;
 }
 
@@ -113,10 +113,10 @@ int MathFunction::minargs() const {
 int MathFunction::maxargs() const {
         return max_argc;
 }
-string MathFunction::condition() const {
+std::string MathFunction::condition() const {
         return scondition;
 }
-void MathFunction::setCondition(string expression) {
+void MathFunction::setCondition(std::string expression) {
         scondition = expression;
         remove_blank_ends(scondition);
 }
@@ -138,10 +138,10 @@ bool MathFunction::testCondition(const MathStructure &vargs) {
         }
         return true;
 }
-string MathFunction::printCondition() {
+std::string MathFunction::printCondition() {
         if(scondition.empty() || last_argdef_index == 0) return scondition;
-        string str = scondition;
-        string svar, argstr;
+        std::string str = scondition;
+        std::string svar, argstr;
         Argument *arg;
         int i_args = maxargs();
         if(i_args < 0) {
@@ -160,7 +160,7 @@ string MathFunction::printCondition() {
                 }
                 size_t i2 = 0;
                 while(true) {
-                        if((i2 = str.find(svar, i2)) != string::npos) {
+                        if((i2 = str.find(svar, i2)) != std::string::npos) {
                                 if(maxargs() < 0 && i > minargs()) {
                                         arg = getArgumentDefinition(i);
                                 } else {
@@ -187,7 +187,7 @@ string MathFunction::printCondition() {
         }
         return str;
 }
-int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOptions &parseoptions) {
+int MathFunction::args(const std::string &argstr, MathStructure &vargs, const ParseOptions &parseoptions) {
         ParseOptions po = parseoptions;
         MathStructure *unended_function = po.unended_function;
         po.unended_function = NULL;
@@ -196,7 +196,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
         bool in_cit1 = false, in_cit2 = false;
         int pars = 0;
         int itmp = 0;
-        string str = argstr, stmp;
+        std::string str = argstr, stmp;
         remove_blank_ends(str);
         Argument *arg;
         bool last_is_vctr = false, vctr_started = false;
@@ -385,7 +385,7 @@ Argument *MathFunction::getArgumentDefinition(size_t index) {
         return NULL;
 }
 void MathFunction::clearArgumentDefinitions() {
-        for(unordered_map<size_t, Argument*>::iterator it = priv->argdefs.begin(); it != priv->argdefs.end(); ++it) {
+        for(std::unordered_map<size_t, Argument*>::iterator it = priv->argdefs.begin(); it != priv->argdefs.end(); ++it) {
                 delete it->second;
         }
         priv->argdefs.clear();
@@ -410,7 +410,7 @@ bool MathFunction::testArgumentCount(int itmp) {
                 }
                 return true;
         }
-        string str;
+        std::string str;
         Argument *arg;
         bool b = false;
         for(int i = 1; i <= minargs(); i++) {
@@ -440,14 +440,14 @@ MathStructure MathFunction::createFunctionMathStructureFromVArgs(const MathStruc
         }
         return mstruct;
 }
-MathStructure MathFunction::createFunctionMathStructureFromSVArgs(vector<string> &svargs) {
+MathStructure MathFunction::createFunctionMathStructureFromSVArgs(std::vector<std::string> &svargs) {
         MathStructure mstruct(this, NULL);
         for(size_t i = 0; i < svargs.size(); i++) {
                 mstruct.addChild(svargs[i]);
         }
         return mstruct;
 }
-MathStructure MathFunction::calculate(const string &argv, const EvaluationOptions &eo) {
+MathStructure MathFunction::calculate(const std::string &argv, const EvaluationOptions &eo) {
 /*	MathStructure vargs;
         args(argv, vargs, eo.parse_options);
         return calculate(vargs, eo);*/
@@ -455,7 +455,7 @@ MathStructure MathFunction::calculate(const string &argv, const EvaluationOption
         fmstruct.calculateFunctions(eo);
         return fmstruct;
 }
-MathStructure MathFunction::parse(const string &argv, const ParseOptions &po) {
+MathStructure MathFunction::parse(const std::string &argv, const ParseOptions &po) {
         MathStructure vargs;
         args(argv, vargs, po);
         vargs.setType(STRUCT_FUNCTION);
@@ -463,7 +463,7 @@ MathStructure MathFunction::parse(const string &argv, const ParseOptions &po) {
         return vargs;
         //return createFunctionMathStructureFromVArgs(vargs);
 }
-int MathFunction::parse(MathStructure &mstruct, const string &argv, const ParseOptions &po) {
+int MathFunction::parse(MathStructure &mstruct, const std::string &argv, const ParseOptions &po) {
         int n = args(argv, mstruct, po);
         mstruct.setType(STRUCT_FUNCTION);
         mstruct.setFunction(this);
@@ -471,7 +471,7 @@ int MathFunction::parse(MathStructure &mstruct, const string &argv, const ParseO
 }
 bool MathFunction::testArguments(MathStructure &vargs) {
         size_t last = 0;
-        for(unordered_map<size_t, Argument*>::iterator it = priv->argdefs.begin(); it != priv->argdefs.end(); ++it) {
+        for(std::unordered_map<size_t, Argument*>::iterator it = priv->argdefs.begin(); it != priv->argdefs.end(); ++it) {
                 if(it->first > last) {
                         last = it->first;
                 }
@@ -532,12 +532,12 @@ int MathFunction::calculate(MathStructure&, const MathStructure&, const Evaluati
         //mstruct = createFunctionMathStructureFromVArgs(vargs);
         return 0;
 }
-void MathFunction::setDefaultValue(size_t arg_, string value_) {
+void MathFunction::setDefaultValue(size_t arg_, std::string value_) {
         if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
                 default_values[arg_ - argc - 1] = value_;
         }
 }
-const string &MathFunction::getDefaultValue(size_t arg_) const {
+const std::string &MathFunction::getDefaultValue(size_t arg_) const {
         if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
                 return default_values[arg_ - argc - 1];
         }
@@ -558,13 +558,13 @@ void MathFunction::appendDefaultValues(MathStructure &vargs) {
                 }
         }
 }
-int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
+int MathFunction::stringArgs(const std::string &argstr, std::vector<std::string> &svargs) {
         svargs.clear();
         int start_pos = 0;
         bool in_cit1 = false, in_cit2 = false;
         int pars = 0;
         int itmp = 0;
-        string str = argstr, stmp;
+        std::string str = argstr, stmp;
         remove_blank_ends(str);
         for(size_t str_index = 0; str_index < str.length(); str_index++) {
                 switch(str[str_index]) {
@@ -694,7 +694,7 @@ bool MathFunction::representsScalar(const MathStructure &vargs) const {
         return representsNonMatrix(vargs);
 }
 
-UserFunction::UserFunction(string cat_, string name_, string formula_, bool is_local, int argc_, string title_, string descr_, int max_argc_, bool is_active) : MathFunction(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
+UserFunction::UserFunction(std::string cat_, std::string name_, std::string formula_, bool is_local, int argc_, std::string title_, std::string descr_, int max_argc_, bool is_active) : MathFunction(name_, argc_, max_argc_, cat_, title_, descr_, is_active) {
         b_local = is_local;
         b_builtin = false;
         setFormula(formula_, argc_, max_argc_);
@@ -703,10 +703,10 @@ UserFunction::UserFunction(string cat_, string name_, string formula_, bool is_l
 UserFunction::UserFunction(const UserFunction *function) {
         set(function);
 }
-string UserFunction::formula() const {
+std::string UserFunction::formula() const {
         return sformula;
 }
-string UserFunction::internalFormula() const {
+std::string UserFunction::internalFormula() const {
         return sformula_calc;
 }
 ExpressionItem *UserFunction::copy() const {
@@ -728,7 +728,7 @@ void UserFunction::set(const ExpressionItem *item) {
 int UserFunction::subtype() const {
         return SUBTYPE_USER_FUNCTION;
 }
-extern string format_and_print(const MathStructure &mstruct);
+extern std::string format_and_print(const MathStructure &mstruct);
 bool replace_intervals_f(MathStructure &mstruct) {
         if(mstruct.isNumber() && (mstruct.number().isInterval(false) || (CALCULATOR->usesIntervalArithmetic() && mstruct.number().precision() >= 0))) {
                 Variable *v = new KnownVariable("", format_and_print(mstruct), mstruct);
@@ -778,11 +778,11 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
         ParseOptions po;
         if(b_local) po.angle_unit = eo.parse_options.angle_unit;
         if(args() != 0) {
-                string stmp = sformula_calc;
-                string svar;
-                string v_str, w_str;
-                vector<string> v_strs;
-                vector<size_t> v_id;
+                std::string stmp = sformula_calc;
+                std::string svar;
+                std::string v_str, w_str;
+                std::vector<std::string> v_strs;
+                std::vector<size_t> v_id;
                 size_t i2 = 0;
                 int i_args = maxargs();
                 if(i_args < 0) {
@@ -803,13 +803,13 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                         v_strs[i] += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
                 }
                 if(maxargs() < 0) {
-                        if(stmp.find("\\v") != string::npos) {
+                        if(stmp.find("\\v") != std::string::npos) {
                                 v_id.push_back(CALCULATOR->addId(new MathStructure(produceVector(vargs)), true));
                                 v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
                                 v_str += i2s(v_id[v_id.size() - 1]);
                                 v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
                         }
-                        if(stmp.find("\\w") != string::npos) {
+                        if(stmp.find("\\w") != std::string::npos) {
                                 v_id.push_back(CALCULATOR->addId(new MathStructure(produceArgumentsVector(vargs)), true));
                                 w_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
                                 w_str += i2s(v_id[v_id.size() - 1]);
@@ -819,7 +819,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
                 for(size_t i = 0; i < v_subs.size(); i++) {
                         if(subfunctionPrecalculated(i + 1)) {
-                                string str = v_subs[i];
+                                std::string str = v_subs[i];
                                 for(int i3 = 0; i3 < i_args; i3++) {
                                         svar = '\\';
                                         if('x' + i3 > 'z') {
@@ -829,7 +829,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                         }
                                         i2 = 0;
                                         while(true) {
-                                                if((i2 = str.find(svar, i2)) != string::npos) {
+                                                if((i2 = str.find(svar, i2)) != std::string::npos) {
                                                         if(i2 != 0 && str[i2 - 1] == '\\') {
                                                                 i2 += 2;
                                                         } else {
@@ -843,7 +843,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                 if(maxargs() < 0) {
                                         i2 = 0;
                                         while(true) {
-                                                if((i2 = str.find("\\v")) != string::npos) {
+                                                if((i2 = str.find("\\v")) != std::string::npos) {
                                                         if(i2 != 0 && str[i2 - 1] == '\\') {
                                                                 i2 += 2;
                                                         } else {
@@ -855,7 +855,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                         }
                                         i2 = 0;
                                         while(true) {
-                                                if((i2 = str.find("\\w")) != string::npos) {
+                                                if((i2 = str.find("\\w")) != std::string::npos) {
                                                         if(i2 != 0 && str[i2 - 1] == '\\') {
                                                                 i2 += 2;
                                                         } else {
@@ -877,7 +877,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                 svar = '\\';
                                 svar += i2s(i + 1);
                                 while(true) {
-                                        if((i2 = stmp.find(svar, i2)) != string::npos) {
+                                        if((i2 = stmp.find(svar, i2)) != std::string::npos) {
                                                 if(i2 != 0 && stmp[i2 - 1] == '\\') {
                                                         i2 += 2;
                                                 } else {
@@ -892,11 +892,11 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                                 svar = '\\';
                                 svar += i2s(i + 1);
                                 while(true) {
-                                        if((i2 = stmp.find(svar, i2)) != string::npos) {
+                                        if((i2 = stmp.find(svar, i2)) != std::string::npos) {
                                                 if(i2 != 0 && stmp[i2 - 1] == '\\') {
                                                         i2 += svar.size();
                                                 } else {
-                                                        stmp.replace(i2, svar.size(), string("(") + v_subs[i] + ")");
+                                                        stmp.replace(i2, svar.size(), std::string("(") + v_subs[i] + ")");
                                                 }
                                         } else {
                                                 break;
@@ -913,7 +913,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                         }
                         i2 = 0;
                         while(true) {
-                                if((i2 = stmp.find(svar, i2)) != string::npos) {
+                                if((i2 = stmp.find(svar, i2)) != std::string::npos) {
                                         if(i2 != 0 && stmp[i2 - 1] == '\\') {
                                                 i2 += 2;
                                         } else {
@@ -927,7 +927,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                 if(maxargs() < 0) {
                         i2 = 0;
                         while(true) {
-                                if((i2 = stmp.find("\\v")) != string::npos) {
+                                if((i2 = stmp.find("\\v")) != std::string::npos) {
                                         if(i2 != 0 && stmp[i2 - 1] == '\\') {
                                                 i2 += 2;
                                         } else {
@@ -939,7 +939,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                         }
                         i2 = 0;
                         while(true) {
-                                if((i2 = stmp.find("\\w")) != string::npos) {
+                                if((i2 = stmp.find("\\w")) != std::string::npos) {
                                         if(i2 != 0 && stmp[i2 - 1] == '\\') {
                                                 i2 += 2;
                                         } else {
@@ -951,7 +951,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
                         }
                 }
                 while(true) {
-                        if((i2 = stmp.find("\\\\")) != string::npos) {
+                        if((i2 = stmp.find("\\\\")) != std::string::npos) {
                                 stmp.replace(i2, 2, "\\");
                         } else {
                                 break;
@@ -970,7 +970,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
         }
         return 1;
 }
-void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
+void UserFunction::setFormula(std::string new_formula, int argc_, int max_argc_) {
         setChanged(true);
         sformula = new_formula;
         default_values.clear();
@@ -982,7 +982,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
         }
         if(argc_ < 0) {
                 argc_ = 0, max_argc_ = 0;
-                string svar, svar_o, svar_v;
+                std::string svar, svar_o, svar_v;
                 bool optionals = false, b;
                 size_t i3 = 0, i4 = 0, i5 = 0;
                 size_t i2 = 0;
@@ -1001,14 +1001,14 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
                                 svar_o += 'X' + i;
 
                         before_find_in_set_formula:
-                        if(i < 24 && (i2 = new_formula.find(svar_o, i4)) != string::npos) {
+                        if(i < 24 && (i2 = new_formula.find(svar_o, i4)) != std::string::npos) {
                                 if(i2 > 0 && new_formula[i2 - 1] == '\\') {
                                         i4 = i2 + 2;
                                         goto before_find_in_set_formula;
                                 }
                                 i3 = 0;
                                 if(new_formula.length() > i2 + 2 && new_formula[i2 + 2] == ID_WRAP_LEFT_CH) {
-                                        if((i3 = new_formula.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+                                        if((i3 = new_formula.find(ID_WRAP_RIGHT_CH, i2 + 2)) != std::string::npos) {
                                                 svar_v = new_formula.substr(i2 + 3, i3 - (i2 + 3));
                                                 i3 -= i2 + 1;
                                         } else i3 = 0;
@@ -1019,7 +1019,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
                                         default_values.push_back("0");
                                 }
                                 new_formula.replace(i2, 2 + i3, svar);
-                                while((i2 = new_formula.find(svar_o, i2 + 1)) != string::npos) {
+                                while((i2 = new_formula.find(svar_o, i2 + 1)) != std::string::npos) {
                                         if(i2 > 0 && new_formula[i2 - 1] == '\\') {
                                                 i2++;
                                         } else {
@@ -1028,7 +1028,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
                                 }
                                 for(size_t sub_i = 0; sub_i < v_subs.size(); sub_i++) {
                                         i2 = 0;
-                                        while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != string::npos) {
+                                        while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != std::string::npos) {
                                                 if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
                                                         i2++;
                                                 } else {
@@ -1037,7 +1037,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
                                         }
                                 }
                                 optionals = true;
-                        } else if((i2 = new_formula.find(svar, i5)) != string::npos) {
+                        } else if((i2 = new_formula.find(svar, i5)) != std::string::npos) {
                                 if(i2 > 0 && new_formula[i2 - 1] == '\\') {
                                         i5 = i2 + 2;
                                         goto before_find_in_set_formula;
@@ -1046,14 +1046,14 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
                                 b = false;
                                 for(size_t sub_i = 0; sub_i < v_subs.size(); sub_i++) {
                                         before_find_in_vsubs_set_formula:
-                                        if(i < 24 && (i2 = v_subs[sub_i].find(svar_o, i4)) != string::npos) {
+                                        if(i < 24 && (i2 = v_subs[sub_i].find(svar_o, i4)) != std::string::npos) {
                                                 if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
                                                         i4 = i2 + 2;
                                                         goto before_find_in_vsubs_set_formula;
                                                 }
                                                 i3 = 0;
                                                 if(v_subs[sub_i].length() > i2 + 2 && v_subs[sub_i][i2 + 2] == ID_WRAP_LEFT_CH) {
-                                                        if((i3 = v_subs[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+                                                        if((i3 = v_subs[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != std::string::npos) {
                                                                 svar_v = v_subs[sub_i].substr(i2 + 3, i3 - (i2 + 3));
                                                                 i3 -= i2 + 1;
                                                         } else i3 = 0;
@@ -1064,7 +1064,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
                                                         default_values.push_back("0");
                                                 }
                                                 v_subs[sub_i].replace(i2, 2 + i3, svar);
-                                                while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != string::npos) {
+                                                while((i2 = v_subs[sub_i].find(svar_o, i2 + 1)) != std::string::npos) {
                                                         if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
                                                                 i2++;
                                                         } else {
@@ -1073,7 +1073,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
                                                 }
                                                 optionals = true;
                                                 b = true;
-                                        } else if((i2 = v_subs[sub_i].find(svar, i5)) != string::npos) {
+                                        } else if((i2 = v_subs[sub_i].find(svar, i5)) != std::string::npos) {
                                                 if(i2 > 0 && v_subs[sub_i][i2 - 1] == '\\') {
                                                         i5 = i2 + 2;
                                                         goto before_find_in_vsubs_set_formula;
@@ -1122,12 +1122,12 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
         argc = argc_;
         max_argc = max_argc_;
 }
-void UserFunction::addSubfunction(string subfunction, bool precalculate) {
+void UserFunction::addSubfunction(std::string subfunction, bool precalculate) {
         setChanged(true);
         v_subs.push_back(subfunction);
         v_precalculate.push_back(precalculate);
 }
-void UserFunction::setSubfunction(size_t index, string subfunction) {
+void UserFunction::setSubfunction(size_t index, std::string subfunction) {
         if(index > 0 && index <= v_subs.size()) {
                 setChanged(true);
                 v_subs[index - 1] = subfunction;
@@ -1157,7 +1157,7 @@ void UserFunction::setSubfunctionPrecalculated(size_t index, bool precalculate) 
 size_t UserFunction::countSubfunctions() const {
         return v_subs.size();
 }
-const string &UserFunction::getSubfunction(size_t index) const {
+const std::string &UserFunction::getSubfunction(size_t index) const {
         if(index > 0 && index <= v_subs.size()) {
                 return v_subs[index - 1];
         }
@@ -1170,7 +1170,7 @@ bool UserFunction::subfunctionPrecalculated(size_t index) const {
         return false;
 }
 
-Argument::Argument(string name_, bool does_test, bool does_error) {
+Argument::Argument(std::string name_, bool does_test, bool does_error) {
         sname = name_;
         remove_blank_ends(sname);
         scondition = "";
@@ -1191,10 +1191,10 @@ Argument::~Argument() {}
 Argument *Argument::copy() const {
         return new Argument(this);
 }
-string Argument::print() const {return "";}
-string Argument::subprintlong() const {return _("a free value");}
-string Argument::printlong() const {
-        string str = subprintlong();
+std::string Argument::print() const {return "";}
+std::string Argument::subprintlong() const {return _("a free value");}
+std::string Argument::printlong() const {
+        std::string str = subprintlong();
         if(!b_zero) {
                 str += " ";
                 str += _("that is nonzero");
@@ -1215,7 +1215,7 @@ string Argument::printlong() const {
                 str += " ";
                 str += _("that fulfills the condition:");
                 str += " \"";
-                string str2 = scondition;
+                std::string str2 = scondition;
                 if(name().empty()) gsub("\\x", _("Argument"), str2);
                 else gsub("\\x", name(), str2);
                 str += str2;
@@ -1261,9 +1261,9 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
                 b = value.isMatrix();
         }
         if(b && !scondition.empty()) {
-                string expression = scondition;
+                std::string expression = scondition;
                 int id = CALCULATOR->addId(new MathStructure(value), true);
-                string ids = LEFT_PARENTHESIS ID_WRAP_LEFT;
+                std::string ids = LEFT_PARENTHESIS ID_WRAP_LEFT;
                 ids += i2s(id);
                 ids += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
                 gsub("\\x", ids, expression);
@@ -1289,12 +1289,12 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
         }
         return true;
 }
-MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
+MathStructure Argument::parse(const std::string &str, const ParseOptions &po) const {
         MathStructure mstruct;
         parse(&mstruct, str, po);
         return mstruct;
 }
-void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
+void Argument::parse(MathStructure *mstruct, const std::string &str, const ParseOptions &po) const {
         if(b_text) {
                 size_t pars = 0;
                 while(true) {
@@ -1303,7 +1303,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
                         if(str.length() >= 2 + pars * 2 && str[pars] == LEFT_PARENTHESIS_CH && str[str.length() - 1 - pars] == RIGHT_PARENTHESIS_CH) {
                                 while(true) {
                                         i = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i + 1);
-                                        if(i == string::npos || i >= str.length() - 1 - pars) {
+                                        if(i == std::string::npos || i >= str.length() - 1 - pars) {
                                                 break;
                                         } else if(str[i] == LEFT_PARENTHESIS_CH) {
                                                 pars2++;
@@ -1345,17 +1345,17 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
                                 }
                                 if((cits / 2) % 2 == 0) {
                                         i = str.find(ID_WRAP_LEFT, 1 + pars);
-                                        if(i == string::npos || i >= str.length() - (1 + pars)) {
+                                        if(i == std::string::npos || i >= str.length() - (1 + pars)) {
                                                 mstruct->set(str.substr(1 + pars, str.length() - 2 - pars * 2));
                                                 return;
                                         }
-                                        string str2 = str.substr(1 + pars, str.length() - 2 - pars * 2);
-                                        string str3;
+                                        std::string str2 = str.substr(1 + pars, str.length() - 2 - pars * 2);
+                                        std::string str3;
                                         i = 0;
                                         size_t i2 = 0; int id = 0;
-                                        while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
+                                        while((i = str2.find(ID_WRAP_LEFT, i)) != std::string::npos) {
                                                 i2 = str2.find(ID_WRAP_RIGHT, i + 1);
-                                                if(i2 == string::npos) break;
+                                                if(i2 == std::string::npos) break;
                                                 id = s2i(str2.substr(i + 1, i2 - (i + 1)));
                                                 MathStructure *m_temp = CALCULATOR->getId((size_t) id);
                                                 str3 = "(";
@@ -1376,17 +1376,17 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
                         }
                 }
                 size_t i = str.find(ID_WRAP_LEFT, pars);
-                if(i == string::npos || i >= str.length() - pars) {
+                if(i == std::string::npos || i >= str.length() - pars) {
                         mstruct->set(str.substr(pars, str.length() - pars * 2), false, true);
                         return;
                 }
-                string str2 = str.substr(pars, str.length() - pars * 2);
-                string str3;
+                std::string str2 = str.substr(pars, str.length() - pars * 2);
+                std::string str3;
                 i = 0;
                 size_t i2 = 0; int id = 0;
-                while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
+                while((i = str2.find(ID_WRAP_LEFT, i)) != std::string::npos) {
                         i2 = str2.find(ID_WRAP_RIGHT, i + 1);
-                        if(i2 == string::npos) break;
+                        if(i2 == std::string::npos) break;
                         id = s2i(str2.substr(i + 1, i2 - (i + 1)));
                         MathStructure *m_temp = CALCULATOR->getId((size_t) id);
                         str3 = "(";
@@ -1411,18 +1411,18 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 bool Argument::subtest(MathStructure&, const EvaluationOptions&) const {
         return true;
 }
-string Argument::name() const {
+std::string Argument::name() const {
         return sname;
 }
-void Argument::setName(string name_) {
+void Argument::setName(std::string name_) {
         sname = name_;
         remove_blank_ends(sname);
 }
-void Argument::setCustomCondition(string condition) {
+void Argument::setCustomCondition(std::string condition) {
         scondition = condition;
         remove_blank_ends(scondition);
 }
-string Argument::getCustomCondition() const {
+std::string Argument::getCustomCondition() const {
         return scondition;
 }
 
@@ -1459,7 +1459,7 @@ void Argument::setIsLastArgument(bool is_last) {b_last = is_last;}
 bool Argument::rationalPolynomial() const {return b_rational;}
 void Argument::setRationalPolynomial(bool rational_polynomial) {b_rational = rational_polynomial;}
 
-NumberArgument::NumberArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+NumberArgument::NumberArgument(std::string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
         fmin = NULL;
         fmax = NULL;
         b_incl_min = true;
@@ -1614,11 +1614,11 @@ void NumberArgument::set(const Argument *arg) {
         }
         Argument::set(arg);
 }
-string NumberArgument::print() const {
+std::string NumberArgument::print() const {
         return _("number");
 }
-string NumberArgument::subprintlong() const {
-        string str;
+std::string NumberArgument::subprintlong() const {
+        std::string str;
         if(b_rational_number) {
                 str += _("a rational number");
         } else if(b_complex) {
@@ -1653,7 +1653,7 @@ string NumberArgument::subprintlong() const {
         return str;
 }
 
-IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error, IntegerType integer_type) : Argument(name_, does_test, does_error) {
+IntegerArgument::IntegerArgument(std::string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error, IntegerType integer_type) : Argument(name_, does_test, does_error) {
         imin = NULL;
         imax = NULL;
         i_inttype = integer_type;
@@ -1775,11 +1775,11 @@ void IntegerArgument::set(const Argument *arg) {
         }
         Argument::set(arg);
 }
-string IntegerArgument::print() const {
+std::string IntegerArgument::print() const {
         return _("integer");
 }
-string IntegerArgument::subprintlong() const {
-        string str = _("an integer");
+std::string IntegerArgument::subprintlong() const {
+        std::string str = _("an integer");
         if(imin) {
                 str += " ";
                 str += _(">=");
@@ -1825,7 +1825,7 @@ string IntegerArgument::subprintlong() const {
         return str;
 }
 
-SymbolicArgument::SymbolicArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
+SymbolicArgument::SymbolicArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 SymbolicArgument::SymbolicArgument(const SymbolicArgument *arg) {set(arg);}
 SymbolicArgument::~SymbolicArgument() {}
 bool SymbolicArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -1836,10 +1836,10 @@ bool SymbolicArgument::subtest(MathStructure &value, const EvaluationOptions &eo
 }
 int SymbolicArgument::type() const {return ARGUMENT_TYPE_SYMBOLIC;}
 Argument *SymbolicArgument::copy() const {return new SymbolicArgument(this);}
-string SymbolicArgument::print() const {return _("symbol");}
-string SymbolicArgument::subprintlong() const {return _("an unknown variable/symbol");}
+std::string SymbolicArgument::print() const {return _("symbol");}
+std::string SymbolicArgument::subprintlong() const {return _("an unknown variable/symbol");}
 
-TextArgument::TextArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+TextArgument::TextArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 TextArgument::TextArgument(const TextArgument *arg) {set(arg); b_text = true;}
 TextArgument::~TextArgument() {}
 bool TextArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -1850,14 +1850,14 @@ bool TextArgument::subtest(MathStructure &value, const EvaluationOptions &eo) co
 }
 int TextArgument::type() const {return ARGUMENT_TYPE_TEXT;}
 Argument *TextArgument::copy() const {return new TextArgument(this);}
-string TextArgument::print() const {return _("text");}
-string TextArgument::subprintlong() const {return _("a text string");}
+std::string TextArgument::print() const {return _("text");}
+std::string TextArgument::subprintlong() const {return _("a text string");}
 bool TextArgument::suggestsQuotes() const {return false;}
 
-DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
+DateArgument::DateArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 DateArgument::DateArgument(const DateArgument *arg) {set(arg);}
 DateArgument::~DateArgument() {}
-void DateArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
+void DateArgument::parse(MathStructure *mstruct, const std::string &str, const ParseOptions &po) const {
         QalculateDateTime dt_test;
         if(dt_test.set(str)) {
                 mstruct->set(dt_test);
@@ -1873,10 +1873,10 @@ bool DateArgument::subtest(MathStructure &value, const EvaluationOptions &eo) co
 }
 int DateArgument::type() const {return ARGUMENT_TYPE_DATE;}
 Argument *DateArgument::copy() const {return new DateArgument(this);}
-string DateArgument::print() const {return string(_("date")) + " (Y-M-D)";}
-string DateArgument::subprintlong() const {return string(_("a date")) + " (Y-M-D)";}
+std::string DateArgument::print() const {return std::string(_("date")) + " (Y-M-D)";}
+std::string DateArgument::subprintlong() const {return std::string(_("a date")) + " (Y-M-D)";}
 
-VectorArgument::VectorArgument(string name_, bool does_test, bool allow_matrix, bool does_error) : Argument(name_, does_test, does_error) {
+VectorArgument::VectorArgument(std::string name_, bool does_test, bool allow_matrix, bool does_error) : Argument(name_, does_test, does_error) {
         setMatrixAllowed(allow_matrix);
         b_argloop = true;
 }
@@ -1920,10 +1920,10 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 }
 int VectorArgument::type() const {return ARGUMENT_TYPE_VECTOR;}
 Argument *VectorArgument::copy() const {return new VectorArgument(this);}
-string VectorArgument::print() const {return _("vector");}
-string VectorArgument::subprintlong() const {
+std::string VectorArgument::print() const {return _("vector");}
+std::string VectorArgument::subprintlong() const {
         if(subargs.size() > 0) {
-                string str = _("a vector with ");
+                std::string str = _("a vector with ");
                 for(size_t i = 0; i < subargs.size(); i++) {
                         if(i > 0) {
                                 str += ", ";
@@ -1963,7 +1963,7 @@ Argument *VectorArgument::getArgument(size_t index) const {
         return NULL;
 }
 
-MatrixArgument::MatrixArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+MatrixArgument::MatrixArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
         b_square = false;
 }
 MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
@@ -1981,8 +1981,8 @@ bool MatrixArgument::squareDemanded() const {return b_square;}
 void MatrixArgument::setSquareDemanded(bool square) {b_square = square;}
 int MatrixArgument::type() const {return ARGUMENT_TYPE_MATRIX;}
 Argument *MatrixArgument::copy() const {return new MatrixArgument(this);}
-string MatrixArgument::print() const {return _("matrix");}
-string MatrixArgument::subprintlong() const {
+std::string MatrixArgument::print() const {return _("matrix");}
+std::string MatrixArgument::subprintlong() const {
         if(b_square) {
                 return _("a square matrix");
         } else {
@@ -1990,7 +1990,7 @@ string MatrixArgument::subprintlong() const {
         }
 }
 
-ExpressionItemArgument::ExpressionItemArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+ExpressionItemArgument::ExpressionItemArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 ExpressionItemArgument::ExpressionItemArgument(const ExpressionItemArgument *arg) {set(arg); b_text = true;}
 ExpressionItemArgument::~ExpressionItemArgument() {}
 bool ExpressionItemArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -2001,10 +2001,10 @@ bool ExpressionItemArgument::subtest(MathStructure &value, const EvaluationOptio
 }
 int ExpressionItemArgument::type() const {return ARGUMENT_TYPE_EXPRESSION_ITEM;}
 Argument *ExpressionItemArgument::copy() const {return new ExpressionItemArgument(this);}
-string ExpressionItemArgument::print() const {return _("object");}
-string ExpressionItemArgument::subprintlong() const {return _("a valid function, unit or variable name");}
+std::string ExpressionItemArgument::print() const {return _("object");}
+std::string ExpressionItemArgument::subprintlong() const {return _("a valid function, unit or variable name");}
 
-FunctionArgument::FunctionArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+FunctionArgument::FunctionArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 FunctionArgument::FunctionArgument(const FunctionArgument *arg) {set(arg); b_text = true;}
 FunctionArgument::~FunctionArgument() {}
 bool FunctionArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -2015,10 +2015,10 @@ bool FunctionArgument::subtest(MathStructure &value, const EvaluationOptions &eo
 }
 int FunctionArgument::type() const {return ARGUMENT_TYPE_FUNCTION;}
 Argument *FunctionArgument::copy() const {return new FunctionArgument(this);}
-string FunctionArgument::print() const {return _("function");}
-string FunctionArgument::subprintlong() const {return _("a valid function name");}
+std::string FunctionArgument::print() const {return _("function");}
+std::string FunctionArgument::subprintlong() const {return _("a valid function name");}
 
-UnitArgument::UnitArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+UnitArgument::UnitArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 UnitArgument::UnitArgument(const UnitArgument *arg) {set(arg); b_text = true;}
 UnitArgument::~UnitArgument() {}
 bool UnitArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -2029,10 +2029,10 @@ bool UnitArgument::subtest(MathStructure &value, const EvaluationOptions &eo) co
 }
 int UnitArgument::type() const {return ARGUMENT_TYPE_UNIT;}
 Argument *UnitArgument::copy() const {return new UnitArgument(this);}
-string UnitArgument::print() const {return _("unit");}
-string UnitArgument::subprintlong() const {return _("a valid unit name");}
+std::string UnitArgument::print() const {return _("unit");}
+std::string UnitArgument::subprintlong() const {return _("a valid unit name");}
 
-VariableArgument::VariableArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+VariableArgument::VariableArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 VariableArgument::VariableArgument(const VariableArgument *arg) {set(arg); b_text = true;}
 VariableArgument::~VariableArgument() {}
 bool VariableArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -2043,10 +2043,10 @@ bool VariableArgument::subtest(MathStructure &value, const EvaluationOptions &eo
 }
 int VariableArgument::type() const {return ARGUMENT_TYPE_VARIABLE;}
 Argument *VariableArgument::copy() const {return new VariableArgument(this);}
-string VariableArgument::print() const {return _("variable");}
-string VariableArgument::subprintlong() const {return _("a valid variable name");}
+std::string VariableArgument::print() const {return _("variable");}
+std::string VariableArgument::subprintlong() const {return _("a valid variable name");}
 
-FileArgument::FileArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+FileArgument::FileArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
 FileArgument::FileArgument(const FileArgument *arg) {set(arg); b_text = true;}
 FileArgument::~FileArgument() {}
 bool FileArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -2057,10 +2057,10 @@ bool FileArgument::subtest(MathStructure &value, const EvaluationOptions &eo) co
 }
 int FileArgument::type() const {return ARGUMENT_TYPE_FILE;}
 Argument *FileArgument::copy() const {return new FileArgument(this);}
-string FileArgument::print() const {return _("file");}
-string FileArgument::subprintlong() const {return _("a valid file name");}
+std::string FileArgument::print() const {return _("file");}
+std::string FileArgument::subprintlong() const {return _("a valid file name");}
 
-BooleanArgument::BooleanArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
+BooleanArgument::BooleanArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 BooleanArgument::BooleanArgument(const BooleanArgument *arg) {set(arg);}
 BooleanArgument::~BooleanArgument() {}
 bool BooleanArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -2071,10 +2071,10 @@ bool BooleanArgument::subtest(MathStructure &value, const EvaluationOptions &eo)
 }
 int BooleanArgument::type() const {return ARGUMENT_TYPE_BOOLEAN;}
 Argument *BooleanArgument::copy() const {return new BooleanArgument(this);}
-string BooleanArgument::print() const {return _("boolean");}
-string BooleanArgument::subprintlong() const {return _("a boolean (0 or 1)");}
+std::string BooleanArgument::print() const {return _("boolean");}
+std::string BooleanArgument::subprintlong() const {return _("a boolean (0 or 1)");}
 
-AngleArgument::AngleArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
+AngleArgument::AngleArgument(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 AngleArgument::AngleArgument(const AngleArgument *arg) {set(arg);}
 AngleArgument::~AngleArgument() {}
 bool AngleArgument::subtest(MathStructure&, const EvaluationOptions&) const {
@@ -2082,9 +2082,9 @@ bool AngleArgument::subtest(MathStructure&, const EvaluationOptions&) const {
 }
 int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}
 Argument *AngleArgument::copy() const {return new AngleArgument(this);}
-string AngleArgument::print() const {return _("angle");}
-string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
-void AngleArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
+std::string AngleArgument::print() const {return _("angle");}
+std::string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
+void AngleArgument::parse(MathStructure *mstruct, const std::string &str, const ParseOptions &po) const {
         CALCULATOR->parse(mstruct, str, po);
         if(po.angle_unit != ANGLE_UNIT_NONE) {
                 if(mstruct->contains(CALCULATOR->getRadUnit(), false, true, true) > 0) return;
@@ -2108,7 +2108,7 @@ void AngleArgument::parse(MathStructure *mstruct, const string &str, const Parse
         }
 }
 
-ArgumentSet::ArgumentSet(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+ArgumentSet::ArgumentSet(std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 }
 ArgumentSet::ArgumentSet(const ArgumentSet *arg) {
         set(arg);
@@ -2134,8 +2134,8 @@ bool ArgumentSet::subtest(MathStructure &value, const EvaluationOptions &eo) con
 }
 int ArgumentSet::type() const {return ARGUMENT_TYPE_SET;}
 Argument *ArgumentSet::copy() const {return new ArgumentSet(this);}
-string ArgumentSet::print() const {
-        string str = "";
+std::string ArgumentSet::print() const {
+        std::string str = "";
         for(size_t i = 0; i < subargs.size(); i++) {
                 if(i > 0) {
                         if(i == subargs.size() - 1) {
@@ -2150,8 +2150,8 @@ string ArgumentSet::print() const {
         }
         return str;
 }
-string ArgumentSet::subprintlong() const {
-        string str = "";
+std::string ArgumentSet::subprintlong() const {
+        std::string str = "";
         for(size_t i = 0; i < subargs.size(); i++) {
                 if(i > 0) {
                         if(i == subargs.size() - 1) {

@@ -15,46 +15,46 @@
 #include "Calculator.h"
 #include "Number.h"
 
-Prefix::Prefix(string long_name, string short_name, string unicode_name) {
+Prefix::Prefix(std::string long_name, std::string short_name, std::string unicode_name) {
         l_name = long_name;
         s_name = short_name;
         u_name = unicode_name;
 }
 Prefix::~Prefix() {
 }
-const string &Prefix::shortName(bool return_long_if_no_short, bool use_unicode) const {
+const std::string &Prefix::shortName(bool return_long_if_no_short, bool use_unicode) const {
         if(use_unicode && !u_name.empty()) return u_name;
         if(return_long_if_no_short && s_name.empty()) {
                 return l_name;
         }
         return s_name;
 }
-const string &Prefix::longName(bool return_short_if_no_long, bool use_unicode) const {
+const std::string &Prefix::longName(bool return_short_if_no_long, bool use_unicode) const {
         if(return_short_if_no_long && l_name.empty()) {
                 if(use_unicode && !u_name.empty()) return u_name;
                 return s_name;
         }
         return l_name;
 }
-const string &Prefix::unicodeName(bool return_short_if_no_unicode) const {
+const std::string &Prefix::unicodeName(bool return_short_if_no_unicode) const {
         if(return_short_if_no_unicode && u_name.empty()) {
                 return s_name;
         }
         return u_name;
 }
-void Prefix::setShortName(string short_name) {
+void Prefix::setShortName(std::string short_name) {
         s_name = short_name;
         CALCULATOR->prefixNameChanged(this);
 }
-void Prefix::setLongName(string long_name) {
+void Prefix::setLongName(std::string long_name) {
         l_name = long_name;
         CALCULATOR->prefixNameChanged(this);
 }
-void Prefix::setUnicodeName(string unicode_name) {
+void Prefix::setUnicodeName(std::string unicode_name) {
         u_name = unicode_name;
         CALCULATOR->prefixNameChanged(this);
 }
-const string &Prefix::name(bool short_default, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+const std::string &Prefix::name(bool short_default, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
         if(short_default) {
                 if(use_unicode && !u_name.empty() && (!can_display_unicode_string_function || (*can_display_unicode_string_function) (u_name.c_str(), can_display_unicode_string_arg))) return u_name;
                 if(s_name.empty()) {
@@ -69,7 +69,7 @@ const string &Prefix::name(bool short_default, bool use_unicode, bool (*can_disp
         return l_name;
 }
 
-DecimalPrefix::DecimalPrefix(int exp10, string long_name, string short_name, string unicode_name) : Prefix(long_name, short_name, unicode_name) {
+DecimalPrefix::DecimalPrefix(int exp10, std::string long_name, std::string short_name, std::string unicode_name) : Prefix(long_name, short_name, unicode_name) {
         exp = exp10;
 }
 DecimalPrefix::~DecimalPrefix() {
@@ -102,7 +102,7 @@ int DecimalPrefix::type() const {
         return PREFIX_DECIMAL;
 }
 
-BinaryPrefix::BinaryPrefix(int exp2, string long_name, string short_name, string unicode_name) : Prefix(long_name, short_name, unicode_name) {
+BinaryPrefix::BinaryPrefix(int exp2, std::string long_name, std::string short_name, std::string unicode_name) : Prefix(long_name, short_name, unicode_name) {
         exp = exp2;
 }
 BinaryPrefix::~BinaryPrefix() {
@@ -135,7 +135,7 @@ int BinaryPrefix::type() const {
         return PREFIX_BINARY;
 }
 
-NumberPrefix::NumberPrefix(const Number &nr, string long_name, string short_name, string unicode_name) : Prefix(long_name, short_name, unicode_name) {
+NumberPrefix::NumberPrefix(const Number &nr, std::string long_name, std::string short_name, std::string unicode_name) : Prefix(long_name, short_name, unicode_name) {
         o_number = nr;
 }
 NumberPrefix::~NumberPrefix() {

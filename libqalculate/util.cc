@@ -75,35 +75,35 @@ void now(int &hour, int &min, int &sec) {
         sec = lt->tm_sec;
 }
 
-string& gsub(const string &pattern, const string &sub, string &str) {
+std::string& gsub(const std::string &pattern, const std::string &sub, std::string &str) {
         size_t i = str.find(pattern);
-        while(i != string::npos) {
+        while(i != std::string::npos) {
                 str.replace(i, pattern.length(), sub);
                 i = str.find(pattern, i + sub.length());
         }
         return str;
 }
-string& gsub(const char *pattern, const char *sub, string &str) {
+std::string& gsub(const char *pattern, const char *sub, std::string &str) {
         size_t i = str.find(pattern);
-        while(i != string::npos) {
-                str.replace(i, strlen(pattern), string(sub));
+        while(i != std::string::npos) {
+                str.replace(i, strlen(pattern), std::string(sub));
                 i = str.find(pattern, i + strlen(sub));
         }
         return str;
 }
 
-string& remove_blanks(string &str) {
+std::string& remove_blanks(std::string &str) {
         size_t i = str.find_first_of(SPACES, 0);
-        while(i != string::npos) {
+        while(i != std::string::npos) {
                 str.erase(i, 1);
                 i = str.find_first_of(SPACES, i);
         }
         return str;
 }
 
-string& remove_duplicate_blanks(string &str) {
+std::string& remove_duplicate_blanks(std::string &str) {
         size_t i = str.find_first_of(SPACES, 0);
-        while(i != string::npos) {
+        while(i != std::string::npos) {
                 if(i != 0 && is_in(SPACES, str[i - 1])) {
                         str.erase(i, 1);
                 } else {
@@ -115,10 +115,10 @@ string& remove_duplicate_blanks(string &str) {
         return str;
 }
 
-string& remove_blank_ends(string &str) {
+std::string& remove_blank_ends(std::string &str) {
         size_t i = str.find_first_not_of(SPACES);
         size_t i2 = str.find_last_not_of(SPACES);
-        if(i != string::npos && i2 != string::npos) {
+        if(i != std::string::npos && i2 != std::string::npos) {
                 if(i > 0 || i2 < str.length() - 1) {
                         str = str.substr(i, i2 - i + 1);
                 }
@@ -127,7 +127,7 @@ string& remove_blank_ends(string &str) {
         }
         return str;
 }
-string& remove_parenthesis(string &str) {
+std::string& remove_parenthesis(std::string &str) {
         if(str[0] == LEFT_PARENTHESIS_CH && str[str.length() - 1] == RIGHT_PARENTHESIS_CH) {
                 str = str.substr(1, str.length() - 2);
                 return remove_parenthesis(str);
@@ -135,31 +135,31 @@ string& remove_parenthesis(string &str) {
         return str;
 }
 
-string d2s(double value, int precision) {
+std::string d2s(double value, int precision) {
         // qgcvt(value, precision, buffer);
         char buffer[200];
         sprintf(buffer, "%.*G", precision, value);
-        string stmp = buffer;
+        std::string stmp = buffer;
         // gsub("e", "E", stmp);
         return stmp;
 }
 
-string p2s(void *o) {
+std::string p2s(void *o) {
         char buffer[80];
         sprintf(buffer, "%p", o);
-        string stmp = buffer;
+        std::string stmp = buffer;
         return stmp;
 }
-string i2s(long int value) {
+std::string i2s(long int value) {
         char buffer[80];
         sprintf(buffer, "%li", value);
-        string stmp = buffer;
+        std::string stmp = buffer;
         return stmp;
 }
-string u2s(unsigned long int value) {
+std::string u2s(unsigned long int value) {
         char buffer[80];
         sprintf(buffer, "%lu", value);
-        string stmp = buffer;
+        std::string stmp = buffer;
         return stmp;
 }
 const char *b2yn(bool b, bool capital) {
@@ -186,13 +186,13 @@ const char *b2oo(bool b, bool capital) {
         if(b) return _("on");
         return _("off");
 }
-long int s2i(const string& str) {
+long int s2i(const std::string& str) {
         return strtol(str.c_str(), NULL, 10);
 }
 long int s2i(const char *str) {
         return strtol(str, NULL, 10);
 }
-void *s2p(const string& str) {
+void *s2p(const std::string& str) {
         void *p;
         sscanf(str.c_str(), "%p", &p);
         return p;
@@ -203,13 +203,13 @@ void *s2p(const char *str) {
         return p;
 }
 
-size_t find_ending_bracket(const string &str, size_t start, int *missing) {
+size_t find_ending_bracket(const std::string &str, size_t start, int *missing) {
         int i_l = 1;
         while(true) {
                 start = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, start);
-                if(start == string::npos) {
+                if(start == std::string::npos) {
                         if(missing) *missing = i_l;
-                        return string::npos;
+                        return std::string::npos;
                 }
                 if(str[start] == LEFT_PARENTHESIS_CH) {
                         i_l++;
@@ -236,7 +236,7 @@ char op2ch(MathOperation op) {
         }
 }
 
-string& wrap_p(string &str) {
+std::string& wrap_p(std::string &str) {
         str.insert(str.begin(), 1, LEFT_PARENTHESIS_CH);
         str += RIGHT_PARENTHESIS_CH;
         return str;
@@ -256,14 +256,14 @@ bool is_not_in(const char *str, char c) {
         }
         return true;
 }
-bool is_in(const string &str, char c) {
+bool is_in(const std::string &str, char c) {
         for(size_t i = 0; i < str.length(); i++) {
                 if(str[i] == c)
                         return true;
         }
         return false;
 }
-bool is_not_in(const string &str, char c) {
+bool is_not_in(const std::string &str, char c) {
         for(size_t i = 0; i < str.length(); i++) {
                 if(str[i] == c)
                         return false;
@@ -271,9 +271,9 @@ bool is_not_in(const string &str, char c) {
         return true;
 }
 
-int sign_place(string *str, size_t start) {
+int sign_place(std::string *str, size_t start) {
         size_t i = str->find_first_of(OPERATORS, start);
-        if(i != string::npos)
+        if(i != std::string::npos)
                 return i;
         else
                 return -1;
@@ -296,7 +296,7 @@ int gcd(int i1, int i2) {
         return i2;
 }
 
-size_t unicode_length(const string &str) {
+size_t unicode_length(const std::string &str) {
         size_t l = str.length(), l2 = 0;
         for(size_t i = 0; i < l; i++) {
                 if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
@@ -315,7 +315,7 @@ size_t unicode_length(const char *str) {
         return l2;
 }
 
-bool text_length_is_one(const string &str) {
+bool text_length_is_one(const std::string &str) {
         if(str.empty()) return false;
         if(str.length() == 1) return true;
         if(str[0] >= 0) return false;
@@ -327,7 +327,7 @@ bool text_length_is_one(const string &str) {
         return true;
 }
 
-bool equalsIgnoreCase(const string &str1, const string &str2) {
+bool equalsIgnoreCase(const std::string &str1, const std::string &str2) {
         if(str1.empty() || str2.empty()) return false;
         for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < str2.length(); i1++, i2++) {
                 if(i1 >= str1.length() || i2 >= str2.length()) return false;
@@ -370,7 +370,7 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
         return true;
 }
 
-bool equalsIgnoreCase(const string &str1, const char *str2) {
+bool equalsIgnoreCase(const std::string &str1, const char *str2) {
         if(str1.empty() || strlen(str2) == 0) return false;
         for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < strlen(str2); i1++, i2++) {
                 if(i1 >= str1.length() || i2 >= strlen(str2)) return false;
@@ -413,10 +413,10 @@ bool equalsIgnoreCase(const string &str1, const char *str2) {
         return true;
 }
 
-void parse_qalculate_version(string qalculate_version, int *qalculate_version_numbers) {
+void parse_qalculate_version(std::string qalculate_version, int *qalculate_version_numbers) {
         for(size_t i = 0; i < 3; i++) {
                 size_t dot_i = qalculate_version.find(".");
-                if(dot_i == string::npos) {
+                if(dot_i == std::string::npos) {
                         qalculate_version_numbers[i] = s2i(qalculate_version);
                         break;
                 }
@@ -426,8 +426,8 @@ void parse_qalculate_version(string qalculate_version, int *qalculate_version_nu
 }
 
 #ifdef _WIN32
-string utf8_encode(const wstring &wstr) {
-        if(wstr.empty()) return string();
+std::string utf8_encode(const std::wstring &wstr) {
+    if(wstr.empty()) return std::string();
         int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), NULL, 0, NULL, NULL);
         std::string strTo(size_needed, 0);
         WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), &strTo[0], size_needed, NULL, NULL);
@@ -435,79 +435,79 @@ string utf8_encode(const wstring &wstr) {
 }
 #endif
 
-string getOldLocalDir() {
+std::string getOldLocalDir() {
 #ifdef _WIN32
         char path[MAX_PATH];
         SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path);
-        string str = path;
+        std::string str = path;
         return str + "\\Qalculate";
 #else
         const char *homedir;
         if ((homedir = getenv("HOME")) == NULL) {
                 homedir = getpwuid(getuid())->pw_dir;
         }
-        return string(homedir) + "/.qalculate";
+        return std::string(homedir) + "/.qalculate";
 #endif
 }
-string getLocalDir() {
+std::string getLocalDir() {
 #ifdef _WIN32
 #	ifdef WIN_PORTABLE
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string str(exepath);
+        std::string str(exepath);
         str.resize(str.find_last_of('\\'));
         _mkdir(str.c_str());
         return str + "\\user";
 #	else
         char path[MAX_PATH];
         SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
-        string str = path;
+        std::string str = path;
         return str + "\\Qalculate";
 #	endif
 #else
         const char *homedir;
         if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
-                return string(getpwuid(getuid())->pw_dir) + "/.config/qalculate";
+                return std::string(getpwuid(getuid())->pw_dir) + "/.config/qalculate";
         }
-        return string(homedir) + "/qalculate";
+        return std::string(homedir) + "/qalculate";
 #endif
 }
-string getLocalDataDir() {
+std::string getLocalDataDir() {
 #ifdef _WIN32
 #	ifdef WIN_PORTABLE
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string str(exepath);
+        std::string str(exepath);
         str.resize(str.find_last_of('\\'));
         _mkdir(str.c_str());
         return str + "\\user";
 #	else
         char path[MAX_PATH];
         SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
-        string str = path;
+        std::string str = path;
         return str + "\\Qalculate";
 #	endif
 #else
         const char *homedir;
         if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
-                return string(getpwuid(getuid())->pw_dir) + "/.local/share/qalculate";
+                return std::string(getpwuid(getuid())->pw_dir) + "/.local/share/qalculate";
         }
-        return string(homedir) + "/qalculate";
+        return std::string(homedir) + "/qalculate";
 #endif
 }
-string getLocalTmpDir() {
+std::string getLocalTmpDir() {
 #ifdef _WIN32
 #	ifdef WIN_PORTABLE
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string str(exepath);
+        std::string str(exepath);
         str.resize(str.find_last_of('\\'));
         _mkdir(str.c_str());
         return str + "\\tmp";
 #	else
         char path[MAX_PATH];
         SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
-        string str = path;
+        std::string str = path;
         str += "\\cache";
         _mkdir(str.c_str());
         return str + "\\Qalculate";
@@ -515,9 +515,9 @@ string getLocalTmpDir() {
 #else
         const char *homedir;
         if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
-                return string(getpwuid(getuid())->pw_dir) + "/.cache/qalculate";
+                return std::string(getpwuid(getuid())->pw_dir) + "/.cache/qalculate";
         }
-        return string(homedir) + "/qalculate";
+        return std::string(homedir) + "/qalculate";
 #endif
 }
 
@@ -525,13 +525,13 @@ bool move_file(const char *from_file, const char *to_file) {
 #ifdef _WIN32
         return MoveFile(from_file, to_file) != 0;
 #else
-        ifstream source(from_file);
+        std::ifstream source(from_file);
         if(source.fail()) {
                 source.close();
                 return false;
         }
 
-        ofstream dest(to_file);
+        std::ofstream dest(to_file);
         if(dest.fail()) {
                 source.close();
                 dest.close();
@@ -557,13 +557,13 @@ bool move_file(const char *from_file, const char *to_file) {
 #endif
 }
 
-string getPackageDataDir() {
+std::string getPackageDataDir() {
 #ifndef WIN32
         return PACKAGE_DATA_DIR;
 #else
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string datadir(exepath);
+        std::string datadir(exepath);
         datadir.resize(datadir.find_last_of('\\'));
         if (datadir.substr(datadir.length() - 4) == "\\bin") {
                 datadir.resize(datadir.find_last_of('\\'));
@@ -576,13 +576,13 @@ string getPackageDataDir() {
 #endif
 }
 
-string getGlobalDefinitionsDir() {
+std::string getGlobalDefinitionsDir() {
 #ifndef WIN32
-        return string(PACKAGE_DATA_DIR) + "/qalculate";
+        return std::string(PACKAGE_DATA_DIR) + "/qalculate";
 #else
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string datadir(exepath);
+        std::string datadir(exepath);
         bool is_qalc = datadir.substr(datadir.length() - 8) == "qalc.exe";
         datadir.resize(datadir.find_last_of('\\'));
         if(datadir.substr(datadir.length() - 4) == "\\bin") {
@@ -606,13 +606,13 @@ string getGlobalDefinitionsDir() {
 #endif
 }
 
-string getPackageLocaleDir() {
+std::string getPackageLocaleDir() {
 #ifndef WIN32
         return PACKAGE_LOCALE_DIR;
 #else
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string datadir(exepath);
+        std::string datadir(exepath);
         datadir.resize(datadir.find_last_of('\\'));
         if(datadir.substr(datadir.length() - 4) == "\\bin" || datadir.substr(datadir.length() - 6) == "\\.libs") {
                 datadir.resize(datadir.find_last_of('\\'));
@@ -622,21 +622,21 @@ string getPackageLocaleDir() {
 #endif
 }
 
-string buildPath(string dir, string filename) {
+std::string buildPath(std::string dir, std::string filename) {
 #ifdef WIN32
         return dir + '\\' + filename;
 #else
         return dir + '/' + filename;
 #endif
 }
-string buildPath(string dir1, string dir2, string filename) {
+std::string buildPath(std::string dir1, std::string dir2, std::string filename) {
 #ifdef WIN32
         return dir1 + '\\' + dir2 + '\\' + filename;
 #else
         return dir1 + '/' + dir2 + '/' + filename;
 #endif
 }
-string buildPath(string dir1, string dir2, string dir3, string filename) {
+std::string buildPath(std::string dir1, std::string dir2, std::string dir3, std::string filename) {
 #ifdef WIN32
         return dir1 + '\\' + dir2 + '\\' + dir3 + '\\' + filename;
 #else
@@ -644,10 +644,10 @@ string buildPath(string dir1, string dir2, string dir3, string filename) {
 #endif
 }
 
-bool dirExists(string dirpath) {
+bool dirExists(std::string dirpath) {
         return fileExists(dirpath);
 }
-bool fileExists(string filepath) {
+bool fileExists(std::string filepath) {
 #ifdef WIN32
         struct _stat info;
         return _stat(filepath.c_str(), &info) == 0;
@@ -656,7 +656,7 @@ bool fileExists(string filepath) {
         return stat(filepath.c_str(), &info) == 0;
 #endif
 }
-bool makeDir(string dirpath) {
+bool makeDir(std::string dirpath) {
 #ifdef WIN32
         return _mkdir(dirpath.c_str()) == 0;
 #else
@@ -664,7 +664,7 @@ bool makeDir(string dirpath) {
 #endif
 }
 
-bool recursiveMakeDir(string dirpath) {
+bool recursiveMakeDir(std::string dirpath) {
 #ifdef WIN32
         return _mkdir(dirpath.c_str()) == 0;
 #else
@@ -685,7 +685,7 @@ bool recursiveMakeDir(string dirpath) {
 #endif
 }
 
-bool removeDir(string dirpath) {
+bool removeDir(std::string dirpath) {
 #ifdef WIN32
         return _rmdir(dirpath.c_str()) == 0;
 #else
@@ -752,10 +752,10 @@ char *utf8_strdown(const char *str, int l) {
 #endif
 }
 
-extern size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer);
-int checkAvailableVersion(const char *version_id, const char *current_version, string *available_version, int timeout) {
+extern size_t write_data(void *ptr, size_t size, size_t nmemb, std::string *sbuffer);
+int checkAvailableVersion(const char *version_id, const char *current_version, std::string *available_version, int timeout) {
 #ifdef HAVE_LIBCURL
-        string sbuffer;
+        std::string sbuffer;
         char error_buffer[CURL_ERROR_SIZE];
         CURL *curl;
         CURLcode res;
@@ -772,10 +772,10 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 #ifdef _WIN32
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string datadir(exepath);
+        std::string datadir(exepath);
         datadir.resize(datadir.find_last_of('\\'));
         if(datadir.substr(datadir.length() - 4) != "\\bin" && datadir.substr(datadir.length() - 6) != "\\.libs") {
-                string cainfo = buildPath(datadir, "ssl", "certs", "ca-bundle.crt");
+                std::string cainfo = buildPath(datadir, "ssl", "certs", "ca-bundle.crt");
                 gsub("\\", "/", cainfo);
                 curl_easy_setopt(curl, CURLOPT_CAINFO, cainfo.c_str());
         }
@@ -785,35 +785,35 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
         curl_global_cleanup();
         if(res != CURLE_OK || sbuffer.empty()) {return -1;}
         size_t i = sbuffer.find(version_id);
-        if(i == string::npos) return -1;
+        if(i == std::string::npos) return -1;
         size_t i2 = sbuffer.find('\n', i + strlen(version_id) + 1);
-        string s_version;
-        if(i2 == string::npos) s_version = sbuffer.substr(i + strlen(version_id) + 1);
+        std::string s_version;
+        if(i2 == std::string::npos) s_version = sbuffer.substr(i + strlen(version_id) + 1);
         else s_version = sbuffer.substr(i + strlen(version_id) + 1, i2 - (i + strlen(version_id) + 1));
         remove_blank_ends(s_version);
         if(s_version.empty()) return -1;
         if(available_version) *available_version = s_version;
         if(s_version != current_version) {
-                vector<int> version_parts_old, version_parts_new;
+            std::vector<int> version_parts_old, version_parts_new;
 
-                string s_old_version = current_version;
-                while((i = s_old_version.find('.', 0)) != string::npos) {
+                std::string s_old_version = current_version;
+                while((i = s_old_version.find('.', 0)) != std::string::npos) {
                         version_parts_old.push_back(s2i(s_old_version.substr(0, i)));
                         s_old_version = s_old_version.substr(i + 1);
                 }
                 i = s_old_version.find_first_not_of("0123456789", 1);
-                if(i != string::npos) {
+                if(i != std::string::npos) {
                         version_parts_old.push_back(s2i(s_old_version.substr(0, i)));
                         s_old_version = s_old_version.substr(i + 1);
                 }
                 version_parts_old.push_back(s2i(s_old_version));
 
-                while((i = s_version.find('.', 0)) != string::npos) {
+                while((i = s_version.find('.', 0)) != std::string::npos) {
                         version_parts_new.push_back(s2i(s_version.substr(0, i)));
                         s_version = s_version.substr(i + 1);
                 }
                 i = s_version.find_first_not_of("0123456789", 1);
-                if(i != string::npos) {
+                if(i != std::string::npos) {
                         version_parts_new.push_back(s2i(s_version.substr(0, i)));
                         s_version = s_version.substr(i + 1);
                 }

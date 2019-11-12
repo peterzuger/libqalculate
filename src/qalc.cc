@@ -40,7 +40,7 @@ protected:
 
 MathStructure *mstruct, *parsed_mstruct;
 KnownVariable *vans[5];
-string result_text, parsed_text;
+std::string result_text, parsed_text;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
@@ -56,7 +56,7 @@ bool adaptive_interval_display;
 Thread *view_thread, *command_thread;
 bool command_aborted = false;
 volatile bool b_busy = false;
-string expression_str;
+std::string expression_str;
 bool expression_executed = false;
 bool avoid_recalculation = false;
 bool hide_parse_errors = false;
@@ -94,8 +94,8 @@ void result_prefix_changed(Prefix *prefix = NULL);
 void expression_format_updated(bool reparse);
 void expression_calculation_updated();
 bool display_errors(bool goto_input = false, int cols = 0);
-void replace_quotation_marks(string &result_text);
-void replace_result_cis(string &resstr);
+void replace_quotation_marks(std::string &result_text);
+void replace_result_cis(std::string &resstr);
 extern int has_information_unit(const MathStructure &m, bool top = true);
 
 FILE *cfile;
@@ -139,7 +139,7 @@ size_t unicode_length_check(const char *str) {
         return unicode_length(str);
 }
 
-int s2b(const string &str) {
+int s2b(const std::string &str) {
         if(str.empty()) return -1;
         if(EQUALS_IGNORECASE_AND_LOCAL(str, "yes", _("yes"))) return 1;
         if(EQUALS_IGNORECASE_AND_LOCAL(str, "no", _("no"))) return 0;
@@ -147,7 +147,7 @@ int s2b(const string &str) {
         if(EQUALS_IGNORECASE_AND_LOCAL(str, "false", _("false"))) return 0;
         if(EQUALS_IGNORECASE_AND_LOCAL(str, "on", _("on"))) return 1;
         if(EQUALS_IGNORECASE_AND_LOCAL(str, "off", _("off"))) return 0;
-        if(str.find_first_not_of(SPACES NUMBERS) != string::npos) return -1;
+        if(str.find_first_not_of(SPACES NUMBERS) != std::string::npos) return -1;
         int i = s2i(str);
         if(i > 0) return 1;
         return 0;
@@ -157,7 +157,7 @@ bool is_answer_variable(Variable *v) {
         return v == vans[0] || v == vans[1] || v == vans[2] || v == vans[3] || v == vans[4];
 }
 
-bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
+bool equalsIgnoreCaseFirst(const std::string &str1, const char *str2) {
         if(str1.length() < 1 || strlen(str2) < 1) return false;
         if((str1[0] < 0 && str1.length() > 1) || (str2[0] < 0 && strlen(str2) > 1)) {
                 size_t iu1 = 1, iu2 = 1;
@@ -200,12 +200,12 @@ bool ask_question(const char *question, bool default_answer = false) {
         while(true) {
 #ifdef HAVE_LIBREADLINE
                 char *rlbuffer = readline(" ");
-                string str = rlbuffer;
+                std::string str = rlbuffer;
                 free(rlbuffer);
 #else
                 fputs(" ", stdout);
                 if(!fgets(buffer, 1000, stdin)) return false;
-                string str = buffer;
+                std::string str = buffer;
 #endif
                 remove_blank_ends(str);
                 if(equalsIgnoreCaseFirst(str, "yes") || equalsIgnoreCaseFirst(str, _("yes")) || EQUALS_IGNORECASE_AND_LOCAL(str, "yes", _("yes"))) {
@@ -221,7 +221,7 @@ bool ask_question(const char *question, bool default_answer = false) {
         }
 }
 
-void set_assumption(const string &str, bool last_of_two = false) {
+void set_assumption(const std::string &str, bool last_of_two = false) {
         if(EQUALS_IGNORECASE_AND_LOCAL(str, "unknown", _("unknown")) || str == "0") {
                 if(!last_of_two) {
                         CALCULATOR->defaultAssumptions()->setSign(ASSUMPTION_SIGN_UNKNOWN);
@@ -252,7 +252,7 @@ void set_assumption(const string &str, bool last_of_two = false) {
         }
 }
 
-vector<const string*> matches;
+std::vector<const std::string*> matches;
 
 #ifdef __cplusplus
 extern "C" {
@@ -406,15 +406,15 @@ int countRows(const char *str, int cols) {
         return r;
 }
 
-int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, size_t result_start = 0) {
+int addLineBreaks(std::string &str, int cols, bool expr = false, size_t indent = 0, size_t result_start = 0) {
         if(cols <= 0) return 1;
         int r = 1;
         size_t c = 0;
-        size_t lb_point = string::npos;
-        size_t or_point = string::npos;
+        size_t lb_point = std::string::npos;
+        size_t or_point = std::string::npos;
         int b_or = 0;
-        if(expr && str.find("||") != string::npos) b_or = 2;
-        else if(expr && str.find(_("or")) != string::npos) b_or = 1;
+        if(expr && str.find("||") != std::string::npos) b_or = 2;
+        else if(expr && str.find(_("or")) != std::string::npos) b_or = 1;
         for(size_t i = 0; i < str.length(); i++) {
                 if(r != 1 && c == indent) {
                         if(str[i] == ' ') {
@@ -441,7 +441,7 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
                         if(str[i] == '\n') {
                                 r++;
                                 c = 0;
-                                lb_point = string::npos;
+                                lb_point = std::string::npos;
                         } else {
                                 if(c > indent) {
                                         if(is_in(" \t", str[i])) {
@@ -454,9 +454,9 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
                                                 lb_point = i + 1;
                                         }
                                 }
-                                if(c == (size_t) cols || or_point != string::npos) {
-                                        if(or_point != string::npos) lb_point = or_point;
-                                        if(lb_point == string::npos) {
+                                if(c == (size_t) cols || or_point != std::string::npos) {
+                                        if(or_point != std::string::npos) lb_point = or_point;
+                                        if(lb_point == std::string::npos) {
                                                 if(expr && printops.digit_grouping != DIGIT_GROUPING_NONE) {
                                                         if(i > 3 && str[i] <= '9' && str[i] >= '0' && str[i - 1] <= '9' && str[i - 1] >= '0') {
                                                                 if(str[i - 2] == ' ' && str[i - 3] <= '9' && str[i - 3] >= '0') i -= 2;
@@ -465,7 +465,7 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
                                                                 else if((str[i - 3] == '.' || str[i - 3] == ',') && str[i - 4] <= '9' && str[i - 4] >= '0') i -= 2;
                                                                 else if(printops.use_unicode_signs && i > 6) {
                                                                         size_t i2 = str.find(" ", i - 6);
-                                                                        if(i2 != string::npos && i2 > 0 && i2 < i && str[i2 - 1] <= '9' && str[i2 - 1] >= '0') {
+                                                                        if(i2 != std::string::npos && i2 > 0 && i2 < i && str[i2 - 1] <= '9' && str[i2 - 1] >= '0') {
                                                                                 i = i2;
                                                                         }
                                                                 }
@@ -501,8 +501,8 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
                                                 i = lb_point;
                                                 c = indent;
                                         }
-                                        lb_point = string::npos;
-                                        or_point = string::npos;
+                                        lb_point = std::string::npos;
+                                        or_point = std::string::npos;
                                         r++;
                                 } else {
                                         if(str[i] == '\t') c += 8;
@@ -517,7 +517,7 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
                                         if((unsigned char) str[index] >= 0xC0) break;
                                 }
                                 if(index > 0 && str[index - 1] != '^' && str[index - 1] != ' ' && str[index - 1] != '=') {
-                                        string unichar = str.substr(index, i - index + 1);
+                                        std::string unichar = str.substr(index, i - index + 1);
                                         if(unichar == SIGN_MULTIPLICATION || unichar == SIGN_MULTIDOT || unichar == SIGN_MIDDLEDOT || unichar == SIGN_MULTIBULLET || unichar == SIGN_SMALLCIRCLE || unichar == SIGN_DIVISION_SLASH || unichar == SIGN_DIVISION || unichar == SIGN_MINUS || unichar == SIGN_PLUS) lb_point = i + 1;
                                 }
                         }
@@ -534,7 +534,7 @@ bool check_exchange_rates() {
         bool b = false;
         if(auto_update_exchange_rates < 0) {
                 char buffer[1000];
-                string ask_str;
+                std::string ask_str;
                 int cx = snprintf(buffer, 1000, _("It has been %s day(s) since the exchange rates last were updated."), i2s((int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime(i)) / 86400)).c_str());
                 if(cx >= 0 && cx < 1000) {
                         ask_str = buffer;
@@ -557,14 +557,14 @@ bool check_exchange_rates() {
 #	define CHECK_IF_SCREEN_FILLED if(check_sf) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {puts(""); rcount = 1;}}}
 #	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) CHECK_IF_SCREEN_FILLED_PUTS_RP(x, 0)
-#	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile) rl_get_screen_size(&rows, &cols);
+#	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; std::string str_lb; if(!cfile) rl_get_screen_size(&rows, &cols);
 #	define INIT_COLS int rows = 0, cols = 0; if(!cfile) rl_get_screen_size(&rows, &cols);
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
 #else
 #	define CHECK_IF_SCREEN_FILLED
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) str_lb = x; if(!cfile) {addLineBreaks(str_lb, cols);} PUTS_UNICODE(str_lb.c_str());
-#	define INIT_SCREEN_CHECK string str_lb; int cols = 80;
+#	define INIT_SCREEN_CHECK std::string str_lb; int cols = 80;
 #	define INIT_COLS int cols = (cfile ? 0 : 80);
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); PUTS_UNICODE(str.c_str());
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) puts(""); str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); PUTS_UNICODE(str.c_str());
@@ -577,18 +577,18 @@ bool check_exchange_rates() {
 #define SET_BOOL_PT(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(true);}}
 #define SET_BOOL_PF(x)	{int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value"));} else if(x != v) {x = v; expression_format_updated(false);}}
 
-void set_option(string str) {
+void set_option(std::string str) {
         remove_blank_ends(str);
-        string svalue, svar;
+        std::string svalue, svar;
         bool empty_value = false;
         size_t i_underscore = str.find("_");
         size_t index;
-        if(i_underscore != string::npos) {
+        if(i_underscore != std::string::npos) {
                 index = str.find_first_of(SPACES);
-                if(index != string::npos && i_underscore > index) i_underscore = string::npos;
+                if(index != std::string::npos && i_underscore > index) i_underscore = std::string::npos;
         }
-        if(i_underscore == string::npos) index = str.find_last_of(SPACES);
-        if(index != string::npos) {
+        if(i_underscore == std::string::npos) index = str.find_last_of(SPACES);
+        if(index != std::string::npos) {
                 svar = str.substr(0, index);
                 remove_blank_ends(svar);
                 svalue = str.substr(index + 1);
@@ -596,7 +596,7 @@ void set_option(string str) {
         } else {
                 svar = str;
         }
-        if(i_underscore != string::npos) gsub("_", " ", svar);
+        if(i_underscore != std::string::npos) gsub("_", " ", svar);
         if(svalue.empty()) {
                 empty_value = true;
                 svalue = "1";
@@ -623,7 +623,7 @@ void set_option(string str) {
                 else if(equalsIgnoreCase(svalue, "dec") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "decimal", _("decimal"))) v = BASE_DECIMAL;
                 else if(equalsIgnoreCase(svalue, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(svalue, "sexagesimal", _("sexagesimal"))) {if(b_in) v = 0; else v = BASE_SEXAGESIMAL;}
 
-                else if(!b_in && !b_out && (index = svalue.find_first_of(SPACES)) != string::npos) {
+                else if(!b_in && !b_out && (index = svalue.find_first_of(SPACES)) != std::string::npos) {
                         str = svalue;
                         svalue = str.substr(index + 1, str.length() - (index + 1));
                         remove_blank_ends(svalue);
@@ -637,12 +637,12 @@ void set_option(string str) {
                         }
                         if(expression_executed) {
                                 expression_executed = false;
-                                set_option(string("outbase ") + str);
+                                set_option(std::string("outbase ") + str);
                                 expression_executed = true;
                         } else {
-                                set_option(string("outbase ") + str);
+                                set_option(std::string("outbase ") + str);
                         }
-                        set_option(string("inbase ") + svalue);
+                        set_option(std::string("inbase ") + svalue);
                         return;
                 } else if(!empty_value) {
                         MathStructure m;
@@ -672,13 +672,13 @@ void set_option(string str) {
                 }
         } else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assumptions", _("assumptions")) || svar == "ass") {
                 size_t i = svalue.find_first_of(SPACES);
-                if(i != string::npos) {
+                if(i != std::string::npos) {
                         set_assumption(svalue.substr(0, i), false);
                         set_assumption(svalue.substr(i + 1, svalue.length() - (i + 1)), true);
                 } else {
                         set_assumption(svalue, false);
                 }
-                string value;
+                std::string value;
                 switch(CALCULATOR->defaultAssumptions()->sign()) {
                         case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
                         case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
@@ -726,7 +726,7 @@ void set_option(string str) {
         else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "sync units", _("sync units")) || svar == "sync") SET_BOOL_E(evalops.sync_units)
         else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") SET_BOOL_D(printops.round_halfway_to_even)
         else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") SET_BOOL_PF(evalops.parse_options.rpn)
-        else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
+        else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == std::string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
         else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
         else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") SET_BOOL_D(printops.lower_case_e)
         else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase numbers", _("lowercase numbers")) || svar == "lownum") SET_BOOL_D(printops.lower_case_numbers)
@@ -751,7 +751,7 @@ void set_option(string str) {
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = BASE_DISPLAY_NONE;
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "normal", _("normal"))) v = BASE_DISPLAY_NORMAL;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "alternative", _("alternative"))) v = BASE_DISPLAY_ALTERNATIVE;
-                else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 2) {
@@ -768,7 +768,7 @@ void set_option(string str) {
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = DIGIT_GROUPING_NONE;
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = DIGIT_GROUPING_STANDARD;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = DIGIT_GROUPING_LOCALE;
-                else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < DIGIT_GROUPING_NONE || v > DIGIT_GROUPING_LOCALE) {
@@ -788,7 +788,7 @@ void set_option(string str) {
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = 0;
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = 1;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = -1;
-                else if(svalue.find_first_not_of(SPACES MINUS NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES MINUS NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < -1 || v > 1) {
@@ -820,7 +820,7 @@ void set_option(string str) {
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "deg", _("deg")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "degrees", _("degrees"))) v = ANGLE_UNIT_DEGREES;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "gra", _("gra")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "gradians", _("gradians"))) v = ANGLE_UNIT_GRADIANS;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = ANGLE_UNIT_NONE;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 3) {
@@ -837,7 +837,7 @@ void set_option(string str) {
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "implicit first", _("implicit first"))) v = PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "conventional", _("conventional"))) v = PARSING_MODE_CONVENTIONAL;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 2) {
@@ -862,7 +862,7 @@ void set_option(string str) {
                 if(svalue == SIGN_MULTIDOT || svalue == ".") v = MULTIPLICATION_SIGN_DOT;
                 else if(svalue == SIGN_MULTIPLICATION || svalue == "x") v = MULTIPLICATION_SIGN_X;
                 else if(svalue == "*") v = MULTIPLICATION_SIGN_ASTERISK;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 2) {
@@ -876,7 +876,7 @@ void set_option(string str) {
                 if(svalue == SIGN_DIVISION_SLASH) v = DIVISION_SIGN_DIVISION_SLASH;
                 else if(svalue == SIGN_DIVISION) v = DIVISION_SIGN_DIVISION;
                 else if(svalue == "/") v = DIVISION_SIGN_SLASH;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 2) {
@@ -890,7 +890,7 @@ void set_option(string str) {
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "exact", _("exact"))) v = APPROXIMATION_EXACT;
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "try exact", _("try exact")) || svalue == "try") v = APPROXIMATION_TRY_EXACT;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "approximate", _("approximate")) || svalue == "approx") v = APPROXIMATION_APPROXIMATE;
-                else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 2) {
@@ -907,7 +907,7 @@ void set_option(string str) {
                 int v = -1;
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "variance formula", _("variance formula")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "variance", _("variance"))) v = INTERVAL_CALCULATION_VARIANCE_FORMULA;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "interval arithmetic", _("interval arithmetic")) || svalue == "iv") v = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < INTERVAL_CALCULATION_NONE || v > INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC) {
@@ -925,7 +925,7 @@ void set_option(string str) {
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "optimal", _("optimal"))) v = POST_CONVERSION_OPTIMAL;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "base", _("base"))) v = POST_CONVERSION_BASE;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = POST_CONVERSION_NONE;
-                else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v == POST_CONVERSION_OPTIMAL + 1) {
@@ -948,7 +948,7 @@ void set_option(string str) {
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = STRUCTURING_NONE;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "expand", _("expand"))) v = STRUCTURING_SIMPLIFY;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "factorize", _("factorize")) || svalue == "factor") v = STRUCTURING_FACTORIZE;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > STRUCTURING_FACTORIZE) {
@@ -1015,7 +1015,7 @@ void set_option(string str) {
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure", _("pure"))) v = EXP_PURE;
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific"))) v = EXP_SCIENTIFIC;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "engineering", _("engineering"))) v = EXP_BASE_3;
-                else if(svalue.find_first_not_of(SPACES NUMBERS MINUS) == string::npos) v = s2i(svalue);
+                else if(svalue.find_first_not_of(SPACES NUMBERS MINUS) == std::string::npos) v = s2i(svalue);
                 else valid = false;
                 if(valid) {
                         printops.min_exp = v;
@@ -1025,7 +1025,7 @@ void set_option(string str) {
                 }
         } else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "precision", _("precision")) || svar == "prec") {
                 int v = 0;
-                if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+                if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) v = s2i(svalue);
                 if(v < 1) {
                         PUTS_UNICODE(_("Illegal value."));
                 } else {
@@ -1041,7 +1041,7 @@ void set_option(string str) {
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "midpoint", _("midpoint"))) v = INTERVAL_DISPLAY_MIDPOINT + 1;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "upper", _("upper"))) v = INTERVAL_DISPLAY_UPPER + 1;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "lower", _("lower"))) v = INTERVAL_DISPLAY_LOWER + 1;
-                else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v == 0) {
@@ -1075,7 +1075,7 @@ void set_option(string str) {
         } else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max decimals", _("max decimals")) || svar == "maxdeci") {
                 int v = -1;
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) v = s2i(svalue);
                 if(v < 0) {
                         printops.use_max_decimals = false;
                         result_format_updated();
@@ -1087,7 +1087,7 @@ void set_option(string str) {
         } else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "min decimals", _("min decimals")) || svar == "mindeci") {
                 int v = -1;
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = -1;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) v = s2i(svalue);
                 if(v < 0) {
                         printops.min_decimals = 0;
                         printops.use_min_decimals = false;
@@ -1104,7 +1104,7 @@ void set_option(string str) {
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = FRACTION_FRACTIONAL;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = FRACTION_COMBINED;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "long", _("long"))) v = FRACTION_COMBINED + 1;
-                else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > FRACTION_COMBINED + 1) {
@@ -1123,7 +1123,7 @@ void set_option(string str) {
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "polar", _("polar"))) v = COMPLEX_NUMBER_FORM_POLAR;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "phasor", _("phasor"))) v = COMPLEX_NUMBER_FORM_CIS + 1;
                 else if(svar == "cis") v = COMPLEX_NUMBER_FORM_CIS;
-                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 4) {
@@ -1139,7 +1139,7 @@ void set_option(string str) {
                 if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DONT_READ_PRECISION;
                 else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "always", _("always"))) v = ALWAYS_READ_PRECISION;
                 else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "when decimals", _("when decimals")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = READ_PRECISION_WHEN_DECIMALS;
-                else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+                else if(svalue.find_first_not_of(SPACES NUMBERS) == std::string::npos) {
                         v = s2i(svalue);
                 }
                 if(v < 0 || v > 2) {
@@ -1149,9 +1149,9 @@ void set_option(string str) {
                         expression_format_updated(true);
                 }
         } else {
-                if(i_underscore == string::npos) {
-                        if(index != string::npos) {
-                                if((index = svar.find_last_of(SPACES)) != string::npos) {
+                if(i_underscore == std::string::npos) {
+                        if(index != std::string::npos) {
+                                if((index = svar.find_last_of(SPACES)) != std::string::npos) {
                                         svar = svar.substr(0, index);
                                         remove_blank_ends(svar);
                                         str = str.substr(index + 1);
@@ -1198,10 +1198,10 @@ void set_option(string str) {
 #	define PUTS_UNDERLINED(x) if(cfile) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
 #endif
 
-bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t i2_end, size_t minlength) {
+bool equalsIgnoreCase(const std::string &str1, const std::string &str2, size_t i2, size_t i2_end, size_t minlength) {
         if(str1.empty() || str2.empty()) return false;
         size_t l = 0;
-        if(i2_end == string::npos) i2_end = str2.length();
+        if(i2_end == std::string::npos) i2_end = str2.length();
         for(size_t i1 = 0;; i1++, i2++) {
                 if(i2 >= i2_end) {
                         return i1 >= str1.length();
@@ -1247,8 +1247,8 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
         return l >= minlength;
 }
 
-bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0) {
-        const string &title = item->title(true);
+bool title_matches(ExpressionItem *item, const std::string &str, size_t minlength = 0) {
+        const std::string &title = item->title(true);
         size_t i = 0;
         while(true) {
                 while(true) {
@@ -1260,12 +1260,12 @@ bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0
                 if(equalsIgnoreCase(str, title, i, i2, minlength)) {
                         return true;
                 }
-                if(i2 == string::npos) break;
+                if(i2 == std::string::npos) break;
                 i = i2 + 1;
         }
         return false;
 }
-bool name_matches(ExpressionItem *item, const string &str) {
+bool name_matches(ExpressionItem *item, const std::string &str) {
         for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
                 if(item->getName(i2).case_sensitive) {
                         if(str == item->getName(i2).name.substr(0, str.length())) {
@@ -1279,8 +1279,8 @@ bool name_matches(ExpressionItem *item, const string &str) {
         }
         return false;
 }
-bool country_matches(Unit *u, const string &str, size_t minlength = 0) {
-        const string &countries = u->countries();
+bool country_matches(Unit *u, const std::string &str, size_t minlength = 0) {
+        const std::string &countries = u->countries();
         size_t i = 0;
         while(true) {
                 while(true) {
@@ -1292,38 +1292,38 @@ bool country_matches(Unit *u, const string &str, size_t minlength = 0) {
                 if(equalsIgnoreCase(str, countries, i, i2, minlength)) {
                         return true;
                 }
-                if(i2 == string::npos) break;
+                if(i2 == std::string::npos) break;
                 i = i2 + 1;
         }
         return false;
 }
 
 void show_calendars(const QalculateDateTime &date, bool indentation = true) {
-        string str, calstr;
+        std::string str, calstr;
         int pctl;
         bool b_fail;
         long int y, m, d;
-        STR_AND_TABS((indentation ? string("  ") + _("Calendar") : _("Calendar"))); str += _("Day"); str += ", "; str += _("Month"); str += ", "; str += _("Year"); PUTS_UNICODE(str.c_str());
-#define PUTS_CALENDAR(x, c) calstr = ""; BEGIN_BOLD(calstr); STR_AND_TABS((indentation ? string("  ") + x : x)); calstr += str; END_BOLD(calstr); b_fail = !dateToCalendar(date, y, m, d, c); if(b_fail) {calstr += _("failed");} else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} FPUTS_UNICODE(calstr.c_str(), stdout);
-        PUTS_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN); puts("");
-        PUTS_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW); puts("");
-        PUTS_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC); puts("");
-        PUTS_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN); puts("");
-        PUTS_CALENDAR(string(_("Indian national:")), CALENDAR_INDIAN); puts("");
-        PUTS_CALENDAR(string(_("Chinese:")), CALENDAR_CHINESE);
+        STR_AND_TABS((indentation ? std::string("  ") + _("Calendar") : _("Calendar"))); str += _("Day"); str += ", "; str += _("Month"); str += ", "; str += _("Year"); PUTS_UNICODE(str.c_str());
+#define PUTS_CALENDAR(x, c) calstr = ""; BEGIN_BOLD(calstr); STR_AND_TABS((indentation ? std::string("  ") + x : x)); calstr += str; END_BOLD(calstr); b_fail = !dateToCalendar(date, y, m, d, c); if(b_fail) {calstr += _("failed");} else {calstr += i2s(d); calstr += " "; calstr += monthName(m, c, true); calstr += " "; calstr += i2s(y);} FPUTS_UNICODE(calstr.c_str(), stdout);
+        PUTS_CALENDAR(std::string(_("Gregorian:")), CALENDAR_GREGORIAN); puts("");
+        PUTS_CALENDAR(std::string(_("Hebrew:")), CALENDAR_HEBREW); puts("");
+        PUTS_CALENDAR(std::string(_("Islamic:")), CALENDAR_ISLAMIC); puts("");
+        PUTS_CALENDAR(std::string(_("Persian:")), CALENDAR_PERSIAN); puts("");
+        PUTS_CALENDAR(std::string(_("Indian national:")), CALENDAR_INDIAN); puts("");
+        PUTS_CALENDAR(std::string(_("Chinese:")), CALENDAR_CHINESE);
         long int cy, yc, st, br;
         chineseYearInfo(y, cy, yc, st, br);
-        if(!b_fail) {FPUTS_UNICODE((string(" (") + chineseStemName(st) + string(" ") + chineseBranchName(br) + ")").c_str(), stdout);}
+        if(!b_fail) {FPUTS_UNICODE((std::string(" (") + chineseStemName(st) + std::string(" ") + chineseBranchName(br) + ")").c_str(), stdout);}
          puts("");
-        PUTS_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN); puts("");
-        PUTS_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC); puts("");
-        PUTS_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC); puts("");
-        PUTS_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN); puts("");
-        //PUTS_CALENDAR(string(_("Egyptian:")), CALENDAR_EGYPTIAN);
+        PUTS_CALENDAR(std::string(_("Julian:")), CALENDAR_JULIAN); puts("");
+        PUTS_CALENDAR(std::string(_("Revised julian:")), CALENDAR_MILANKOVIC); puts("");
+        PUTS_CALENDAR(std::string(_("Coptic:")), CALENDAR_COPTIC); puts("");
+        PUTS_CALENDAR(std::string(_("Ethiopian:")), CALENDAR_ETHIOPIAN); puts("");
+        //PUTS_CALENDAR(std::string(_("Egyptian:")), CALENDAR_EGYPTIAN);
 }
 
 
-void list_defs(bool in_interactive, char list_type = 0, string search_str = "") {
+void list_defs(bool in_interactive, char list_type = 0, std::string search_str = "") {
 #ifdef HAVE_LIBREADLINE
         int rows, cols, rcount = 0;
         bool check_sf = (cfile == NULL);
@@ -1336,11 +1336,11 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 #else
         int cols = 80;
 #endif
-        string str_lb;
-        string str;
+        std::string str_lb;
+        std::string str;
         if(!search_str.empty()) {
                 int max_l = 0;
-                list<string> name_list;
+                std::list<std::string> name_list;
                 int i_end = 0;
                 size_t i2 = 0;
                 if(list_type == 'v') i2 = 1;
@@ -1350,7 +1350,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
                         else if(i2 == 1) i_end = CALCULATOR->variables.size();
                         else if(i2 == 2) i_end = CALCULATOR->units.size();
                         ExpressionItem *item = NULL;
-                        string name_str, name_str2;
+                        std::string name_str, name_str2;
                         for(int i = 0; i < i_end; i++) {
                                 if(i2 == 0) item = CALCULATOR->functions[i];
                                 else if(i2 == 1) item = CALCULATOR->variables[i];
@@ -1389,8 +1389,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
                         puts("");
                 } else {
                         name_list.sort();
-                        list<string>::iterator it = name_list.begin();
-                        list<string>::iterator it_e = name_list.end();
+                        std::list<std::string>::iterator it = name_list.begin();
+                        std::list<std::string>::iterator it_e = name_list.end();
                         int c = 0;
                         int max_tabs = (max_l / 8) + 1;
                         int max_c = cols / (max_tabs * 8);
@@ -1439,7 +1439,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
                                 }
                                 STR_AND_TABS(v->preferredInputName(false, false).name.c_str())
                                 FPUTS_UNICODE(str.c_str(), stdout);
-                                string value;
+                                std::string value;
                                 if(v->isKnown()) {
                                         bool is_relative = false;
                                         if(((KnownVariable*) v)->isExpression()) {
@@ -1459,7 +1459,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
                                                         value += "...";
                                                 }
                                                 FPUTS_UNICODE(value.c_str(), stdout);
-                                                if(!is_relative && ((KnownVariable*) v)->uncertainty().empty() && v->isApproximate() && ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == string::npos) {
+                                                if(!is_relative && ((KnownVariable*) v)->uncertainty().empty() && v->isApproximate() && ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == std::string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == std::string::npos) {
                                                         fputs(" (", stdout);
                                                         FPUTS_UNICODE(_("approximate"), stdout);
                                                         fputs(")", stdout);
@@ -1552,14 +1552,14 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
                 puts("");
         } else {
                 int max_l = 0;
-                list<string> name_list;
+                std::list<std::string> name_list;
                 int i_end = 0;
                 if(list_type == 'f') i_end = CALCULATOR->functions.size();
                 if(list_type == 'v') i_end = CALCULATOR->variables.size();
                 if(list_type == 'u') i_end = CALCULATOR->units.size();
                 if(list_type == 'c') i_end = CALCULATOR->units.size();
                 ExpressionItem *item = NULL;
-                string name_str, name_str2;
+                std::string name_str, name_str2;
                 for(int i = 0; i < i_end; i++) {
                         if(list_type == 'f') item = CALCULATOR->functions[i];
                         if(list_type == 'v') item = CALCULATOR->variables[i];
@@ -1588,8 +1588,8 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
                         }
                 }
                 name_list.sort();
-                list<string>::iterator it = name_list.begin();
-                list<string>::iterator it_e = name_list.end();
+                std::list<std::string>::iterator it = name_list.begin();
+                std::list<std::string>::iterator it_e = name_list.end();
                 int c = 0;
                 int max_tabs = (max_l / 8) + 1;
                 int max_c = cols / (max_tabs * 8);
@@ -1625,10 +1625,10 @@ bool do_imaginary_j = false;
 
 int main(int argc, char *argv[]) {
 
-        string calc_arg;
-        vector<string> set_option_strings;
+        std::string calc_arg;
+        std::vector<std::string> set_option_strings;
         bool calc_arg_begun = false;
-        string command_file;
+        std::string command_file;
         cfile = NULL;
         interactive_mode = false;
         result_only = false;
@@ -1637,13 +1637,13 @@ int main(int argc, char *argv[]) {
         printops.use_unicode_signs = false;
         fetch_exchange_rates_at_startup = false;
         char list_type = 'n';
-        string search_str;
+        std::string search_str;
 
 #ifdef ENABLE_NLS
-        string filename = buildPath(getLocalDir(), "qalc.cfg");
+        std::string filename = buildPath(getLocalDir(), "qalc.cfg");
         FILE *file = fopen(filename.c_str(), "r");
         char line[10000];
-        string stmp;
+        std::string stmp;
         if(file) {
                 while(true) {
                         if(fgets(line, 10000, file) == NULL) break;
@@ -1666,13 +1666,13 @@ int main(int argc, char *argv[]) {
         if(!ignore_locale) setlocale(LC_ALL, "");
 
         for(int i = 1; i < argc; i++) {
-                string svalue, svar;
+                std::string svalue, svar;
                 if(calc_arg_begun) {
                         calc_arg += " ";
                 } else {
                         svar = argv[i];
                         size_t i2 = svar.find_first_of(NUMBERS);
-                        if(i2 != string::npos && i2 != 0) {
+                        if(i2 != std::string::npos && i2 != 0) {
                                 svalue = svar.substr(i2);
                                 svar = svar.substr(0, i2);
                         }
@@ -1736,7 +1736,7 @@ int main(int argc, char *argv[]) {
                         fetch_exchange_rates_at_startup = true;
 #endif
                 } else if(!calc_arg_begun && (svar == "-base" || svar == "--base" || svar == "-b")) {
-                        string set_base_str = "base ";
+                        std::string set_base_str = "base ";
                         if(!svalue.empty()) {
                                 set_base_str += svalue;
                         } else {
@@ -1748,7 +1748,7 @@ int main(int argc, char *argv[]) {
                         set_option_strings.push_back(set_base_str);
                 } else if(!calc_arg_begun && svar == "-p") {
                         programmers_mode = true;
-                        string set_base_str = "base ";
+                        std::string set_base_str = "base ";
                         if(!svalue.empty()) {
                                 set_base_str += svalue;
                                 set_base_str += " ";
@@ -1865,7 +1865,7 @@ int main(int argc, char *argv[]) {
 
         canfetch = CALCULATOR->canFetch();
 
-        string str;
+        std::string str;
 #ifdef HAVE_LIBREADLINE
         static char* rlbuffer;
 #endif
@@ -1881,7 +1881,7 @@ int main(int argc, char *argv[]) {
                 CALCULATOR->loadExchangeRates();
         }
 
-        string ans_str = _("ans");
+        std::string ans_str = _("ans");
         vans[0] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str, m_undefined, _("Last Answer"), false));
         vans[0]->addName(_("answer"));
         vans[0]->addName(ans_str + "1");
@@ -1984,7 +1984,7 @@ int main(int argc, char *argv[]) {
                         expression_str = calc_arg;
                 }
                 size_t index = expression_str.find_first_of(ID_WRAPS);
-                if(index != string::npos) {
+                if(index != std::string::npos) {
                         printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
                         puts("");
                 } else {
@@ -2013,7 +2013,7 @@ int main(int argc, char *argv[]) {
         rl_bind_key('\t', rlcom_tab);
 #endif
 
-        string scom;
+        std::string scom;
         size_t slen, ispace;
 
         while(true) {
@@ -2036,7 +2036,7 @@ int main(int argc, char *argv[]) {
                                                 expression_str = calc_arg;
                                         }
                                         size_t index = expression_str.find_first_of(ID_WRAPS);
-                                        if(index != string::npos) {
+                                        if(index != std::string::npos) {
                                                 printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
                                                 puts("");
                                         } else {
@@ -2098,7 +2098,7 @@ int main(int argc, char *argv[]) {
                 if(rpn_mode && explicit_command && str.empty()) {str = "/"; explicit_command = false;}
                 slen = str.length();
                 ispace = str.find_first_of(SPACES);
-                if(ispace == string::npos) {
+                if(ispace == std::string::npos) {
                         scom = "";
                 } else {
                         scom = str.substr(0, ispace);
@@ -2120,10 +2120,10 @@ int main(int argc, char *argv[]) {
                                         PUTS_UNICODE(_("definitions saved"));
                                 }
                         } else {
-                                string name = str, cat, title;
+                                std::string name = str, cat, title;
                                 if(str[0] == '\"') {
                                         size_t i = str.find('\"', 1);
-                                        if(i != string::npos) {
+                                        if(i != std::string::npos) {
                                                 name = str.substr(1, i - 1);
                                                 str = str.substr(i + 1, str.length() - (i + 1));
                                                 remove_blank_ends(str);
@@ -2132,7 +2132,7 @@ int main(int argc, char *argv[]) {
                                         }
                                 } else {
                                         size_t i = str.find_first_of(SPACES, 1);
-                                        if(i != string::npos) {
+                                        if(i != std::string::npos) {
                                                 name = str.substr(0, i);
                                                 str = str.substr(i + 1, str.length() - (i + 1));
                                                 remove_blank_ends(str);
@@ -2146,14 +2146,14 @@ int main(int argc, char *argv[]) {
                                 } else {
                                         if(str[0] == '\"') {
                                                 size_t i = str.find('\"', 1);
-                                                if(i != string::npos) {
+                                                if(i != std::string::npos) {
                                                         cat = str.substr(1, i - 1);
                                                         title = str.substr(i + 1, str.length() - (i + 1));
                                                         remove_blank_ends(title);
                                                 }
                                         } else {
                                                 size_t i = str.find_first_of(SPACES, 1);
-                                                if(i != string::npos) {
+                                                if(i != std::string::npos) {
                                                         cat = str.substr(0, i);
                                                         title = str.substr(i + 1, str.length() - (i + 1));
                                                         remove_blank_ends(title);
@@ -2199,10 +2199,10 @@ int main(int argc, char *argv[]) {
                 } else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "variable", _("variable"))) {
                         str = str.substr(ispace + 1, slen - (ispace + 1));
                         remove_blank_ends(str);
-                        string name = str, expr;
+                        std::string name = str, expr;
                         if(str[0] == '\"') {
                                 size_t i = str.find('\"', 1);
-                                if(i != string::npos) {
+                                if(i != std::string::npos) {
                                         name = str.substr(1, i - 1);
                                         str = str.substr(i + 1, str.length() - (i + 1));
                                         remove_blank_ends(str);
@@ -2211,7 +2211,7 @@ int main(int argc, char *argv[]) {
                                 }
                         } else {
                                 size_t i = str.find_first_of(SPACES, 1);
-                                if(i != string::npos) {
+                                if(i != std::string::npos) {
                                         name = str.substr(0, i);
                                         str = str.substr(i + 1, str.length() - (i + 1));
                                         remove_blank_ends(str);
@@ -2256,10 +2256,10 @@ int main(int argc, char *argv[]) {
                 } else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "function", _("function"))) {
                         str = str.substr(ispace + 1, slen - (ispace + 1));
                         remove_blank_ends(str);
-                        string name = str, expr;
+                        std::string name = str, expr;
                         if(str[0] == '\"') {
                                 size_t i = str.find('\"', 1);
-                                if(i != string::npos) {
+                                if(i != std::string::npos) {
                                         name = str.substr(1, i - 1);
                                         str = str.substr(i + 1, str.length() - (i + 1));
                                         remove_blank_ends(str);
@@ -2268,7 +2268,7 @@ int main(int argc, char *argv[]) {
                                 }
                         } else {
                                 size_t i = str.find_first_of(SPACES, 1);
-                                if(i != string::npos) {
+                                if(i != std::string::npos) {
                                         name = str.substr(0, i);
                                         str = str.substr(i + 1, str.length() - (i + 1));
                                         remove_blank_ends(str);
@@ -2326,7 +2326,7 @@ int main(int argc, char *argv[]) {
                         }
                 //qalc command
                 } else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "assume", _("assume"))) {
-                        string str2 = "assumptions ";
+                        std::string str2 = "assumptions ";
                         set_option(str2 + str.substr(ispace + 1, slen - (ispace + 1)));
                 //qalc command
                 } else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "base", _("base"))) {
@@ -2387,7 +2387,7 @@ int main(int argc, char *argv[]) {
                                         m = *CALCULATOR->getRPNRegister(i);
                                         m.removeDefaultAngleUnit(evalops);
                                         m.format(printops);
-                                        string regstr = m.print(printops);
+                                        std::string regstr = m.print(printops);
                                         if(!cfile) replace_quotation_marks(regstr);
                                         if(complex_angle_form) replace_result_cis(regstr);
                                         printf("  %i:\t%s\n", (int) i, regstr.c_str());
@@ -2412,10 +2412,10 @@ int main(int argc, char *argv[]) {
                         } else {
                                 int index1 = 0, index2 = 0;
                                 str = str.substr(ispace + 1, slen - (ispace + 1));
-                                string str2 = "";
+                                std::string str2 = "";
                                 remove_blank_ends(str);
                                 ispace = str.find_first_of(SPACES);
-                                if(ispace != string::npos) {
+                                if(ispace != std::string::npos) {
                                         str2 = str.substr(ispace + 1, str.length() - (ispace + 1));
                                         str = str.substr(0, ispace);
                                         remove_blank_ends(str2);
@@ -2445,10 +2445,10 @@ int main(int argc, char *argv[]) {
                         } else {
                                 int index1 = 0, index2 = 0;
                                 str = str.substr(ispace + 1, slen - (ispace + 1));
-                                string str2 = "";
+                                std::string str2 = "";
                                 remove_blank_ends(str);
                                 ispace = str.find_first_of(SPACES);
-                                if(ispace != string::npos) {
+                                if(ispace != std::string::npos) {
                                         str2 = str.substr(ispace + 1, str.length() - (ispace + 1));
                                         str = str.substr(0, ispace);
                                         remove_blank_ends(str2);
@@ -2561,9 +2561,9 @@ int main(int argc, char *argv[]) {
                 } else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to"))) {
                         str = str.substr(ispace + 1, slen - (ispace + 1));
                         remove_blank_ends(str);
-                        string str1, str2;
+                        std::string str1, str2;
                         size_t ispace2 = str.find_first_of(SPACES);
-                        if(ispace2 != string::npos) {
+                        if(ispace2 != std::string::npos) {
                                 str1 = str.substr(0, ispace2);
                                 remove_blank_ends(str1);
                                 str2 = str.substr(ispace2 + 1);
@@ -2625,7 +2625,7 @@ int main(int argc, char *argv[]) {
                                 setResult(NULL, false);
                                 printops.time_zone = TIME_ZONE_LOCAL;
                         } else if(str.length() > 3 && (equalsIgnoreCase(str.substr(0, 3), "utc") || equalsIgnoreCase(str.substr(0, 3), "gmt"))) {
-                                string to_str = str.substr(3);
+                                std::string to_str = str.substr(3);
                                 remove_blanks(to_str);
                                 bool b_minus = false;
                                 if(to_str[0] == '+') {
@@ -2718,8 +2718,8 @@ int main(int argc, char *argv[]) {
                                 complex_angle_form = caf_bak;
                         } else if(EQUALS_IGNORECASE_AND_LOCAL(str, "bases", _("bases"))) {
                                 int save_base = printops.base;
-                                string save_result_text = result_text;
-                                string base_str;
+                                std::string save_result_text = result_text;
+                                std::string base_str;
                                 int cols = 0;
                                 if(interactive_mode && !cfile) {
                                         base_str = "\n  ";
@@ -2894,7 +2894,7 @@ int main(int argc, char *argv[]) {
                         CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
                         PRINT_AND_COLON_TABS(_("assume nonzero denominators"), "nzd"); str += b2oo(evalops.assume_denominators_nonzero, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
                         PRINT_AND_COLON_TABS(_("warn nonzero denominators"), "warnnzd"); str += b2oo(evalops.warn_about_denominators_assumed_nonzero, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-                        string value;
+                        std::string value;
                         switch(CALCULATOR->defaultAssumptions()->sign()) {
                                 case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
                                 case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
@@ -3219,8 +3219,8 @@ int main(int argc, char *argv[]) {
                         str = str.substr(ispace + 1);
                         remove_blank_ends(str);
                         size_t i = str.find_first_of(SPACES);
-                        string str1, str2;
-                        if(i == string::npos) {
+                        std::string str1, str2;
+                        if(i == std::string::npos) {
                                 str1 = str;
                         } else {
                                 str1 = str.substr(0, i);
@@ -3259,7 +3259,7 @@ int main(int argc, char *argv[]) {
                                                 MathFunction *f = (MathFunction*) item;
                                                 Argument *arg;
                                                 Argument default_arg;
-                                                string str2;
+                                                std::string str2;
                                                 str = _("Function");
                                                 if(!f->title(false).empty()) {
                                                         str += ": ";
@@ -3496,7 +3496,7 @@ int main(int argc, char *argv[]) {
                                                         }
                                                 }
                                                 Variable *v = (Variable*) item;
-                                                string value;
+                                                std::string value;
                                                 if(is_answer_variable(v)) {
                                                         value = _("a previous result");
                                                 } else if(v->isKnown()) {
@@ -3548,13 +3548,13 @@ int main(int argc, char *argv[]) {
                                                         else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
                                                         PUTS_UNICODE(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()).c_str())
                                                 } else {
-                                                        string value_pre = _("Value");
+                                                        std::string value_pre = _("Value");
                                                         STR_AND_COLON_TABS_INFO(value_pre);
                                                         value.insert(0, value_pre);
                                                         bool b_approx = item->isApproximate();
                                                         if(b_approx && v->isKnown()) {
                                                                 if(((KnownVariable*) v)->isExpression()) {
-                                                                        b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == string::npos;
+                                                                        b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == std::string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->f_interval->referenceName()) == std::string::npos;
                                                                 } else {
                                                                         b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
                                                                 }
@@ -4075,7 +4075,7 @@ int main(int argc, char *argv[]) {
                         puts("");
                 } else {
                         size_t index = str.find_first_of(ID_WRAPS);
-                        if(index != string::npos) {
+                        if(index != std::string::npos) {
                                 printf(_("Illegal character, \'%c\', in expression."), str[index]);
                                 puts("");
                         } else {
@@ -4108,16 +4108,16 @@ int main(int argc, char *argv[]) {
 
 }
 
-void RPNRegisterAdded(string, int = 0) {}
+void RPNRegisterAdded(std::string, int = 0) {}
 void RPNRegisterRemoved(int) {}
-void RPNRegisterChanged(string, int) {}
+void RPNRegisterChanged(std::string, int) {}
 
 bool display_errors(bool goto_input, int cols) {
         if(!CALCULATOR->message()) return false;
         while(true) {
                 if(!hide_parse_errors || (CALCULATOR->message()->stage() != MESSAGE_STAGE_PARSING && CALCULATOR->message()->stage() != MESSAGE_STAGE_CONVERSION_PARSING)) {
                         MessageType mtype = CALCULATOR->message()->type();
-                        string str;
+                        std::string str;
                         if(goto_input) str += "  ";
                         if(mtype == MESSAGE_ERROR) {
                                 str += _("error"); str += ": ";
@@ -4137,37 +4137,37 @@ void on_abort_display() {
         CALCULATOR->abort();
 }
 
-void replace_result_cis(string &resstr) {
+void replace_result_cis(std::string &resstr) {
         gsub(" cis ", "∠", resstr);
 }
 
-void replace_quotation_marks(string &str) {
+void replace_quotation_marks(std::string &str) {
 #ifndef _WIN32
         if(cfile) return;
         size_t i1 = 0, i2 = 0, i_prev = 0;
         size_t i_equals = str.find(_("approx.")) + strlen(_("approx."));
         while(i_prev + 2 < str.length()) {
                 i1 = str.find_first_of("\"\'", i_prev);
-                if(i1 == string::npos) break;
+                if(i1 == std::string::npos) break;
                 i2 = str.find(str[i1], i1 + 1);
-                if(i2 == string::npos) break;
+                if(i2 == std::string::npos) break;
                 if(i2 - i1 > 2) {
                         if(!text_length_is_one(str.substr(i1 + 1, i2 - i1 - 1))) {
                                 i_prev = i2 + 1;
                                 continue;
                         }
                 }
-                if(i1 > 1 && str[i1 - 1] == ' ' && (i_equals == string::npos || i1 != i_equals + 1) && (is_in(NUMBERS, str[i1 - 2]) || i1 == i_prev + 1)) {
+                if(i1 > 1 && str[i1 - 1] == ' ' && (i_equals == std::string::npos || i1 != i_equals + 1) && (is_in(NUMBERS, str[i1 - 2]) || i1 == i_prev + 1)) {
                         str.replace(i1 - 1, 2, "\033[3m");
                         i2 += 2;
-                        if(i_equals != string::npos && i1 < i_equals) i_equals += 2;
+                        if(i_equals != std::string::npos && i1 < i_equals) i_equals += 2;
                 } else {
                         str.replace(i1, 1, "\033[3m");
                         i2 += 3;
-                        if(i_equals != string::npos && i1 < i_equals) i_equals += 3;
+                        if(i_equals != std::string::npos && i1 < i_equals) i_equals += 3;
                 }
                 str.replace(i2, 1, "\033[23m");
-                if(i_equals != string::npos && i1 < i_equals) i_equals += 4;
+                if(i_equals != std::string::npos && i1 < i_equals) i_equals += 4;
                 i_prev = i2 + 5;
         }
 #endif
@@ -4263,7 +4263,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
         if(!interactive_mode || cfile) goto_input = false;
 
-        string prev_result_text = result_text;
+        std::string prev_result_text = result_text;
         result_text = "?";
 
         if(update_parse) {
@@ -4293,7 +4293,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
         }
         if(update_parse) {
                 if(adaptive_interval_display) {
-                        if((parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_uncertainty)) || expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+                        if((parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_uncertainty)) || expression_str.find("+/-") != std::string::npos || expression_str.find("+/" SIGN_MINUS) != std::string::npos || expression_str.find("±") != std::string::npos) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
                         else if(parsed_mstruct && parsed_mstruct->containsFunction(CALCULATOR->f_interval)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
                         else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
                 }
@@ -4406,7 +4406,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
         if(stack_index != 0) {
                 RPNRegisterChanged(result_text, stack_index);
         } else {
-                string strout;
+                std::string strout;
                 if(goto_input) strout += "  ";
                 size_t i_result = 0, i_result_u = 0;
                 if(!result_only) {
@@ -4687,19 +4687,19 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
         if(i_maxtime < 0) return;
 
-        string str;
+        std::string str;
         bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_fraction = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false;
         avoid_recalculation = false;
         if(!interactive_mode) goto_input = false;
         if(do_stack) {
         } else {
                 str = expression_str;
-                string from_str = str, to_str;
+                std::string from_str = str, to_str;
                 if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
                         remove_duplicate_blanks(to_str);
-                        string to_str1, to_str2;
+                        std::string to_str1, to_str2;
                         size_t ispace = to_str.find_first_of(SPACES);
-                        if(ispace != string::npos) {
+                        if(ispace != std::string::npos) {
                                 to_str1 = to_str.substr(0, ispace);
                                 remove_blank_ends(to_str1);
                                 to_str2 = to_str.substr(ispace + 1);
@@ -4999,7 +4999,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
                         }
                 } else {
                         size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
-                        if(i != string::npos) {
+                        if(i != std::string::npos) {
                                 to_str = str.substr(0, i);
                                 if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
                                         str = str.substr(i + 1);
@@ -5031,7 +5031,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
                         if(f) CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
                         else CALCULATOR->calculateRPN(op, 0, evalops, parsed_mstruct);
                 } else {
-                        string str2 = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
+                        std::string str2 = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
                         CALCULATOR->parseSigns(str2);
                         remove_blank_ends(str2);
                         if(str2.length() == 1) {
@@ -5284,7 +5284,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
                 int save_base = printops.base;
                 printops.base = BASE_BINARY;
                 setResult(NULL, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
-                string base_str = result_text;
+                std::string base_str = result_text;
                 base_str += " = ";
                 printops.base = BASE_OCTAL;
                 setResult(NULL, false, false, do_stack ? stack_index : 0, false, true);
@@ -5300,7 +5300,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
                 if(has_printed) printf("\n");
                 if(goto_input) printf("\n");
                 if(!result_only) {
-                        string prestr = parsed_text;
+                        std::string prestr = parsed_text;
                         if(goto_input) prestr.insert(0, "  ");
                         if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
                                 prestr += " = ";
@@ -5480,11 +5480,11 @@ void load_preferences() {
 
         FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
-        string historyfile = buildPath(getLocalDir(), "qalc.history");
-        string oldhistoryfile;
+        std::string historyfile = buildPath(getLocalDir(), "qalc.history");
+        std::string oldhistoryfile;
 #endif
-        string oldfilename;
-        string filename = buildPath(getLocalDir(), "qalc.cfg");
+        std::string oldfilename;
+        std::string filename = buildPath(getLocalDir(), "qalc.cfg");
         file = fopen(filename.c_str(), "r");
         if(!file) {
 #ifndef _WIN32
@@ -5520,14 +5520,14 @@ void load_preferences() {
 
         if(file) {
                 char line[10000];
-                string stmp, svalue, svar;
+                std::string stmp, svalue, svar;
                 size_t i;
                 int v;
                 while(true) {
                         if(fgets(line, 10000, file) == NULL) break;
                         stmp = line;
                         remove_blank_ends(stmp);
-                        if((i = stmp.find_first_of("=")) != string::npos) {
+                        if((i = stmp.find_first_of("=")) != std::string::npos) {
                                 svar = stmp.substr(0, i);
                                 remove_blank_ends(svar);
                                 svalue = stmp.substr(i + 1, stmp.length() - (i + 1));
@@ -5791,7 +5791,7 @@ bool save_preferences(bool mode) {
 #ifdef HAVE_LIBREADLINE
         write_history(buildPath(getLocalDir(), "qalc.history").c_str());
 #endif
-        string filename = buildPath(getLocalDir(), "qalc.cfg");
+        std::string filename = buildPath(getLocalDir(), "qalc.cfg");
         file = fopen(filename.c_str(), "w+");
         if(file == NULL) {
                 fprintf(stderr, _("Couldn't write preferences to\n%s"), filename.c_str());

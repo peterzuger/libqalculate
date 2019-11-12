@@ -38,7 +38,7 @@ struct ExpressionName {
         /// Use only for completion (useful for unicode letter alternatives)
         bool completion_only;
         /// The name.
-        string name;
+        std::string name;
 
         /** Create an empty expression name. All properties are set to false.
         */
@@ -47,7 +47,7 @@ struct ExpressionName {
         *
         * @param sname The name.
         */
-        ExpressionName(string sname);
+        ExpressionName(std::string sname);
 
         void operator = (const ExpressionName &ename);
         bool operator == (const ExpressionName &ename) const;
@@ -83,15 +83,15 @@ class ExpressionItem {
 
   protected:
 
-        string scat, stitle, sdescr;
+        std::string scat, stitle, sdescr;
         bool b_local, b_changed, b_builtin, b_approx, b_active, b_registered, b_hidden, b_destroyed;
         int i_ref, i_precision;
-        vector<ExpressionItem*> v_refs;
-        vector<ExpressionName> names;
+        std::vector<ExpressionItem*> v_refs;
+        std::vector<ExpressionName> names;
 
   public:
 
-        ExpressionItem(string cat_, string name_, string title_ = "", string descr_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+        ExpressionItem(std::string cat_, std::string name_, std::string title_ = "", std::string descr_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
         ExpressionItem();
         virtual ~ExpressionItem();
 
@@ -104,8 +104,8 @@ class ExpressionItem {
         /// For internal use.
         void setRegistered(bool is_registered);
 
-        virtual const string &name(bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-        virtual const string &referenceName() const;
+        virtual const std::string &name(bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+        virtual const std::string &referenceName() const;
 
         /** Returns the name that best fulfils provided criterias. If two names are equally preferred, the one with lowest index is returned.
         *
@@ -159,9 +159,9 @@ class ExpressionItem {
         * @param index Index of name to change.
         * @param force If true, expression items with conflicting names are replaced, otherwise . Only applies if the item is registered.
         */
-        virtual void setName(string sname, size_t index, bool force = true);
+        virtual void setName(std::string sname, size_t index, bool force = true);
         virtual void addName(const ExpressionName &ename, size_t index = 0, bool force = true);
-        virtual void addName(string sname, size_t index = 0, bool force = true);
+        virtual void addName(std::string sname, size_t index = 0, bool force = true);
         virtual size_t countNames() const;
         /** Removes all names. */
         virtual void clearNames();
@@ -174,13 +174,13 @@ class ExpressionItem {
         * @param case_sensitive If the name is case sensitive.
         * @returns Index of the name with the given text string or zero if such a name was not found.
         */
-        virtual size_t hasName(const string &sname, bool case_sensitive = true) const;
+        virtual size_t hasName(const std::string &sname, bool case_sensitive = true) const;
         /** Checks if the expression item has a name with a specific case sensitive text string.
         *
         * @param sname A text string to look for (case sensitive)
         * @returns Index of the name with the given text string or zero if such a name was not found.
         */
-        virtual size_t hasNameCaseSensitive(const string &sname) const;
+        virtual size_t hasNameCaseSensitive(const std::string &sname) const;
         /** Searches for a name with specific properties.
         *
         * @param abbreviation If the name must be abbreviated. 1=true, 0=false, -1=ignore.
@@ -200,35 +200,35 @@ class ExpressionItem {
         * @param can_display_unicode_string_arg Argument to pass to the above test function (passed to preferredName()).
         * @returns Item title.
         */
-        virtual const string &title(bool return_name_if_no_title = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+        virtual const std::string &title(bool return_name_if_no_title = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 
         /** Sets the title, descriptive name, of the item. The title can not be used in expressions.
         *
         * @param title_ The new title.
         */
-        virtual void setTitle(string title_);
+        virtual void setTitle(std::string title_);
 
         /** Returns the expression items description.
         *
         * @returns Description.
         */
-        virtual const string &description() const;
+        virtual const std::string &description() const;
         /** Sets the expression items description.
         *
         * @param descr_ Description.
         */
-        virtual void setDescription(string descr_);
+        virtual void setDescription(std::string descr_);
 
         /** Returns the category that the expression item belongs to. Subcategories are separated by '/'.
         *
         * @returns Category.
         */
-        virtual const string &category() const;
+        virtual const std::string &category() const;
         /** Sets which category the expression belongs to. Subcategories are separated by '/'.
         *
         * @param cat_ Category.
         */
-        virtual void setCategory(string cat_);
+        virtual void setCategory(std::string cat_);
 
         /** If the object has been changed since it was created/loaded. */
         virtual bool hasChanged() const;

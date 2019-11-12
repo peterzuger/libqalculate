@@ -15,7 +15,7 @@
 #include "Calculator.h"
 #include "util.h"
 
-ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), completion_only(false) {
+ExpressionName::ExpressionName(std::string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), completion_only(false) {
         name = sname;
         if(text_length_is_one(sname)) {
                 abbreviation = true;
@@ -26,7 +26,7 @@ ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), pl
         }
         if(sname.length() > 2) {
                 size_t i = sname.find('_', 1);
-                if(i != string::npos && i < sname.length() - 1 && sname.find('_', i + 1) == string::npos) suffix = true;
+                if(i != std::string::npos && i < sname.length() - 1 && sname.find('_', i + 1) == std::string::npos) suffix = true;
         }
 }
 ExpressionName::ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false), completion_only(false) {
@@ -49,7 +49,7 @@ bool ExpressionName::operator != (const ExpressionName &ename) const {
         return name != ename.name || abbreviation != ename.abbreviation || case_sensitive != ename.case_sensitive || suffix != ename.suffix || unicode != ename.unicode || plural != ename.plural || reference != ename.reference || avoid_input != ename.avoid_input || completion_only != ename.completion_only;
 }
 
-ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string descr_, bool is_local, bool is_builtin, bool is_active) {
+ExpressionItem::ExpressionItem(std::string cat_, std::string name_, std::string title_, std::string descr_, bool is_local, bool is_builtin, bool is_active) {
 
         b_local = is_local;
         b_builtin = is_builtin;
@@ -64,7 +64,7 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
                 names[0].abbreviation = false;
                 names[0].case_sensitive = text_length_is_one(name_);
                 size_t i = name_.find('_');
-                if(i != string::npos && i > 0 && i < name_.length() - 1 && name_.find('_', i + 1) == string::npos) names[0].suffix = true;
+                if(i != std::string::npos && i > 0 && i < name_.length() - 1 && name_.find('_', i + 1) == std::string::npos) names[0].suffix = true;
                 else names[0].suffix = false;
                 names[0].avoid_input = false;
                 names[0].reference = true;
@@ -130,30 +130,30 @@ bool ExpressionItem::isRegistered() const {
 void ExpressionItem::setRegistered(bool is_registered) {
         b_registered = is_registered;
 }
-const string &ExpressionItem::title(bool return_name_if_no_title, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+const std::string &ExpressionItem::title(bool return_name_if_no_title, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
         if(return_name_if_no_title && stitle.empty()) {
                 return preferredName(false, use_unicode, false, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
         }
         return stitle;
 }
-void ExpressionItem::setTitle(string title_) {
+void ExpressionItem::setTitle(std::string title_) {
         remove_blank_ends(title_);
         if(stitle != title_) {
                 stitle = title_;
                 b_changed = true;
         }
 }
-const string &ExpressionItem::description() const {
+const std::string &ExpressionItem::description() const {
         return sdescr;
 }
-void ExpressionItem::setDescription(string descr_) {
+void ExpressionItem::setDescription(std::string descr_) {
         remove_blank_ends(descr_);
         if(sdescr != descr_) {
                 sdescr = descr_;
                 b_changed = true;
         }
 }
-const string &ExpressionItem::name(bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+const std::string &ExpressionItem::name(bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
         bool undisplayable_uni = false;
         for(size_t i = 0; i < names.size(); i++) {
                 if(names[i].unicode == use_unicode && (!names[i].completion_only || i + 1 == names.size())) {
@@ -168,7 +168,7 @@ const string &ExpressionItem::name(bool use_unicode, bool (*can_display_unicode_
         if(names.size() > 0) return names[0].name;
         return empty_string;
 }
-const string &ExpressionItem::referenceName() const {
+const std::string &ExpressionItem::referenceName() const {
         for(size_t i = 0; i < names.size(); i++) {
                 if(names[i].reference) {
                         return names[i].name;
@@ -258,7 +258,7 @@ void ExpressionItem::setName(const ExpressionName &ename, size_t index, bool for
                 b_changed = true;
         }
 }
-void ExpressionItem::setName(string sname, size_t index, bool force) {
+void ExpressionItem::setName(std::string sname, size_t index, bool force) {
         if(index < 1) addName(sname, 1);
         if(index > names.size()) addName(sname);
         if(b_registered && names[index - 1].name != sname) {
@@ -283,7 +283,7 @@ void ExpressionItem::addName(const ExpressionName &ename, size_t index, bool for
         }
         b_changed = true;
 }
-void ExpressionItem::addName(string sname, size_t index, bool force) {
+void ExpressionItem::addName(std::string sname, size_t index, bool force) {
         if(index < 1 || index > names.size()) {
                 names.push_back(ExpressionName(sname));
                 index = names.size();
@@ -310,7 +310,7 @@ void ExpressionItem::clearNames() {
 }
 void ExpressionItem::clearNonReferenceNames() {
         bool b = false;
-        for(vector<ExpressionName>::iterator it = names.begin(); it != names.end(); ++it) {
+        for(std::vector<ExpressionName>::iterator it = names.begin(); it != names.end(); ++it) {
                 if(!it->reference) {
                         it = names.erase(it);
                         --it;
@@ -333,14 +333,14 @@ void ExpressionItem::removeName(size_t index) {
                 b_changed = true;
         }
 }
-size_t ExpressionItem::hasName(const string &sname, bool case_sensitive) const {
+size_t ExpressionItem::hasName(const std::string &sname, bool case_sensitive) const {
         for(size_t i = 0; i < names.size(); i++) {
                 if(case_sensitive && names[i].case_sensitive && sname == names[i].name) return i + 1;
                 if((!case_sensitive || !names[i].case_sensitive) && equalsIgnoreCase(names[i].name, sname)) return i + 1;
         }
         return 0;
 }
-size_t ExpressionItem::hasNameCaseSensitive(const string &sname) const {
+size_t ExpressionItem::hasNameCaseSensitive(const std::string &sname) const {
         for(size_t i = 0; i < names.size(); i++) {
                 if(sname == names[i].name) return i + 1;
         }
@@ -353,10 +353,10 @@ const ExpressionName &ExpressionItem::findName(int abbreviation, int use_unicode
         return empty_expression_name;
 }
 
-const string &ExpressionItem::category() const {
+const std::string &ExpressionItem::category() const {
         return scat;
 }
-void ExpressionItem::setCategory(string cat_) {
+void ExpressionItem::setCategory(std::string cat_) {
         remove_blank_ends(cat_);
         if(scat != cat_) {
                 scat = cat_;

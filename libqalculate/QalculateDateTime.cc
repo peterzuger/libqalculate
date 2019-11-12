@@ -203,7 +203,7 @@ int dateTimeZone(time_t rawtime) {
         if(!strftime(buffer, 10, "%z", &tmdate)) {
                 return 0;
         }
-        string s = buffer;
+        std::string s = buffer;
         int h = s2i(s.substr(0, 3));
         int m = s2i(s.substr(3));
         return h * 60 + m;
@@ -246,7 +246,7 @@ int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
 QalculateDateTime::QalculateDateTime() : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {}
 QalculateDateTime::QalculateDateTime(long int initialyear, int initialmonth, int initialday) : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {set(initialyear, initialmonth, initialday);}
 QalculateDateTime::QalculateDateTime(const Number &initialtimestamp) : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {set(initialtimestamp);}
-QalculateDateTime::QalculateDateTime(string date_string) : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {set(date_string);}
+QalculateDateTime::QalculateDateTime(std::string date_string) : i_year(0), i_month(1), i_day(1), i_hour(0), i_min(0), b_time(false) {set(date_string);}
 QalculateDateTime::QalculateDateTime(const QalculateDateTime &date) : i_year(date.year()), i_month(date.month()), i_day(date.day()), i_hour(date.hour()), i_min(date.minute()), n_sec(date.second()), b_time(date.timeIsSet()), parsed_string(date.parsed_string) {}
 void QalculateDateTime::setToCurrentDate() {
         parsed_string.clear();
@@ -340,11 +340,11 @@ bool QalculateDateTime::set(const Number &newtimestamp) {
         }
         return true;
 }
-bool QalculateDateTime::set(string str) {
+bool QalculateDateTime::set(std::string str) {
 
         long int newyear = 0, newmonth = 0, newday = 0;
 
-        string str_bak(str);
+        std::string str_bak(str);
 
         remove_blank_ends(str);
         remove_duplicate_blanks(str);
@@ -369,12 +369,12 @@ bool QalculateDateTime::set(string str) {
         }
         bool b_t = false, b_tz = false;
         size_t i_t = str.find("T");
-        if(i_t == string::npos && str.find(":") != string::npos) i_t = str.rfind(' ');
+        if(i_t == std::string::npos && str.find(":") != std::string::npos) i_t = str.rfind(' ');
         int newhour = 0, newmin = 0, newsec = 0;
         int itz = 0;
-        if(i_t != string::npos && i_t < str.length() - 1 && is_in(NUMBERS, str[i_t + 1])) {
+        if(i_t != std::string::npos && i_t < str.length() - 1 && is_in(NUMBERS, str[i_t + 1])) {
                 b_t = true;
-                string time_str = str.substr(i_t + 1);
+                std::string time_str = str.substr(i_t + 1);
                 str.resize(i_t);
                 char tzstr[10] = "";
                 if(sscanf(time_str.c_str(), "%2u:%2u:%2u%9s", &newhour, &newmin, &newsec, tzstr) < 3) {
@@ -395,7 +395,7 @@ bool QalculateDateTime::set(string str) {
                                 }
                         }
                 }
-                string stz = tzstr;
+                std::string stz = tzstr;
                 remove_blanks(stz);
                 if(stz == "Z" || stz == "GMT" || stz == "UTC" || stz == "WET") {
                         b_tz = true;
@@ -509,8 +509,8 @@ void QalculateDateTime::set(const QalculateDateTime &date) {
         n_sec = date.second();
         b_time = date.timeIsSet();
 }
-string QalculateDateTime::toISOString() const {
-        string str = i2s(i_year);
+std::string QalculateDateTime::toISOString() const {
+        std::string str = i2s(i_year);
         str += "-";
         if(i_month < 10) {
                 str += "0";
@@ -536,7 +536,7 @@ string QalculateDateTime::toISOString() const {
         }
         return str;
 }
-string QalculateDateTime::toLocalString() const {
+std::string QalculateDateTime::toLocalString() const {
         if(i_year > INT_MAX || i_year < INT_MIN + 1900) return toISOString();
         struct tm tmdate;
         tmdate.tm_year = i_year - 1900;
@@ -559,9 +559,9 @@ string QalculateDateTime::toLocalString() const {
         }
         return buffer;
 }
-string QalculateDateTime::print(const PrintOptions &po) const {
+std::string QalculateDateTime::print(const PrintOptions &po) const {
         if(po.is_approximate && (!n_sec.isInteger() || n_sec.isApproximate())) *po.is_approximate = true;
-        string str;
+        std::string str;
         if(po.time_zone == TIME_ZONE_LOCAL) {
                 if(po.date_time_format == DATE_TIME_FORMAT_LOCALE) str = toLocalString();
                 else str = toISOString();
@@ -1681,7 +1681,7 @@ Number cal_poly(Number c, size_t n, ...) {
 
 Number equation_of_time(Number tee) {
         Number c = julian_centuries(tee);
-        vector<long double> a;
+        std::vector<long double> a;
         Number lam, anomaly, eccentricity;
         Number t, x(c);
         t.setFloat(280.46645L); lam += t;
@@ -2604,18 +2604,18 @@ int numberOfMonths(CalendarSystem ct) {
         if(ct == CALENDAR_HEBREW || ct == CALENDAR_COPTIC || ct == CALENDAR_EGYPTIAN || ct == CALENDAR_ETHIOPIAN) return 13;
         return 12;
 }
-string monthName(long int month, CalendarSystem ct, bool append_number, bool append_leap) {
+std::string monthName(long int month, CalendarSystem ct, bool append_number, bool append_leap) {
         if(month < 1) return i2s(month);
         if(ct == CALENDAR_CHINESE) {
                 if(month > 24) return i2s(month);
                 bool leap = month > 12;
                 if(leap) month -= 12;
-                string str = i2s(month);
+                std::string str = i2s(month);
                 if(leap && append_leap) {str += " ("; str += _("leap month"); str += ")";}
                 return str;
         }
         if(month > 13) return i2s(month);
-        string str;
+        std::string str;
         if(ct == CALENDAR_HEBREW) {
                 str = HEBREW_MONTHS[month - 1];
         } else if(ct == CALENDAR_JULIAN || ct == CALENDAR_MILANKOVIC || ct == CALENDAR_GREGORIAN) {
@@ -2659,12 +2659,12 @@ int chineseStemBranchToCycleYear(long int stem, long int branch) {
         if(cy < 0 || cy > 60) return 0;
         return cy;
 }
-string chineseStemName(long int stem) {
+std::string chineseStemName(long int stem) {
         stem = (stem + 1) / 2;
         if(stem < 1 || stem > 5) return empty_string;
         return _(CHINESE_ELEMENTS[stem - 1]);
 }
-string chineseBranchName(long int branch) {
+std::string chineseBranchName(long int branch) {
         if(branch < 1 || branch > 12) return empty_string;
         return _(CHINESE_ANIMALS[branch - 1]);
 }

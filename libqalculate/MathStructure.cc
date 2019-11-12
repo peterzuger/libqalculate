@@ -41,7 +41,7 @@
 #define INSERT_REF(o, i)	v_order.insert(v_order.begin() + i, v_subs.size()); v_subs.push_back(o); (o)->ref(); if(!b_approx && (o)->isApproximate()) b_approx = true; if((o)->precision() > 0 && (i_precision < 1 || (o)->precision() < i_precision)) i_precision = (o)->precision();
 #define CLEAR			v_order.clear(); for(size_t i = 0; i < v_subs.size(); i++) {v_subs[i]->unref();} v_subs.clear();
 //#define REDUCE(v_size)		for(size_t v_index = v_size; v_index < v_order.size(); v_index++) {v_subs[v_order[v_index]]->unref(); v_subs.erase(v_subs.begin() + v_order[v_index]);} v_order.resize(v_size);
-#define REDUCE(v_size)          {vector<size_t> v_tmp; v_tmp.resize(SIZE, 0); for(size_t v_index = v_size; v_index < v_order.size(); v_index++) {v_subs[v_order[v_index]]->unref(); v_subs[v_order[v_index]] = NULL; v_tmp[v_order[v_index]] = 1;} v_order.resize(v_size); for(vector<MathStructure*>::iterator v_it = v_subs.begin(); v_it != v_subs.end();) {if(*v_it == NULL) v_it = v_subs.erase(v_it); else ++v_it;} size_t i_change = 0; for(size_t v_index = 0; v_index < v_tmp.size(); v_index++) {if(v_tmp[v_index] == 1) i_change++; v_tmp[v_index] = i_change;} for(size_t v_index = 0; v_index < v_order.size(); v_index++) v_order[v_index] -= v_tmp[v_index];}
+#define REDUCE(v_size)          {std::vector<size_t> v_tmp; v_tmp.resize(SIZE, 0); for(size_t v_index = v_size; v_index < v_order.size(); v_index++) {v_subs[v_order[v_index]]->unref(); v_subs[v_order[v_index]] = NULL; v_tmp[v_order[v_index]] = 1;} v_order.resize(v_size); for(std::vector<MathStructure*>::iterator v_it = v_subs.begin(); v_it != v_subs.end();) {if(*v_it == NULL) v_it = v_subs.erase(v_it); else ++v_it;} size_t i_change = 0; for(size_t v_index = 0; v_index < v_tmp.size(); v_index++) {if(v_tmp[v_index] == 1) i_change++; v_tmp[v_index] = i_change;} for(size_t v_index = 0; v_index < v_order.size(); v_index++) v_order[v_index] -= v_tmp[v_index];}
 #define CHILD(v_index)		(*v_subs[v_order[v_index]])
 #define SIZE			v_order.size()
 #define LAST			(*v_subs[v_order[v_order.size() - 1]])
@@ -79,7 +79,7 @@
         }
 }*/
 
-string format_and_print(const MathStructure &mstruct) {
+std::string format_and_print(const MathStructure &mstruct) {
         MathStructure m_print(mstruct);
         if(CALCULATOR) {
                 m_print.sort(CALCULATOR->messagePrintOptions());
@@ -122,11 +122,11 @@ void polynomial_smod(const MathStructure &mpoly, const Number &xi, MathStructure
 bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, const sym_desc_vec &sym_stats, size_t var_i);
 void add_symbol(const MathStructure &mpoly, sym_desc_vec &v);
 void collect_symbols(const MathStructure &mpoly, sym_desc_vec &v);
-void add_symbol(const MathStructure &mpoly, vector<MathStructure> &v);
-void collect_symbols(const MathStructure &mpoly, vector<MathStructure> &v);
+void add_symbol(const MathStructure &mpoly, std::vector<MathStructure> &v);
+void collect_symbols(const MathStructure &mpoly, std::vector<MathStructure> &v);
 void get_symbol_stats(const MathStructure &m1, const MathStructure &m2, sym_desc_vec &v);
 bool sqrfree(MathStructure &mpoly, const EvaluationOptions &eo);
-bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo);
+bool sqrfree(MathStructure &mpoly, const std::vector<MathStructure> &symbols, const EvaluationOptions &eo);
 bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var = m_undefined);
 bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew, MathStructure &factor_mstruct, bool only_units = false);
 bool is_unit_multiexp(const MathStructure &mstruct);
@@ -411,7 +411,7 @@ MathStructure::MathStructure(int num, int den, int exp10) {
         init();
         o_number.set(num, den, exp10);
 }
-MathStructure::MathStructure(string sym, bool force_symbol) {
+MathStructure::MathStructure(std::string sym, bool force_symbol) {
         init();
         if(!force_symbol && sym.length() > 1) {
                 if(sym == "undefined") {
@@ -648,7 +648,7 @@ void MathStructure::set(double float_value, bool preserve_precision) {
         }
         m_type = STRUCT_NUMBER;
 }
-void MathStructure::set(string sym, bool preserve_precision, bool force_symbol) {
+void MathStructure::set(std::string sym, bool preserve_precision, bool force_symbol) {
         clear(preserve_precision);
         if(!force_symbol && sym.length() > 1) {
                 if(sym == "undefined") {
@@ -742,7 +742,7 @@ void MathStructure::operator = (const Number &o) {set(o);}
 void MathStructure::operator = (int i) {set(i, 1, 0);}
 void MathStructure::operator = (Unit *u) {set(u);}
 void MathStructure::operator = (Variable *v) {set(v);}
-void MathStructure::operator = (string sym) {set(sym);}
+void MathStructure::operator = (std::string sym) {set(sym);}
 MathStructure MathStructure::operator - () const {
         MathStructure o2(*this);
         o2.negate();
@@ -819,18 +819,18 @@ void MathStructure::operator += (Variable *v) {add(v);}
 void MathStructure::operator -= (Variable *v) {subtract(v);}
 void MathStructure::operator ^= (Variable *v) {raise(v);}
 
-void MathStructure::operator *= (string sym) {multiply(sym);}
-void MathStructure::operator /= (string sym) {divide(sym);}
-void MathStructure::operator += (string sym) {add(sym);}
-void MathStructure::operator -= (string sym) {subtract(sym);}
-void MathStructure::operator ^= (string sym) {raise(sym);}
+void MathStructure::operator *= (std::string sym) {multiply(sym);}
+void MathStructure::operator /= (std::string sym) {divide(sym);}
+void MathStructure::operator += (std::string sym) {add(sym);}
+void MathStructure::operator -= (std::string sym) {subtract(sym);}
+void MathStructure::operator ^= (std::string sym) {raise(sym);}
 
 bool MathStructure::operator == (const MathStructure &o) const {return equals(o);}
 bool MathStructure::operator == (const Number &o) const {return equals(o);}
 bool MathStructure::operator == (int i) const {return equals(i);}
 bool MathStructure::operator == (Unit *u) const {return equals(u);}
 bool MathStructure::operator == (Variable *v) const {return equals(v);}
-bool MathStructure::operator == (string sym) const {return equals(sym);}
+bool MathStructure::operator == (std::string sym) const {return equals(sym);}
 
 bool MathStructure::operator != (const MathStructure &o) const {return !equals(o);}
 
@@ -907,7 +907,7 @@ void MathStructure::childrenUpdated(bool recursive) {
                 MERGE_APPROX_AND_PREC(CHILD(i))
         }
 }
-const string &MathStructure::symbol() const {
+const std::string &MathStructure::symbol() const {
         return s_sym;
 }
 const QalculateDateTime *MathStructure::datetime() const {
@@ -1673,7 +1673,7 @@ void MathStructure::transform(StructureType mtype, Variable *v) {
         APPEND_NEW(v);
         b_parentheses = false;
 }
-void MathStructure::transform(StructureType mtype, string sym) {
+void MathStructure::transform(StructureType mtype, std::string sym) {
         MathStructure *struct_this = new MathStructure();
         struct_this->set_nocopy(*this);
         clear(true);
@@ -1952,31 +1952,31 @@ void MathStructure::divide(Unit *u, bool append) {
 void MathStructure::raise(Unit *u) {
         transform(STRUCT_POWER, u);
 }
-void MathStructure::add(string sym, bool append) {
+void MathStructure::add(std::string sym, bool append) {
         if(m_type == STRUCT_ADDITION && append) {
                 APPEND_NEW(sym);
         } else {
                 transform(STRUCT_ADDITION, sym);
         }
 }
-void MathStructure::subtract(string sym, bool append) {
+void MathStructure::subtract(std::string sym, bool append) {
         MathStructure *o2 = new MathStructure(sym);
         o2->negate();
         add_nocopy(o2, append);
 }
-void MathStructure::multiply(string sym, bool append) {
+void MathStructure::multiply(std::string sym, bool append) {
         if(m_type == STRUCT_MULTIPLICATION && append) {
                 APPEND_NEW(sym);
         } else {
                 transform(STRUCT_MULTIPLICATION, sym);
         }
 }
-void MathStructure::divide(string sym, bool append) {
+void MathStructure::divide(std::string sym, bool append) {
         MathStructure *o2 = new MathStructure(sym);
         o2->inverse();
         multiply_nocopy(o2, append);
 }
-void MathStructure::raise(string sym) {
+void MathStructure::raise(std::string sym) {
         transform(STRUCT_POWER, sym);
 }
 void MathStructure::add_nocopy(MathStructure *o, MathOperation op, bool append) {
@@ -2147,7 +2147,7 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
                         if(SIZE == 2) {
                                 return (CHILD(0) == o[0] && CHILD(1) == o[1]) || (CHILD(0) == o[1] && CHILD(1) == o[0]);
                         }
-                        vector<size_t> i2taken;
+                        std::vector<size_t> i2taken;
                         for(size_t i = 0; i < SIZE; i++) {
                                 bool b = false, b2 = false;
                                 for(size_t i2 = 0; i2 < o.size(); i2++) {
@@ -2193,7 +2193,7 @@ bool MathStructure::equals(Variable *v) const {
         if(m_type != STRUCT_VARIABLE) return false;
         return o_variable == v;
 }
-bool MathStructure::equals(string sym) const {
+bool MathStructure::equals(std::string sym) const {
         if(m_type != STRUCT_SYMBOLIC) return false;
         return s_sym == sym;
 }
@@ -3710,8 +3710,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
                         }
                         case STRUCT_MULTIPLICATION: {
                                 Number nr;
-                                vector<Number> nrs;
-                                vector<size_t> reducables;
+                                std::vector<Number> nrs;
+                                std::vector<size_t> reducables;
                                 for(size_t i = 0; i < mnum->size(); i++) {
                                         switch((*mnum)[i].type()) {
                                                 case STRUCT_ADDITION: {break;}
@@ -4107,7 +4107,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
                                         if(eo.expand == 0 && mstruct[0].isAddition()) return -1;
                                         if(eo.combine_divisions && mstruct[1].hasNegativeSign()) {
                                                 int ret;
-                                                vector<bool> merged;
+                                                std::vector<bool> merged;
                                                 merged.resize(SIZE, false);
                                                 size_t merges = 0;
                                                 MathStructure *mstruct2 = new MathStructure(mstruct);
@@ -7437,7 +7437,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
                                                 }
                                         }
                                         bool b_found = false;
-                                        unordered_map<size_t, size_t> matches;
+                                        std::unordered_map<size_t, size_t> matches;
                                         for(size_t i = 0; i < divs[0].size(); i++) {
                                                 if((b_unknown && divs[0][i].containsUnknowns()) || (!b_unknown && !divs[0][i].isNumber())) {
                                                         MathStructure mcomp1;
@@ -7508,7 +7508,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
                         if(!combine_only && !only_gcd && divs.size() > 0 && divs[0].isAddition()) {
                                 bool b_unknown = divs[0].containsUnknowns() || nums[0].containsUnknowns();
                                 MathStructure mquo, mrem;
-                                vector<MathStructure> symsd, symsn;
+                                std::vector<MathStructure> symsd, symsn;
                                 collect_symbols(nums[0], symsn);
                                 if(!symsn.empty()) {
                                         collect_symbols(divs[0], symsd);
@@ -7688,7 +7688,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
         eo2.keep_zero_units = false;
 
         // do polynomial division; give points to incomplete division
-        vector<long int> points(nums.size(), -1);
+        std::vector<long int> points(nums.size(), -1);
         bool b = false, b_ready_candidate = false;
         for(size_t i = 0; i < divs.size(); i++) {
                 if(CALCULATOR->aborted()) return false;
@@ -8189,13 +8189,13 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
                         bool isResistance = false;
                         switch(CHILD(0).type()) {
                                 case STRUCT_MULTIPLICATION: {
-                                        if(CHILD(0)[1] != 0 && CHILD(0)[1].unit() && CHILD(0)[1].unit()->name().find("ohm") != string::npos) {
+                                        if(CHILD(0)[1] != 0 && CHILD(0)[1].unit() && CHILD(0)[1].unit()->name().find("ohm") != std::string::npos) {
                                                 isResistance = true;
                                         }
                                         break;
                                 }
                                 case STRUCT_UNIT: {
-                                        if (CHILD(0).unit() && CHILD(0).unit()->name().find("ohm") != string::npos) {
+                                        if (CHILD(0).unit() && CHILD(0).unit()->name().find("ohm") != std::string::npos) {
                                                 isResistance = true;
                                         }
                                         break;
@@ -9683,7 +9683,7 @@ void MathStructure::evalSort(bool recursive, bool b_abs) {
         //if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR && m_type != STRUCT_LOGICAL_XOR && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
         if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR) return;
         if(m_type == STRUCT_ADDITION && containsType(STRUCT_DATETIME, false, true, false) > 0) return;
-        vector<size_t> sorted;
+        std::vector<size_t> sorted;
         sorted.reserve(SIZE);
         for(size_t i = 0; i < SIZE; i++) {
                 if(i == 0) {
@@ -10021,7 +10021,7 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
         }
         if(m_type != STRUCT_ADDITION && m_type != STRUCT_MULTIPLICATION && m_type != STRUCT_BITWISE_AND && m_type != STRUCT_BITWISE_OR && m_type != STRUCT_BITWISE_XOR && m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR) return;
         if(m_type == STRUCT_ADDITION && containsType(STRUCT_DATETIME, false, true, false) > 0) return;
-        vector<size_t> sorted;
+        std::vector<size_t> sorted;
         bool b;
         PrintOptions po2 = po;
         po2.sort_options.minus_last = po.sort_options.minus_last && SIZE == 2;
@@ -10239,7 +10239,7 @@ bool factor1(const MathStructure &mstruct, MathStructure &mnum, MathStructure &m
                 }
                 if(b_num && b_den) {
                         MathStructure *mden_cur = NULL;
-                        vector<int> multi_index;
+                        std::vector<int> multi_index;
                         for(size_t i = 0; i < mstruct.size(); i++) {
                                 if(mnum.isUndefined()) {
                                         mnum.transform(STRUCT_ADDITION);
@@ -11075,7 +11075,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
                         MathStructure mzero(1, 1, 0);
                         MathStructure minfp(1, 1, 0);
                         MathStructure mleft;
-                        vector<size_t> irecalc;
+                        std::vector<size_t> irecalc;
                         MathStructure mbak(mstruct);
                         bool b_inf = false;
                         bool b_li = nr_limit.isInfinite(false);
@@ -11959,7 +11959,7 @@ void factorize_variable(MathStructure &mstruct, const MathStructure &mvar, bool 
                 if(mstruct.size() == 0) mstruct = b_struct;
                 else mstruct.addChild(b_struct);
         } else {
-                vector<MathStructure*> left_structs;
+                std::vector<MathStructure*> left_structs;
                 for(size_t i2 = 0; i2 < mstruct.size();) {
                         bool b = false;
                         if(mstruct[i2] == mvar) {
@@ -12003,10 +12003,10 @@ bool var_contains_interval(const MathStructure &mstruct) {
 bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
         bool b = false;
         if(mstruct.type() == STRUCT_ADDITION) {
-                vector<MathStructure> variables;
-                vector<size_t> variable_count;
-                vector<int> term_sgn;
-                vector<bool> term_deg2;
+                std::vector<MathStructure> variables;
+                std::vector<size_t> variable_count;
+                std::vector<int> term_sgn;
+                std::vector<bool> term_deg2;
                 for(size_t i = 0; i < mstruct.size(); i++) {
                         if(CALCULATOR->aborted()) break;
                         if(mstruct[i].isMultiplication()) {
@@ -12163,7 +12163,7 @@ bool factorize_variables(MathStructure &mstruct, const EvaluationOptions &eo) {
         return b;
 }
 
-void find_interval_variables(const MathStructure &mstruct, vector<KnownVariable*> &vars, vector<int> &v_count, vector<int> &v_prec) {
+void find_interval_variables(const MathStructure &mstruct, std::vector<KnownVariable*> &vars, std::vector<int> &v_count, std::vector<int> &v_prec) {
         if(mstruct.isVariable() && mstruct.variable()->isKnown()) {
                 KnownVariable *v = (KnownVariable*) mstruct.variable();
                 int var_prec = PRECISION + 11;
@@ -12264,7 +12264,7 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
                         }
                         return true;
                 }
-                vector<Number> splits;
+                std::vector<Number> splits;
                 nr_intval.splitInterval(2, splits);
                 for(size_t i = 0; i < splits.size(); i++) {
                         if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, depth + 1, nr_prec, orig_prec, is_real, cmp == COMPARISON_RESULT_UNKNOWN ? undef_depth + 1 : 0)) return false;
@@ -12391,7 +12391,7 @@ void remove_nonzero_mul(MathStructure &msolve, const MathStructure &u_var, const
 }
 
 extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
-void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const EvaluationOptions &eo_pre) {
+void solve_intervals2(MathStructure &mstruct, std::vector<KnownVariable*> vars, const EvaluationOptions &eo_pre) {
         if(vars.size() > 0) {
                 EvaluationOptions eo = eo_pre;
                 eo.approximation = APPROXIMATION_EXACT_VARIABLES;
@@ -12498,7 +12498,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
                                 if(!mmul.isOne()) malts[i] *= mmul;
                                 mlim.replace(v, malts[i]);
                                 mlim.calculatesub(eo, eo, true);
-                                vector<KnownVariable*> vars2 = vars;
+                                std::vector<KnownVariable*> vars2 = vars;
                                 solve_intervals2(mlim, vars2, eo_pre);
                                 if(i == 0) {
                                         mnew = mlim;
@@ -12614,7 +12614,7 @@ void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo, const 
                 eo2.expand = false;
                 mstruct.calculatesub(eo2, feo, true);
         }
-        vector<KnownVariable*> vars; vector<int> v_count; vector<int> v_prec;
+        std::vector<KnownVariable*> vars; std::vector<int> v_count; std::vector<int> v_prec;
         find_interval_variables(mstruct, vars, v_count, v_prec);
         for(size_t i = 0; i < v_count.size();) {
                 if(v_count[i] < 2) {
@@ -12714,9 +12714,9 @@ void find_interval_create_var(const Number &nr, MathStructure &m, MathStructure 
                         nmid.intervalToMidValue();
                         Number nmid2(nr.realPart());
                         nmid2.intervalToMidValue();
-                        *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+                        *v = new KnownVariable("", std::string("(") + format_and_print(nmid) + ")", nmid);
                         (*v)->setApproximate(false);
-                        *v2 = new KnownVariable("", string("(") + format_and_print(nmid2) + ")", nmid2);
+                        *v2 = new KnownVariable("", std::string("(") + format_and_print(nmid2) + ")", nmid2);
                         (*v2)->setApproximate(false);
                         m.set(*v);
                         m.multiply(nr_one_i);
@@ -12727,7 +12727,7 @@ void find_interval_create_var(const Number &nr, MathStructure &m, MathStructure 
                         unc = nr.internalImaginary()->uncertainty();
                         Number nmid(*nr.internalImaginary());
                         nmid.intervalToMidValue();
-                        *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+                        *v = new KnownVariable("", std::string("(") + format_and_print(nmid) + ")", nmid);
                         (*v)->setApproximate(false);
                         m.set(*v);
                         m.multiply(nr_one_i);
@@ -12737,7 +12737,7 @@ void find_interval_create_var(const Number &nr, MathStructure &m, MathStructure 
                 unc = nr.uncertainty();
                 Number nmid(nr);
                 nmid.intervalToMidValue();
-                *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+                *v = new KnownVariable("", std::string("(") + format_and_print(nmid) + ")", nmid);
                 (*v)->setApproximate(false);
                 m.set(*v);
                 (*v)->destroy();
@@ -12799,7 +12799,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
                                 if(mmid && munc) {
                                         unc = *munc;
                                         MathStructure mmid2(*mmid);
-                                        KnownVariable *v = new KnownVariable("", string("(") + format_and_print(*mmid) + ")", mmid2);
+                                        KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(*mmid) + ")", mmid2);
                                         m.set(v);
                                         v->destroy();
                                         return v;
@@ -12811,7 +12811,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
                         MathStructure mmid(mvar[0]);
                         mmid += mvar[1];
                         mmid *= nr_half;
-                        KnownVariable *v = new KnownVariable("", string("(") + format_and_print(mmid) + ")", mmid);
+                        KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(mmid) + ")", mmid);
                         m.variable()->ref();
                         *prev_v = m.variable();
                         m.set(v);
@@ -12825,7 +12825,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
                         } else {
                                 unc = mvar[1];
                         }
-                        KnownVariable *v = new KnownVariable("", string("(") + format_and_print(mvar[0]) + ")", mvar[0]);
+                        KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(mvar[0]) + ")", mvar[0]);
                         m.variable()->ref();
                         *prev_v = m.variable();
                         m.set(v);
@@ -12860,7 +12860,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
                         }
                         if(mmid && munc) {
                                 unc = *munc;
-                                KnownVariable *v = new KnownVariable("", string("(") + format_and_print(*mmid) + ")", *mmid);
+                                KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(*mmid) + ")", *mmid);
                                 m.set(v);
                                 v->destroy();
                                 return v;
@@ -12872,7 +12872,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
                 MathStructure mmid(m[0]);
                 mmid += m[1];
                 mmid *= nr_half;
-                KnownVariable *v = new KnownVariable("", string("(") + format_and_print(mmid) + ")", mmid);
+                KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(mmid) + ")", mmid);
                 m.set(v);
                 v->destroy();
                 return v;
@@ -12883,7 +12883,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
                 } else {
                         unc = m[1];
                 }
-                KnownVariable *v = new KnownVariable("", string("(") + format_and_print(m[0]) + ")", m[0]);
+                KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(m[0]) + ")", m[0]);
                 m.set(v);
                 v->destroy();
                 return v;
@@ -12898,7 +12898,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 
 bool find_interval_replace_var_nr(MathStructure &m) {
         if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2) || (m.isFunction() && m.function() == CALCULATOR->f_uncertainty && m.size() == 3)) {
-                KnownVariable *v = new KnownVariable("", string("(") + format_and_print(m) + ")", m);
+                KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(m) + ")", m);
                 m.set(v);
                 v->destroy();
                 return true;
@@ -12956,11 +12956,11 @@ bool contains_diff_for(const MathStructure &m, const MathStructure &x_var) {
         return false;
 }
 
-bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, vector<KnownVariable*> *vars = NULL, vector<MathStructure> *uncs = NULL, bool do_intervals = true);
+bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars = NULL, std::vector<MathStructure> *uncs = NULL, bool do_intervals = true);
 
 MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &eo, bool &b_failed) {
-        vector<KnownVariable*> vars;
-        vector<MathStructure> uncs;
+        std::vector<KnownVariable*> vars;
+        std::vector<MathStructure> uncs;
         MathStructure unc, unc2;
         if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) replace_variables_with_interval(m, eo);
         while(true) {
@@ -13035,9 +13035,9 @@ Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptio
         } else if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function() == CALCULATOR->f_interval && m.size() == 2) || (m.isFunction() && m.function() == CALCULATOR->f_uncertainty && m.size() == 3)) {
                 Variable *uv = NULL;
                 if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
-                        uv = new KnownVariable("", string("(") + format_and_print(m) + ")", m);
+                        uv = new KnownVariable("", std::string("(") + format_and_print(m) + ")", m);
                 } else {
-                        uv = new UnknownVariable("", string("(") + format_and_print(m) + ")");
+                        uv = new UnknownVariable("", std::string("(") + format_and_print(m) + ")");
                         ((UnknownVariable*) uv)->setInterval(m);
                 }
                 *v = NULL;
@@ -13196,7 +13196,7 @@ bool remove_add_zero_unit(MathStructure &m) {
         return false;
 }
 
-bool contains_duplicate_interval_variables_eq(const MathStructure &mstruct, const MathStructure &xvar, vector<KnownVariable*> &vars) {
+bool contains_duplicate_interval_variables_eq(const MathStructure &mstruct, const MathStructure &xvar, std::vector<KnownVariable*> &vars) {
         if(mstruct.isVariable() && mstruct.variable()->isKnown() && ((KnownVariable*) mstruct.variable())->get().containsInterval(false, true, false, false)) {
                 KnownVariable *v = (KnownVariable*) mstruct.variable();
                 for(size_t i = 0; i < vars.size(); i++) {
@@ -13222,7 +13222,7 @@ bool fix_eqs(MathStructure &m, const EvaluationOptions &eo) {
                 if(eo.isolate_var && m.contains(*eo.isolate_var)) x_var = eo.isolate_var;
                 else x_var = &m.find_x_var();
                 if(!x_var->isUndefined()) {
-                        vector<KnownVariable*> vars;
+                        std::vector<KnownVariable*> vars;
                         if(contains_duplicate_interval_variables_eq(m, *x_var, vars)) {
                                 if(!m[0].contains(*x_var)) {
                                         m.swapChildren(1, 2);
@@ -13271,7 +13271,7 @@ bool fix_eqs(MathStructure &m, const EvaluationOptions &eo) {
 }
 
 Unit *find_log_unit(const MathStructure &m, bool toplevel = true) {
-        if(!toplevel && m.isUnit() && m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->hasNonlinearExpression() && (((AliasUnit*) m.unit())->expression().find("log") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("log") != string::npos || ((AliasUnit*) m.unit())->expression().find("ln") != string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("ln") != string::npos)) {
+        if(!toplevel && m.isUnit() && m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->hasNonlinearExpression() && (((AliasUnit*) m.unit())->expression().find("log") != std::string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("log") != std::string::npos || ((AliasUnit*) m.unit())->expression().find("ln") != std::string::npos || ((AliasUnit*) m.unit())->inverseExpression().find("ln") != std::string::npos)) {
                 return ((AliasUnit*) m.unit())->firstBaseUnit();
         }
         if(m.isMultiplication() && toplevel && m.last().isUnit()) {
@@ -13358,8 +13358,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
                         eo3.assume_denominators_nonzero = false;
                         if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
                         else eo3.approximation = APPROXIMATION_EXACT;
-                        vector<KnownVariable*> vars;
-                        vector<MathStructure> uncs;
+                        std::vector<KnownVariable*> vars;
+                        std::vector<MathStructure> uncs;
                         calculatesub(eo3, eo3);
                         while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
                                 calculatesub(eo3, eo3);
@@ -13388,8 +13388,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
                                 if(eo.expand && eo.expand >= -1) eo3.expand = -1;
                                 eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
                                 eo3.approximation = APPROXIMATION_EXACT;
-                                vector<KnownVariable*> vars;
-                                vector<MathStructure> uncs;
+                                std::vector<KnownVariable*> vars;
+                                std::vector<MathStructure> uncs;
                                 calculatesub(eo3, eo3);
                                 while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
                                         calculatesub(eo3, eo3);
@@ -13402,7 +13402,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
                                 eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
                                 eo3.structuring = STRUCTURING_NONE;
                                 eo3.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
-                                vector<Variable*> vars;
+                                std::vector<Variable*> vars;
                                 while(true) {
                                         Variable *v = NULL;
                                         Variable *uv = find_interval_replace_var_comp(*this, eo3, &v);
@@ -14132,7 +14132,7 @@ bool MathStructure::polynomialDivide(const MathStructure &mnum, const MathStruct
         return false;
 }
 
-bool polynomial_divide_integers(const vector<Number> &vnum, const vector<Number> &vden, vector<Number> &vquotient) {
+bool polynomial_divide_integers(const std::vector<Number> &vnum, const std::vector<Number> &vden, std::vector<Number> &vquotient) {
 
         vquotient.clear();
 
@@ -14144,7 +14144,7 @@ bool polynomial_divide_integers(const vector<Number> &vnum, const vector<Number>
 
         vquotient.resize(numdeg - dendeg + 1, nr_zero);
 
-        vector<Number> vrem = vnum;
+        std::vector<Number> vrem = vnum;
 
         while(numdeg >= dendeg) {
                 Number numcoeff(vrem[numdeg]);
@@ -15258,7 +15258,7 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 
         MathStructure xvar(xvar_pre);
         if(xvar.isZero()) {
-                vector<MathStructure> symsd, symsn;
+                std::vector<MathStructure> symsd, symsn;
                 collect_symbols(mnum, symsn);
                 if(symsn.empty()) return false;
                 collect_symbols(mden, symsd);
@@ -15382,8 +15382,8 @@ void collect_symbols(const MathStructure &mpoly, sym_desc_vec &v) {
         }
 }
 
-void add_symbol(const MathStructure &mpoly, vector<MathStructure> &v) {
-        vector<MathStructure>::const_iterator it = v.begin(), itend = v.end();
+void add_symbol(const MathStructure &mpoly, std::vector<MathStructure> &v) {
+        std::vector<MathStructure>::const_iterator it = v.begin(), itend = v.end();
         while (it != itend) {
                 if(*it == mpoly) return;
                 ++it;
@@ -15391,7 +15391,7 @@ void add_symbol(const MathStructure &mpoly, vector<MathStructure> &v) {
         v.push_back(mpoly);
 }
 
-void collect_symbols(const MathStructure &mpoly, vector<MathStructure> &v) {
+void collect_symbols(const MathStructure &mpoly, std::vector<MathStructure> &v) {
         if(IS_A_SYMBOL(mpoly)) {
                 add_symbol(mpoly, v);
         } else if(mpoly.isAddition() || mpoly.isMultiplication()) {
@@ -16062,11 +16062,11 @@ void multiply_lcm(const MathStructure &e, const Number &lcm, MathStructure &mmul
 
 //from GiNaC
 bool sqrfree(MathStructure &mpoly, const EvaluationOptions &eo) {
-        vector<MathStructure> symbols;
+        std::vector<MathStructure> symbols;
         collect_symbols(mpoly, symbols);
         return sqrfree(mpoly, symbols, eo);
 }
-bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const EvaluationOptions &eo) {
+bool sqrfree(MathStructure &mpoly, const std::vector<MathStructure> &symbols, const EvaluationOptions &eo) {
 
         EvaluationOptions eo2 = eo;
         eo2.assume_denominators_nonzero = true;
@@ -16106,7 +16106,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
                 factors.addChild(tmp);
         }
 
-        vector<MathStructure> newsymbols;
+        std::vector<MathStructure> newsymbols;
         for(size_t i = 0; i < symbols.size(); i++) {
                 if(i != symbol_index) newsymbols.push_back(symbols[i]);
         }
@@ -16169,7 +16169,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 bool MathStructure::integerFactorize() {
         if(!isNumber()) return false;
-        vector<Number> factors;
+        std::vector<Number> factors;
         if(!o_number.factorize(factors)) return false;
         if(factors.size() <= 1) return true;
         clear(true);
@@ -16954,12 +16954,12 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                                 }
 
                                                 if(b) {
-                                                        vector<Number> factors;
+                                                        std::vector<Number> factors;
                                                         factors.resize(degree + 1, Number());
                                                         factors[0] = CHILD(SIZE - 1).number();
-                                                        vector<int> ps;
-                                                        vector<int> qs;
-                                                        vector<Number> zeroes;
+                                                        std::vector<int> ps;
+                                                        std::vector<int> qs;
+                                                        std::vector<Number> zeroes;
                                                         int curdeg = 1, prevdeg = 0;
                                                         for(size_t i = 0; b && i < SIZE - 1; i++) {
                                                                 switch(CHILD(i).type()) {
@@ -17100,8 +17100,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                                                         }
                                                                 }
                                                                 mleft.factorize(eo, false, 0, 0, only_integers, recursive, endtime_p, force_factorization, complete_square, only_sqrfree, max_factor_degree);
-                                                                vector<long int> powers;
-                                                                vector<size_t> powers_i;
+                                                                std::vector<long int> powers;
+                                                                std::vector<size_t> powers_i;
                                                                 int dupsfound = 0;
                                                                 for(size_t i = 0; i < zeroes.size() - 1; i++) {
                                                                         while(i + 1 < zeroes.size() && zeroes[i] == zeroes[i + 1]) {
@@ -17229,7 +17229,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 
                                                 if(b && b2 && (max_factor_degree < 0 || max_factor_degree >= 2) && degree > 3 && degree < 50) {
                                                         // Kronecker method
-                                                        vector<Number> vnum;
+                                                        std::vector<Number> vnum;
                                                         vnum.resize(degree + 1, nr_zero);
                                                         bool overflow = false;
                                                         for(size_t i = 0; b && i < SIZE; i++) {
@@ -17277,7 +17277,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                                         }
 
                                                         long int lcoeff = vnum[degree].lintValue();
-                                                        vector<int> vs;
+                                                        std::vector<int> vs;
                                                         if(b && lcoeff != 0) {
                                                                 degree /= 2;
                                                                 if(max_factor_degree > 0 && degree > max_factor_degree) degree = max_factor_degree;
@@ -17299,7 +17299,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                                         }
 
                                                         if(b) {
-                                                                vector<int> factors0, factorsl;
+                                                                std::vector<int> factors0, factorsl;
                                                                 factors0.push_back(1);
                                                                 for(int i = 2; i < vs[0] / 3 && i < 1000; i++) {
                                                                         if(vs[0] % i == 0) factors0.push_back(i);
@@ -17318,8 +17318,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                                                 long long int cmax = 500000LL / (factors0.size() * factorsl.size());
                                                                 if(term_combination_levels != 0) cmax *= 10;
                                                                 if(degree >= 2 && cmax > 10) {
-                                                                        vector<Number> vden;
-                                                                        vector<Number> vquo;
+                                                                        std::vector<Number> vden;
+                                                                        std::vector<Number> vquo;
                                                                         vden.resize(3, nr_zero);
                                                                         long int c0;
                                                                         for(size_t i = 0; i < factors0.size() * 2; i++) {
@@ -17397,8 +17397,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                                                         for(int i = 0; i < i_d - 3; i++) {
                                                                                 c2totalmax *= t1max;
                                                                         }
-                                                                        vector<Number> vden;
-                                                                        vector<Number> vquo;
+                                                                        std::vector<Number> vden;
+                                                                        std::vector<Number> vquo;
                                                                         long int *vc = (long int*) malloc(sizeof(long int) * (i_d + 1));
                                                                         vden.resize(i_d + 1, nr_zero);
                                                                         int in = 0;
@@ -17967,8 +17967,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                         b_ret = true;
                                 }
                                 // a*y + a*z + x = a(y + z) + x
-                                vector<MathStructure> syms;
-                                vector<size_t> counts;
+                                std::vector<MathStructure> syms;
+                                std::vector<size_t> counts;
                                 collect_symbols(*this, syms);
                                 size_t max_count = 0, max_i = 0;
                                 Number min_pow;
@@ -18033,7 +18033,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                 }
                                 if(max_count > 0) {
                                         size_t i = max_i;
-                                        vector<MathStructure*> mleft;
+                                        std::vector<MathStructure*> mleft;
                                         for(size_t i2 = 0; i2 < SIZE;) {
                                                 b = false;
                                                 if(CHILD(i2).isMultiplication()) {
@@ -18189,7 +18189,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
                                 }
                                 if(max_count > 0) {
                                         size_t i = max_i;
-                                        vector<MathStructure*> mleft;
+                                        std::vector<MathStructure*> mleft;
                                         for(size_t i2 = 0; i2 < SIZE;) {
                                                 b = false;
                                                 if(CHILD(i2).isMultiplication()) {
@@ -19577,7 +19577,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure*, size
         switch(m_type) {
                 case STRUCT_DIVISION: {
                         if(po.place_units_separately) {
-                                vector<size_t> nums;
+                                std::vector<size_t> nums;
                                 bool b1 = false, b2 = false;
                                 if(CHILD(0).isMultiplication()) {
                                         for(size_t i = 0; i < CHILD(0).size(); i++) {
@@ -19591,7 +19591,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure*, size
                                 } else if(CHILD(0).isUnit_exp()) {
                                         b1 = true;
                                 }
-                                vector<size_t> dens;
+                                std::vector<size_t> dens;
                                 if(CHILD(1).isMultiplication()) {
                                         for(size_t i = 0; i < CHILD(1).size(); i++) {
                                                 if(CHILD(1)[i].isUnit_exp()) {
@@ -20703,7 +20703,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 }
 
 int namelen(const MathStructure &mstruct, const PrintOptions &po, const InternalPrintStruct&, bool *abbreviated = NULL) {
-        const string *str;
+        const std::string *str;
         switch(mstruct.type()) {
                 case STRUCT_FUNCTION: {
                         const ExpressionName *ename = &mstruct.function()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
@@ -21130,13 +21130,13 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
         }
 }
 
-ostream& operator << (ostream &os, const MathStructure &mstruct) {
+std::ostream& operator << (std::ostream &os, const MathStructure &mstruct) {
         os << format_and_print(mstruct);
         return os;
 }
-string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
+std::string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
         if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
-        string print_str;
+        std::string print_str;
         InternalPrintStruct ips_n = ips;
         if(isApproximate()) ips_n.parent_approximate = true;
         if(precision() >= 0 && (ips_n.parent_precision < 0 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
@@ -21150,7 +21150,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
                         if(po.allow_non_usable) {
                                 print_str = s_sym;
                         } else {
-                                if((text_length_is_one(s_sym) && s_sym.find("\'") == string::npos) || s_sym.find("\"") != string::npos) {
+                                if((text_length_is_one(s_sym) && s_sym.find("\'") == std::string::npos) || s_sym.find("\"") != std::string::npos) {
                                         print_str = "\'";
                                         print_str += s_sym;
                                         print_str += "\'";
@@ -21511,7 +21511,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
                         print_str += ename->name;
                         if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
                                 size_t i = print_str.rfind('_');
-                                if(i != string::npos && i + 5 <= print_str.length() && print_str.substr(print_str.length() - 4, 4) == "unit") {
+                                if(i != std::string::npos && i + 5 <= print_str.length() && print_str.substr(print_str.length() - 4, 4) == "unit") {
                                         if(i + 5 == print_str.length()) {
                                                 print_str = print_str.substr(0, i);
                                                 if(po.hide_underscore_spaces) gsub("_", " ", print_str);
@@ -21530,7 +21530,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
                         print_str += ename->name;
                         if(ename->suffix && !po.preserve_format && !po.use_reference_names) {
                                 size_t i = print_str.rfind('_');
-                                if(i != string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant") {
+                                if(i != std::string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant") {
                                         if(i + 9 == print_str.length()) {
                                                 print_str = print_str.substr(0, i);
                                                 if(po.hide_underscore_spaces) gsub("_", " ", print_str);
@@ -21593,7 +21593,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
                                 argcount = 1;
                         } else if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
                                 while(true) {
-                                        string defstr = o_function->getDefaultValue(argcount);
+                                        std::string defstr = o_function->getDefaultValue(argcount);
                                         Argument *arg = o_function->getArgumentDefinition(argcount);
                                         remove_blank_ends(defstr);
                                         if(defstr.empty()) break;
@@ -21601,7 +21601,7 @@ string MathStructure::print(const PrintOptions &po, const InternalPrintStruct &i
                                                 argcount--;
                                         } else if(CHILD(argcount - 1).isVariable() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr == CHILD(argcount - 1).variable()->referenceName()) {
                                                 argcount--;
-                                        } else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+                                        } else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS) == std::string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
                                                 argcount--;
                                         } else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && CHILD(argcount - 1).symbol() == defstr) {
                                                 argcount--;
@@ -21662,8 +21662,8 @@ MathStructure &MathStructure::flattenVector(MathStructure &mstruct) const {
         return mstruct;
 }
 bool MathStructure::rankVector(bool ascending) {
-        vector<int> ranked;
-        vector<bool> ranked_equals_prev;
+        std::vector<int> ranked;
+        std::vector<bool> ranked_equals_prev;
         bool b;
         for(size_t index = 0; index < SIZE; index++) {
                 b = false;
@@ -21713,7 +21713,7 @@ bool MathStructure::rankVector(bool ascending) {
         return true;
 }
 bool MathStructure::sortVector(bool ascending) {
-        vector<size_t> ranked_mstructs;
+        std::vector<size_t> ranked_mstructs;
         bool b;
         for(size_t index = 0; index < SIZE; index++) {
                 b = false;
@@ -22417,7 +22417,7 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
         return mstruct;
 }
 
-void gatherInformation(const MathStructure &mstruct, vector<Unit*> &base_units, vector<AliasUnit*> &alias_units, bool check_variables = false) {
+void gatherInformation(const MathStructure &mstruct, std::vector<Unit*> &base_units, std::vector<AliasUnit*> &alias_units, bool check_variables = false) {
         switch(mstruct.type()) {
                 case STRUCT_UNIT: {
                         switch(mstruct.unit()->subtype()) {
@@ -22516,9 +22516,9 @@ int MathStructure::isUnitCompatible(const MathStructure &mstruct) const {
 
 bool MathStructure::syncUnits(bool sync_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
         if(SIZE == 0) return false;
-        vector<Unit*> base_units;
-        vector<AliasUnit*> alias_units;
-        vector<CompositeUnit*> composite_units;
+        std::vector<Unit*> base_units;
+        std::vector<AliasUnit*> alias_units;
+        std::vector<CompositeUnit*> composite_units;
         gatherInformation(*this, base_units, alias_units);
         if(alias_units.empty() || base_units.size() + alias_units.size() == 1) return false;
         CompositeUnit *cu;
@@ -22658,7 +22658,7 @@ bool MathStructure::syncUnits(bool sync_nonlinear_relations, bool *found_nonline
 bool has_approximate_relation_to_base(Unit *u, bool do_intervals) {
         if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
                 if(((AliasUnit*) u)->isApproximate()) return do_intervals;
-                if(((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) != string::npos && !((AliasUnit*) u)->hasNonlinearExpression()) return true;
+                if(((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) != std::string::npos && !((AliasUnit*) u)->hasNonlinearExpression()) return true;
                 return has_approximate_relation_to_base(((AliasUnit*) u)->firstBaseUnit());
         } else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
                 for(size_t i = 1; i <= ((CompositeUnit*) u)->countUnits(); i++) {
@@ -22872,8 +22872,8 @@ bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *f
         }
         return b;
 }
-bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo, vector<KnownVariable*> *vars, vector<MathStructure> *uncs, vector<Unit*> *units, bool do_intervals);
-bool convert_approximate(MathStructure &m, const MathStructure unit_mstruct, const EvaluationOptions &feo, vector<KnownVariable*> *vars, vector<MathStructure> *uncs, vector<Unit*> *units, bool do_intervals) {
+bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars, std::vector<MathStructure> *uncs, std::vector<Unit*> *units, bool do_intervals);
+bool convert_approximate(MathStructure &m, const MathStructure unit_mstruct, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars, std::vector<MathStructure> *uncs, std::vector<Unit*> *units, bool do_intervals) {
         bool b = false;
         if(unit_mstruct.type() == STRUCT_UNIT) {
                 if(convert_approximate(m, unit_mstruct.unit(), feo, vars, uncs, units, do_intervals)) b = true;
@@ -22884,7 +22884,7 @@ bool convert_approximate(MathStructure &m, const MathStructure unit_mstruct, con
         }
         return b;
 }
-bool test_dissolve_cu_approximate(MathStructure &mstruct, Unit *u, const EvaluationOptions &feo, vector<KnownVariable*> *vars, vector<MathStructure> *uncs, vector<Unit*> *units, bool do_intervals) {
+bool test_dissolve_cu_approximate(MathStructure &mstruct, Unit *u, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars, std::vector<MathStructure> *uncs, std::vector<Unit*> *units, bool do_intervals) {
         if(mstruct.isUnit()) {
                 if(mstruct.unit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
                         if(((CompositeUnit*) mstruct.unit())->containsRelativeTo(u)) {
@@ -22902,7 +22902,7 @@ bool test_dissolve_cu_approximate(MathStructure &mstruct, Unit *u, const Evaluat
         }
         return false;
 }
-bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo, vector<KnownVariable*> *vars, vector<MathStructure> *uncs, vector<Unit*> *units, bool do_intervals) {
+bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars, std::vector<MathStructure> *uncs, std::vector<Unit*> *units, bool do_intervals) {
         bool b = false;
         if(m.type() == STRUCT_UNIT && (m.unit() == u || m.prefix())) {
                 return false;
@@ -22937,7 +22937,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
                                         Number nmid(mstruct->number());
                                         nmid.intervalToMidValue();
                                         nmid.setApproximate(false);
-                                        KnownVariable *v = new KnownVariable("", string("(") + format_and_print(nmid) + ")", nmid);
+                                        KnownVariable *v = new KnownVariable("", std::string("(") + format_and_print(nmid) + ")", nmid);
                                         mstruct->set(v);
                                         vars->push_back(v);
                                         v->destroy();
@@ -23010,13 +23010,13 @@ bool contains_approximate_relation_to_base(const MathStructure &m, bool do_inter
         return false;
 }
 
-bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, vector<KnownVariable*> *vars, vector<MathStructure> *uncs, bool do_intervals) {
+bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars, std::vector<MathStructure> *uncs, bool do_intervals) {
         if(m.size() == 0) return false;
         if(!contains_approximate_relation_to_base(m, do_intervals)) return false;
         bool check_variables = (feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES);
-        vector<Unit*> base_units;
-        vector<AliasUnit*> alias_units;
-        vector<CompositeUnit*> composite_units;
+        std::vector<Unit*> base_units;
+        std::vector<AliasUnit*> alias_units;
+        std::vector<CompositeUnit*> composite_units;
         gatherInformation(m, base_units, alias_units, check_variables);
         if(alias_units.empty() || base_units.size() + alias_units.size() == 1) return false;
         CompositeUnit *cu;
@@ -23137,7 +23137,7 @@ bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, vect
                 }
         }
         b = false;
-        vector<Unit*> units;
+        std::vector<Unit*> units;
         for(size_t i = 0; i < composite_units.size(); i++) {
                 if(convert_approximate(m, composite_units[i], feo, vars, uncs, &units, do_intervals)) b = true;
         }
@@ -24955,7 +24955,7 @@ bool check_zero_div(const MathStructure &m, const MathStructure &x_var, const Ev
         return true;
 }
 
-int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const EvaluationOptions &eo, const MathStructure &mpow, const MathStructure &mfac, const MathStructure &mpowadd, const MathStructure &mpowmul, int use_abs, bool definite_integral, int max_part_depth, vector<MathStructure*> *parent_parts) {
+int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const EvaluationOptions &eo, const MathStructure &mpow, const MathStructure &mfac, const MathStructure &mpowadd, const MathStructure &mpowmul, int use_abs, bool definite_integral, int max_part_depth, std::vector<MathStructure*> *parent_parts) {
         if(!mpowadd.isZero() || !mpowmul.isOne()) {
                 if(!mfac.isOne() || !mpow.isMinusOne()) return false;
                 if((mstruct.function() == CALCULATOR->f_sin || mstruct.function() == CALCULATOR->f_cos || mstruct.function() == CALCULATOR->f_sinh || mstruct.function() == CALCULATOR->f_cosh || mstruct.function() == CALCULATOR->f_ln) && mstruct.size() == 1) {
@@ -27247,7 +27247,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
                                 Number den_inv(den);
                                 den_inv.recip();
                                 morig ^= den_inv;
-                                UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
+                                UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
                                 Number den_m1(den);
                                 den_m1--;
                                 MathStructure mtest(var);
@@ -27283,7 +27283,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
                 } else if((mfac.isOne() || mfac == x_var || (mfac.isPower() && mfac[0] == x_var && mfac[1].isInteger())) && (mexp.isPower() && mexp[0] != x_var && mexp[1].isNumber())) {
                         MathStructure madd2, mmul2, mexp2;
                         if(integrate_info(mexp[0], x_var, madd2, mmul2, mexp2) && (!madd.isZero() || mexp != x_var) && mexp2.isOne()) {
-                                UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mexp[0]) + RIGHT_PARENTHESIS);
+                                UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(mexp[0]) + RIGHT_PARENTHESIS);
                                 if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
                                         MathStructure m_interval(mexp[0]);
                                         m_interval.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
@@ -27442,7 +27442,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
         if(m_pow) {
                 if((*m_pow)[0].containsRepresentativeOf(x_var, true, true) == 0 && integrate_info((*m_pow)[1], x_var, madd, mmul, mexp) && mexp.isOne()) {
                         MathStructure m_orig(*m_pow);
-                        UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_orig) + RIGHT_PARENTHESIS);
+                        UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(m_orig) + RIGHT_PARENTHESIS);
                         MathStructure mtest(mstruct);
                         mtest[0].replace(m_orig, var, m_pow->containsInterval());
                         if(mtest[0].containsRepresentativeOf(x_var, true, true) == 0) {
@@ -27525,7 +27525,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
                 MathStructure mfacs, mnew;
                 mnew.setType(STRUCT_ADDITION);
                 mfacs.setType(STRUCT_ADDITION);
-                vector<int> i_degrees;
+                std::vector<int> i_degrees;
                 i_degrees.resize(mtest2.size(), 1);
                 for(size_t i = 0; i < mtest2.size() && b; i++) {
                         MathStructure mfactor = mtest2[i];
@@ -27578,7 +27578,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
                 mnums3.clearVector();
                 mtest3.clearVector();
                 if(b) {
-                        UnknownVariable *var = new UnknownVariable("", string("a"));
+                        UnknownVariable *var = new UnknownVariable("", std::string("a"));
                         var->setAssumptions(new Assumptions());
                         MathStructure mvar(var);
                         for(size_t i = 0; i < mtest2.size(); i++) {
@@ -27616,7 +27616,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
                         var->destroy();
                 }
                 if(b) {
-                        vector<UnknownVariable*> vars;
+                        std::vector<UnknownVariable*> vars;
                         bool b_solve = false;
                         for(size_t i = 0; i < mtest2.size(); i++) {
                                 if(mtest2[i].isPower()) {
@@ -27639,7 +27639,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
                                                         else mfacs.last()[i][1].number() = i_exp - i_exp_n;
                                                 }
                                                 if(i_degrees[i] == 1) {
-                                                        UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()));
+                                                        UnknownVariable *var = new UnknownVariable("", std::string("a") + i2s(mtest3.size()));
                                                         var->setAssumptions(new Assumptions());
                                                         mnums3.addChild_nocopy(new MathStructure(var));
                                                         vars.push_back(var);
@@ -27647,7 +27647,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
                                                         mnums3.addChild_nocopy(new MathStructure());
                                                         mnums3.last().setType(STRUCT_ADDITION);
                                                         for(int i2 = 1; i2 <= i_degrees[i]; i2++) {
-                                                                UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()) + i2s(i2));
+                                                                UnknownVariable *var = new UnknownVariable("", std::string("a") + i2s(mtest3.size()) + i2s(i2));
                                                                 var->setAssumptions(new Assumptions());
                                                                 if(i2 == 1) {
                                                                         mnums3.last().addChild_nocopy(new MathStructure(var));
@@ -27672,7 +27672,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
                                         mnums3.addChild_nocopy(new MathStructure());
                                         mnums3.last().setType(STRUCT_ADDITION);
                                         for(int i2 = 1; i2 <= i_degrees[i]; i2++) {
-                                                UnknownVariable *var = new UnknownVariable("", string("a") + i2s(mtest3.size()) + i2s(i2));
+                                                UnknownVariable *var = new UnknownVariable("", std::string("a") + i2s(mtest3.size()) + i2s(i2));
                                                 var->setAssumptions(new Assumptions());
                                                 if(i2 == 1) {
                                                         mnums3.last().addChild_nocopy(new MathStructure(var));
@@ -27927,7 +27927,7 @@ bool MathStructure::expandPartialFractions(const EvaluationOptions &eo) {
 }
 
 int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *this_mstruct, MathStructure *parent_parts);
-int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *this_mstruct, vector<MathStructure*> *parent_parts) {
+int contains_unsolved_integrate(const MathStructure &mstruct, MathStructure *this_mstruct, std::vector<MathStructure*> *parent_parts) {
         if(mstruct.isFunction() && mstruct.function() == CALCULATOR->f_integrate) {
                 if(this_mstruct->equals(mstruct[0], true)) return 3;
                 for(size_t i = 0; i < parent_parts->size(); i++) {
@@ -28172,7 +28172,7 @@ bool contains_imaginary(const MathStructure &m) {
         return false;
 }
 
-int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo_pre, bool simplify_first, int use_abs, bool definite_integral, bool try_abs, int max_part_depth, vector<MathStructure*> *parent_parts) {
+int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions &eo_pre, bool simplify_first, int use_abs, bool definite_integral, bool try_abs, int max_part_depth, std::vector<MathStructure*> *parent_parts) {
         if(CALCULATOR->aborted()) CANNOT_INTEGRATE
         EvaluationOptions eo = eo_pre;
         eo.protected_function = CALCULATOR->f_integrate;
@@ -28767,7 +28767,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                 den_inv.recip();
                                                 morig ^= den_inv;
 
-                                                UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
+                                                UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
                                                 Number den_m1(den);
                                                 den_m1--;
                                                 MathStructure mtest(var);
@@ -28810,7 +28810,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                 if(integrate_info(mbase, x_var, madd, mmul, mexp, false, false) && mexp.isOne() && (!madd.isZero() || !mmul.isOne())) {
                                                         MathStructure mtest(*this);
 
-                                                        UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mbase) + RIGHT_PARENTHESIS);
+                                                        UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(mbase) + RIGHT_PARENTHESIS);
                                                         mtest.replace(mbase, var, mbase.containsInterval());
                                                         if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
                                                                 MathStructure m_interval(mbase);
@@ -28996,7 +28996,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                         den_inv.recip();
                                                         morig ^= den_inv;
 
-                                                        UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
+                                                        UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(morig) + RIGHT_PARENTHESIS);
                                                         MathStructure mvar(var);
                                                         if(!num.isOne()) mvar ^= num;
                                                         MathStructure mtest(CHILD(0));
@@ -29561,7 +29561,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                                                 bool b = false;
                                                                                 if(i == 1) {
                                                                                         m_replace ^= mpow;
-                                                                                        var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
+                                                                                        var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
                                                                                         mtest.replace(m_replace, var);
                                                                                         new_pow++;
                                                                                         new_pow -= mpow.number();
@@ -29575,7 +29575,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                                                         if(new_pow.isInteger()) {
                                                                                                 b = true;
                                                                                                 m_replace ^= nr_two;
-                                                                                                var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
+                                                                                                var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
                                                                                                 MathStructure m_prev(x_var), m_new(var);
                                                                                                 m_prev ^= mpow;
                                                                                                 m_new ^= mpow;
@@ -29589,7 +29589,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                                                         if(new_pow.isInteger()) {
                                                                                                 b = true;
                                                                                                 m_replace ^= nr_three;
-                                                                                                var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
+                                                                                                var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
                                                                                                 MathStructure m_prev(x_var), m_new(var);
                                                                                                 m_prev ^= mpow;
                                                                                                 m_new ^= mpow;
@@ -29629,7 +29629,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                                 if(integrate_info(mbase, x_var, madd, mmul, mpow, false, false) && mpow.isOne() && (!madd.isZero() || !mmul.isOne())) {
                                                                         MathStructure mtest(CHILD(1));
 
-                                                                        UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mbase) + RIGHT_PARENTHESIS);
+                                                                        UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(mbase) + RIGHT_PARENTHESIS);
                                                                         mtest.replace(mbase, var, mbase.containsInterval());
                                                                         if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
                                                                                 MathStructure m_interval(mbase);
@@ -30099,7 +30099,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                                         if(!new_pow.isOne()) mtest[0] ^= new_pow;
                                                                 }
                                                                 CALCULATOR->beginTemporaryStopMessages();
-                                                                var->setName(string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
+                                                                var->setName(std::string(LEFT_PARENTHESIS) + format_and_print(m_replace) + RIGHT_PARENTHESIS);
                                                                 if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
                                                                         MathStructure m_interval(m_replace);
                                                                         m_interval.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
@@ -30121,7 +30121,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
                                                 }
                                         }
                                 }
-                                vector<MathStructure*> parent_parts_pre;
+                                std::vector<MathStructure*> parent_parts_pre;
                                 if(parent_parts) {
                                         for(size_t i = 0; i < parent_parts->size(); i++) {
                                                 if(equals(*(*parent_parts)[i], true)) CANNOT_INTEGRATE
@@ -30648,7 +30648,7 @@ bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const E
 
 bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig) {
         if(!isComparison()) {
-                cout << "isolate_x_sub: " << *this << " is not a comparison." << endl;
+            std::cout << "isolate_x_sub: " << *this << " is not a comparison." << std::endl;
                 return false;
         }
         if(CHILD(0) == x_var) return false;
@@ -32026,7 +32026,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
                                 }
                                 UnknownVariable *var = NULL;
                                 if(mvar != x_var) {
-                                        var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mvar) + RIGHT_PARENTHESIS);
+                                        var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(mvar) + RIGHT_PARENTHESIS);
                                         var->setInterval(mvar);
                                 }
                                 if(!nr_root.isZero()) {
@@ -32846,7 +32846,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
                         //x*y=0 => x=0 || y=0
                         if(CHILD(1).isZero()) {
                                 if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
-                                        vector<int> checktype;
+                                        std::vector<int> checktype;
                                         bool bdoit = false;
                                         for(size_t i = 0; i < CHILD(0).size(); i++) {
                                                 if(CALCULATOR->aborted()) return false;
@@ -33945,7 +33945,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
                                                 MathStructure mvar(CHILD(0)[0]);
                                                 mvar.raise(CHILD(0)[1].number().numerator());
 
-                                                UnknownVariable *var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(mvar) + RIGHT_PARENTHESIS);
+                                                UnknownVariable *var = new UnknownVariable("", std::string(LEFT_PARENTHESIS) + format_and_print(mvar) + RIGHT_PARENTHESIS);
                                                 var->setInterval(mvar);
                                                 MathStructure mu(var);
                                                 MathStructure mtest(mu);

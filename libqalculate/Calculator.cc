@@ -65,8 +65,8 @@
 
 PrintOptions::PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(true), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), hexadecimal_twos_complement(false), binary_bits(0) {}
 
-const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
-const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
+const std::string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
+const std::string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
 
 InternalPrintStruct::InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL), parent_approximate(false), parent_precision(-1), iexp(NULL) {}
 
@@ -110,7 +110,7 @@ PlotDataParameters::PlotDataParameters() {
         test_continuous = false;
 }
 
-CalculatorMessage::CalculatorMessage(string message_, MessageType type_, int cat_, int stage_) {
+CalculatorMessage::CalculatorMessage(std::string message_, MessageType type_, int cat_, int stage_) {
         mtype = type_;
         i_stage = stage_;
         i_cat = cat_;
@@ -122,7 +122,7 @@ CalculatorMessage::CalculatorMessage(const CalculatorMessage &e) {
         i_cat = e.category();
         smessage = e.message();
 }
-string CalculatorMessage::message() const {
+std::string CalculatorMessage::message() const {
         return smessage;
 }
 const char* CalculatorMessage::c_message() const {
@@ -138,11 +138,11 @@ int CalculatorMessage::category() const {
         return i_cat;
 }
 
-void Calculator::addStringAlternative(string replacement, string standard) {
+void Calculator::addStringAlternative(std::string replacement, std::string standard) {
         signs.push_back(replacement);
         real_signs.push_back(standard);
 }
-bool Calculator::delStringAlternative(string replacement, string standard) {
+bool Calculator::delStringAlternative(std::string replacement, std::string standard) {
         for(size_t i = 0; i < signs.size(); i++) {
                 if(signs[i] == replacement && real_signs[i] == standard) {
                         signs.erase(signs.begin() + i);
@@ -152,11 +152,11 @@ bool Calculator::delStringAlternative(string replacement, string standard) {
         }
         return false;
 }
-void Calculator::addDefaultStringAlternative(string replacement, string standard) {
+void Calculator::addDefaultStringAlternative(std::string replacement, std::string standard) {
         default_signs.push_back(replacement);
         default_real_signs.push_back(standard);
 }
-bool Calculator::delDefaultStringAlternative(string replacement, string standard) {
+bool Calculator::delDefaultStringAlternative(std::string replacement, std::string standard) {
         for(size_t i = 0; i < default_signs.size(); i++) {
                 if(default_signs[i] == replacement && default_real_signs[i] == standard) {
                         default_signs.erase(default_signs.begin() + i);
@@ -287,9 +287,9 @@ void CalculateThread::run() {
 
 class Calculator_p {
         public:
-                unordered_map<size_t, MathStructure*> id_structs;
-                unordered_map<size_t, bool> ids_p;
-                vector<size_t> freed_ids;
+                std::unordered_map<size_t, MathStructure*> id_structs;
+                std::unordered_map<size_t, bool> ids_p;
+                std::vector<size_t> freed_ids;
                 size_t ids_i;
                 Number custom_input_base, custom_output_base;
                 long int custom_input_base_i;
@@ -471,7 +471,7 @@ Calculator::Calculator() {
         NAME_NUMBER_PRE_STR = "_";
 
         //"to"-operator
-        string str = _("to");
+        std::string str = _("to");
         local_to = (str != "to");
 
         decimal_null_prefix = new DecimalPrefix(0, "", "");
@@ -697,7 +697,7 @@ Calculator::Calculator(bool ignore_locale) {
         NAME_NUMBER_PRE_STR = "_";
 
         //"to"-operator
-        string str = _("to");
+        std::string str = _("to");
         local_to = (str != "to");
 
         decimal_null_prefix = new DecimalPrefix(0, "", "");
@@ -811,7 +811,7 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
                 return false;
         }
         if((unsigned char) pos[0] >= 0xC0) {
-                string str;
+                std::string str;
                 str += pos[0];
                 while((unsigned char) pos[1] >= 0x80 && (unsigned char) pos[1] < 0xC0) {
                         str += pos[1];
@@ -830,7 +830,7 @@ void Calculator::beginTemporaryStopMessages() {
         stopped_errors_count.push_back(0);
         stopped_warnings_count.push_back(0);
         stopped_messages_count.push_back(0);
-        vector<CalculatorMessage> vcm;
+        std::vector<CalculatorMessage> vcm;
         stopped_messages.push_back(vcm);
 }
 int Calculator::endTemporaryStopMessages(int *message_count, int *warning_count, int release_messages_if_no_equal_or_greater_than_message_type) {
@@ -852,7 +852,7 @@ int Calculator::endTemporaryStopMessages(int *message_count, int *warning_count,
         stopped_messages.pop_back();
         return ret;
 }
-void Calculator::endTemporaryStopMessages(bool release_messages, vector<CalculatorMessage> *blocked_messages) {
+void Calculator::endTemporaryStopMessages(bool release_messages, std::vector<CalculatorMessage> *blocked_messages) {
         if(disable_errors_ref <= 0) return;
         disable_errors_ref--;
         stopped_errors_count.pop_back();
@@ -862,9 +862,9 @@ void Calculator::endTemporaryStopMessages(bool release_messages, vector<Calculat
         if(release_messages) addMessages(&stopped_messages[disable_errors_ref]);
         stopped_messages.pop_back();
 }
-void Calculator::addMessages(vector<CalculatorMessage> *message_vector) {
+void Calculator::addMessages(std::vector<CalculatorMessage> *message_vector) {
         for(size_t i3 = 0; i3 < message_vector->size(); i3++) {
-                string error_str = (*message_vector)[i3].message();
+                std::string error_str = (*message_vector)[i3].message();
                 bool dup_error = false;
                 for(size_t i = 0; i < messages.size(); i++) {
                         if(error_str == messages[i].message()) {
@@ -917,19 +917,19 @@ bool Calculator::hasFunction(MathFunction *f) {
         return false;
 }
 bool Calculator::stillHasVariable(Variable *v) {
-        for(vector<Variable*>::iterator it = deleted_variables.begin(); it != deleted_variables.end(); ++it) {
+        for(std::vector<Variable*>::iterator it = deleted_variables.begin(); it != deleted_variables.end(); ++it) {
                 if(*it == v) return false;
         }
         return true;
 }
 bool Calculator::stillHasUnit(Unit *u) {
-        for(vector<Unit*>::iterator it = deleted_units.begin(); it != deleted_units.end(); ++it) {
+        for(std::vector<Unit*>::iterator it = deleted_units.begin(); it != deleted_units.end(); ++it) {
                 if(*it == u) return false;
         }
         return true;
 }
 bool Calculator::stillHasFunction(MathFunction *f) {
-        for(vector<MathFunction*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
+        for(std::vector<MathFunction*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
                 if(*it == f) return false;
         }
         return true;
@@ -954,7 +954,7 @@ ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
         }
         return NULL;
 }
-ExpressionItem *Calculator::getActiveExpressionItem(string name, ExpressionItem *item) {
+ExpressionItem *Calculator::getActiveExpressionItem(std::string name, ExpressionItem *item) {
         if(name.empty()) return NULL;
         for(size_t index = 0; index < variables.size(); index++) {
                 if(variables[index] != item && variables[index]->isActive() && variables[index]->hasName(name)) {
@@ -973,7 +973,7 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name, ExpressionItem 
         }
         return NULL;
 }
-ExpressionItem *Calculator::getInactiveExpressionItem(string name, ExpressionItem *item) {
+ExpressionItem *Calculator::getInactiveExpressionItem(std::string name, ExpressionItem *item) {
         if(name.empty()) return NULL;
         for(size_t index = 0; index < variables.size(); index++) {
                 if(variables[index] != item && !variables[index]->isActive() && variables[index]->hasName(name)) {
@@ -992,7 +992,7 @@ ExpressionItem *Calculator::getInactiveExpressionItem(string name, ExpressionIte
         }
         return NULL;
 }
-ExpressionItem *Calculator::getExpressionItem(string name, ExpressionItem *item) {
+ExpressionItem *Calculator::getExpressionItem(std::string name, ExpressionItem *item) {
         if(name.empty()) return NULL;
         Variable *v = getVariable(name);
         if(v && v != item) return v;
@@ -1031,7 +1031,7 @@ Prefix *Calculator::getPrefix(size_t index) const {
         }
         return NULL;
 }
-Prefix *Calculator::getPrefix(string name_) const {
+Prefix *Calculator::getPrefix(std::string name_) const {
         for(size_t i = 0; i < prefixes.size(); i++) {
                 if(prefixes[i]->shortName(false) == name_ || prefixes[i]->longName(false) == name_ || prefixes[i]->unicodeName(false) == name_) {
                         return prefixes[i];
@@ -1338,7 +1338,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
                 l2 = p->longName(false).length();
                 if(l2 > UFV_LENGTHS) {
                         size_t i = 0, l;
-                        for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+                        for(std::vector<void*>::iterator it = ufvl.begin(); ; ++it) {
                                 l = 0;
                                 if(it != ufvl.end()) {
                                         if(ufvl_t[i] == 'v')
@@ -1377,7 +1377,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
                 l2 = p->shortName(false).length();
                 if(l2 > UFV_LENGTHS) {
                         size_t i = 0, l;
-                        for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+                        for(std::vector<void*>::iterator it = ufvl.begin(); ; ++it) {
                                 l = 0;
                                 if(it != ufvl.end()) {
                                         if(ufvl_t[i] == 'v')
@@ -1416,7 +1416,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
                 l2 = p->unicodeName(false).length();
                 if(l2 > UFV_LENGTHS) {
                         size_t i = 0, l;
-                        for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+                        for(std::vector<void*>::iterator it = ufvl.begin(); ; ++it) {
                                 l = 0;
                                 if(it != ufvl.end()) {
                                         if(ufvl_t[i] == 'v')
@@ -1490,14 +1490,14 @@ void Calculator::setCustomOutputBase(Number nr) {priv->custom_output_base = nr;}
 const Number &Calculator::customInputBase() const {return priv->custom_input_base;}
 const Number &Calculator::customOutputBase() const {return priv->custom_output_base;}
 
-const string &Calculator::getDecimalPoint() const {return DOT_STR;}
-const string &Calculator::getComma() const {return COMMA_STR;}
-string Calculator::localToString(bool include_spaces) const {
-        if(include_spaces) return string(SPACE) + string(_("to")) + SPACE;
+const std::string &Calculator::getDecimalPoint() const {return DOT_STR;}
+const std::string &Calculator::getComma() const {return COMMA_STR;}
+std::string Calculator::localToString(bool include_spaces) const {
+        if(include_spaces) return std::string(SPACE) + std::string(_("to")) + SPACE;
         else return _("to");
 }
-string Calculator::localWhereString() const {
-        return string(SPACE) + string(_("where")) + SPACE;
+std::string Calculator::localWhereString() const {
+        return std::string(SPACE) + std::string(_("where")) + SPACE;
 }
 void Calculator::setLocale() {
         if(b_ignore_locale) return;
@@ -1592,7 +1592,7 @@ size_t Calculator::addId(MathStructure *mstruct, bool persistent) {
         priv->id_structs[id] = mstruct;
         return id;
 }
-size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent) {
+size_t Calculator::parseAddId(MathFunction *f, const std::string &str, const ParseOptions &po, bool persistent) {
         size_t id = 0;
         if(priv->freed_ids.size() > 0) {
                 id = priv->freed_ids.back();
@@ -1606,7 +1606,7 @@ size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOpt
         f->parse(*priv->id_structs[id], str, po);
         return id;
 }
-size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
+size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const std::string &str, const ParseOptions &po, bool persistent) {
         size_t id = 0;
         if(priv->freed_ids.size() > 0) {
                 id = priv->freed_ids.back();
@@ -1621,7 +1621,7 @@ size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append
         priv->id_structs[id]->addChild(append_mstruct);
         return id;
 }
-size_t Calculator::parseAddVectorId(const string &str, const ParseOptions &po, bool persistent) {
+size_t Calculator::parseAddVectorId(const std::string &str, const ParseOptions &po, bool persistent) {
         size_t id = 0;
         if(priv->freed_ids.size() > 0) {
                 id = priv->freed_ids.back();
@@ -1689,7 +1689,7 @@ class UptimeVariable : public DynamicVariable {
 #	ifdef __linux__
                 std::ifstream proc_uptime("/proc/uptime", std::ios::in);
                 if(proc_uptime.is_open()) {
-                        string s_uptime;
+                        std::string s_uptime;
                         getline(proc_uptime, s_uptime, ' ');
                         nr.set(s_uptime);
                 } else {
@@ -2033,11 +2033,11 @@ void Calculator::message(MessageType mtype, int message_category, const char *TE
                         stopped_warnings_count[disable_errors_ref - 1]++;
                 }
         }
-        string error_str = TEMPLATE;
+        std::string error_str = TEMPLATE;
         size_t i = 0;
         while(true) {
                 i = error_str.find("%", i);
-                if(i == string::npos || i + 1 == error_str.length()) break;
+                if(i == std::string::npos || i + 1 == error_str.length()) break;
                 switch(error_str[i + 1]) {
                         case 's': {
                                 const char *str = va_arg(ap, const char*);
@@ -2115,7 +2115,7 @@ void Calculator::cleanMessages(const MathStructure &mstruct, size_t first_messag
                 }
         }
 }
-void Calculator::deleteName(string name_, ExpressionItem *object) {
+void Calculator::deleteName(std::string name_, ExpressionItem *object) {
         Variable *v2 = getVariable(name_);
         if(v2 == object) {
                 return;
@@ -2132,7 +2132,7 @@ void Calculator::deleteName(string name_, ExpressionItem *object) {
         }
         deleteName(name_, object);
 }
-void Calculator::deleteUnitName(string name_, Unit *object) {
+void Calculator::deleteUnitName(std::string name_, Unit *object) {
         Unit *u2 = getUnit(name_);
         if(u2) {
                 if(u2 != object) {
@@ -2153,7 +2153,7 @@ void Calculator::saveState() {
 void Calculator::restoreState() {
 }
 void Calculator::clearBuffers() {
-        for(unordered_map<size_t, bool>::iterator it = priv->ids_p.begin(); it != priv->ids_p.end(); ++it) {
+        for(std::unordered_map<size_t, bool>::iterator it = priv->ids_p.begin(); it != priv->ids_p.end(); ++it) {
                 if(!it->second) {
                         priv->freed_ids.push_back(it->first);
                         priv->id_structs.erase(it->first);
@@ -2203,19 +2203,19 @@ void Calculator::terminateThreads() {
         }
 }
 
-string Calculator::localizeExpression(string str, const ParseOptions &po) const {
+std::string Calculator::localizeExpression(std::string str, const ParseOptions &po) const {
         if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
-        vector<size_t> q_begin;
-        vector<size_t> q_end;
+        std::vector<size_t> q_begin;
+        std::vector<size_t> q_end;
         size_t i3 = 0;
         while(true) {
                 i3 = str.find_first_of("\"\'", i3);
-                if(i3 == string::npos) {
+                if(i3 == std::string::npos) {
                         break;
                 }
                 q_begin.push_back(i3);
                 i3 = str.find(str[i3], i3 + 1);
-                if(i3 == string::npos) {
+                if(i3 == std::string::npos) {
                         q_end.push_back(str.length() - 1);
                         break;
                 }
@@ -2225,7 +2225,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
         if(COMMA_STR != COMMA || po.comma_as_separator) {
                 bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
                 size_t ui = str.find(COMMA);
-                while(ui != string::npos) {
+                while(ui != std::string::npos) {
                         bool b = false;
                         for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
                                 if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
@@ -2242,7 +2242,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
         }
         if(DOT_STR != DOT) {
                 size_t ui = str.find(DOT);
-                while(ui != string::npos) {
+                while(ui != std::string::npos) {
                         bool b = false;
                         for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
                                 if(ui <= q_end[ui2] && ui >= q_begin[ui2]) {
@@ -2259,7 +2259,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
         }
         return str;
 }
-string Calculator::unlocalizeExpression(string str, const ParseOptions &po) const {
+std::string Calculator::unlocalizeExpression(std::string str, const ParseOptions &po) const {
         if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
         int base = po.base;
         if(base == BASE_CUSTOM) {
@@ -2277,17 +2277,17 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
         } else if(base < 2 || base > 36) {
                 base = -1;
         }
-        vector<size_t> q_begin;
-        vector<size_t> q_end;
+        std::vector<size_t> q_begin;
+        std::vector<size_t> q_end;
         size_t i3 = 0;
         while(true) {
                 i3 = str.find_first_of("\"\'", i3);
-                if(i3 == string::npos) {
+                if(i3 == std::string::npos) {
                         break;
                 }
                 q_begin.push_back(i3);
                 i3 = str.find(str[i3], i3 + 1);
-                if(i3 == string::npos) {
+                if(i3 == std::string::npos) {
                         q_end.push_back(str.length() - 1);
                         break;
                 }
@@ -2295,33 +2295,33 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
                 i3++;
         }
         if(DOT_STR != DOT) {
-                if(DOT_STR == COMMA && str.find(COMMA_STR) == string::npos && base > 0 && base <= 10) {
-                        bool b_vector = (str.find(LEFT_VECTOR_WRAP) != string::npos && !po.dot_as_separator);
-                        bool b_dot = (str.find(DOT) != string::npos);
+                if(DOT_STR == COMMA && str.find(COMMA_STR) == std::string::npos && base > 0 && base <= 10) {
+                        bool b_vector = (str.find(LEFT_VECTOR_WRAP) != std::string::npos && !po.dot_as_separator);
+                        bool b_dot = (str.find(DOT) != std::string::npos);
                         size_t ui = str.find_first_of(b_vector ? DOT COMMA : COMMA);
                         size_t ui2 = 0;
-                        while(ui != string::npos) {
+                        while(ui != std::string::npos) {
                                 for(; ui2 < q_end.size(); ui2++) {
                                         if(ui >= q_begin[ui2]) {
                                                 if(ui <= q_end[ui2]) {
                                                         ui = str.find_first_of(b_vector ? DOT COMMA : COMMA, q_end[ui2] + 1);
-                                                        if(ui == string::npos) break;
+                                                        if(ui == std::string::npos) break;
                                                 }
                                         } else {
                                                 break;
                                         }
                                 }
-                                if(ui == string::npos) break;
+                                if(ui == std::string::npos) break;
                                 if(ui > 0) {
                                         size_t ui3 = str.find_last_not_of(SPACES, ui - 1);
-                                        if(ui3 != string::npos && ((str[ui3] > 'a' && str[ui3] < 'z') || (str[ui3] > 'A' && str[ui3] < 'Z')) && is_not_number(str[ui3], base)) return str;
+                                        if(ui3 != std::string::npos && ((str[ui3] > 'a' && str[ui3] < 'z') || (str[ui3] > 'A' && str[ui3] < 'Z')) && is_not_number(str[ui3], base)) return str;
                                 }
                                 if(ui != str.length() - 1) {
                                         size_t ui3 = str.find_first_not_of(SPACES, ui + 1);
-                                        if(ui3 != string::npos && is_not_number(str[ui3], base)) return str;
+                                        if(ui3 != std::string::npos && is_not_number(str[ui3], base)) return str;
                                         if(b_vector || !b_dot) {
                                                 ui3 = str.find_first_not_of(SPACES NUMBERS, ui3 + 1);
-                                                if(ui3 != string::npos && (str[ui3] == COMMA_CH || (b_vector && str[ui3] == DOT_CH))) return str;
+                                                if(ui3 != std::string::npos && (str[ui3] == COMMA_CH || (b_vector && str[ui3] == DOT_CH))) return str;
                                         }
                                 }
                                 ui = str.find(b_vector ? DOT COMMA : COMMA, ui + 1);
@@ -2330,36 +2330,36 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
                 if(po.dot_as_separator) {
                         size_t ui = str.find(DOT);
                         size_t ui2 = 0;
-                        while(ui != string::npos) {
+                        while(ui != std::string::npos) {
                                 for(; ui2 < q_end.size(); ui2++) {
                                         if(ui >= q_begin[ui2]) {
                                                 if(ui <= q_end[ui2]) {
                                                         ui = str.find(DOT, q_end[ui2] + 1);
-                                                        if(ui == string::npos) break;
+                                                        if(ui == std::string::npos) break;
                                                 }
                                         } else {
                                                 break;
                                         }
                                 }
-                                if(ui == string::npos) break;
+                                if(ui == std::string::npos) break;
                                 str.replace(ui, strlen(DOT), SPACE);
                                 ui = str.find(DOT, ui + strlen(SPACE));
                         }
                 }
                 size_t ui2 = 0;
                 size_t ui = str.find(DOT_STR);
-                while(ui != string::npos) {
+                while(ui != std::string::npos) {
                         for(; ui2 < q_end.size(); ui2++) {
                                 if(ui >= q_begin[ui2]) {
                                         if(ui <= q_end[ui2]) {
                                                 ui = str.find(DOT_STR, q_end[ui2] + 1);
-                                                if(ui == string::npos) break;
+                                                if(ui == std::string::npos) break;
                                         }
                                 } else {
                                         break;
                                 }
                         }
-                        if(ui == string::npos) break;
+                        if(ui == std::string::npos) break;
                         str.replace(ui, DOT_STR.length(), DOT);
                         ui = str.find(DOT_STR, ui + strlen(DOT));
                 }
@@ -2369,36 +2369,36 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
                 if(po.comma_as_separator) {
                         size_t ui = str.find(COMMA);
                         size_t ui2 = 0;
-                        while(ui != string::npos) {
+                        while(ui != std::string::npos) {
                                 for(; ui2 < q_end.size(); ui2++) {
                                         if(ui >= q_begin[ui2]) {
                                                 if(ui <= q_end[ui2]) {
                                                         ui = str.find(COMMA, q_end[ui2] + 1);
-                                                        if(ui == string::npos) break;
+                                                        if(ui == std::string::npos) break;
                                                 }
                                         } else {
                                                 break;
                                         }
                                 }
-                                if(ui == string::npos) break;
+                                if(ui == std::string::npos) break;
                                 str.erase(ui, strlen(COMMA));
                                 ui = str.find(COMMA, ui);
                         }
                 }
                 size_t ui2 = 0;
                 size_t ui = str.find(b_alt_comma ? ";" : COMMA_STR);
-                while(ui != string::npos) {
+                while(ui != std::string::npos) {
                         for(; ui2 < q_end.size(); ui2++) {
                                 if(ui >= q_begin[ui2]) {
                                         if(ui <= q_end[ui2]) {
                                                 ui = str.find(b_alt_comma ? ";" : COMMA_STR, q_end[ui2] + 1);
-                                                if(ui == string::npos) break;
+                                                if(ui == std::string::npos) break;
                                         }
                                 } else {
                                         break;
                                 }
                         }
-                        if(ui == string::npos) break;
+                        if(ui == std::string::npos) break;
                         str.replace(ui, b_alt_comma ? 1 : COMMA_STR.length(), COMMA);
                         ui = str.find(b_alt_comma ? ";" : COMMA_STR, ui + strlen(COMMA));
                 }
@@ -2432,7 +2432,7 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
         }
         return true;
 }
-bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division, int function_arguments) {
+bool Calculator::calculateRPN(std::string str, int command, size_t index, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division, int function_arguments) {
         MathStructure *mstruct = new MathStructure();
         b_busy = true;
         if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
@@ -2740,7 +2740,7 @@ MathStructure *Calculator::calculateRPNLogicalNot(const EvaluationOptions &eo, M
 bool Calculator::RPNStackEnter(MathStructure *mstruct, int msecs, const EvaluationOptions &eo) {
         return calculateRPN(mstruct, PROC_RPN_ADD, 0, msecs, eo);
 }
-bool Calculator::RPNStackEnter(string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+bool Calculator::RPNStackEnter(std::string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
         remove_blank_ends(str);
         if(str.empty() && rpn_stack.size() > 0) {
                 rpn_stack.push_back(new MathStructure(*rpn_stack.back()));
@@ -2758,7 +2758,7 @@ void Calculator::RPNStackEnter(MathStructure *mstruct, bool eval, const Evaluati
         }
         rpn_stack.push_back(mstruct);
 }
-void Calculator::RPNStackEnter(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+void Calculator::RPNStackEnter(std::string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
         remove_blank_ends(str);
         if(str.empty() && rpn_stack.size() > 0) rpn_stack.push_back(new MathStructure(*rpn_stack.back()));
         else rpn_stack.push_back(new MathStructure(calculate(str, eo, parsed_struct, to_struct, make_to_division)));
@@ -2771,7 +2771,7 @@ bool Calculator::setRPNRegister(size_t index, MathStructure *mstruct, int msecs,
         if(index <= 0 || index > rpn_stack.size()) return false;
         return calculateRPN(mstruct, PROC_RPN_SET, index, msecs, eo);
 }
-bool Calculator::setRPNRegister(size_t index, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+bool Calculator::setRPNRegister(size_t index, std::string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
         if(index <= 0 || index > rpn_stack.size()) return false;
         return calculateRPN(str, PROC_RPN_SET, index, msecs, eo, parsed_struct, to_struct, make_to_division);
 }
@@ -2792,7 +2792,7 @@ void Calculator::setRPNRegister(size_t index, MathStructure *mstruct, bool eval,
         rpn_stack[index]->unref();
         rpn_stack[index] = mstruct;
 }
-void Calculator::setRPNRegister(size_t index, string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+void Calculator::setRPNRegister(size_t index, std::string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
         if(index <= 0 || index > rpn_stack.size()) return;
         index = rpn_stack.size() - index;
         MathStructure *mstruct = new MathStructure(calculate(str, eo, parsed_struct, to_struct, make_to_division));
@@ -2887,21 +2887,21 @@ int has_information_unit(const MathStructure &m, bool top = true) {
 }
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
-string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
+std::string Calculator::calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
         if(msecs > 0) startControl(msecs);
         PrintOptions printops = po;
         EvaluationOptions evalops = eo;
         MathStructure mstruct;
         bool do_bases = false, do_factors = false, do_fraction = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
-        string from_str = str, to_str;
+        std::string from_str = str, to_str;
         Number base_save;
         if(printops.base == BASE_CUSTOM) base_save = customOutputBase();
         int save_bin = priv->use_binary_prefixes;
         if(separateToExpression(from_str, to_str, evalops, true)) {
                 remove_duplicate_blanks(to_str);
-                string to_str1, to_str2;
+                std::string to_str1, to_str2;
                 size_t ispace = to_str.find_first_of(SPACES);
-                if(ispace != string::npos) {
+                if(ispace != std::string::npos) {
                         to_str1 = to_str.substr(0, ispace);
                         remove_blank_ends(to_str1);
                         to_str2 = to_str.substr(ispace + 1);
@@ -3048,7 +3048,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
                 }
         } else {
                 size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
-                if(i != string::npos) {
+                if(i != std::string::npos) {
                         to_str = str.substr(0, i);
                         if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
                                 str = str.substr(i + 1);
@@ -3078,19 +3078,19 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
                 bool b_fail;
                 long int y, m, d;
 #define PRINT_CALENDAR(x, c) if(!str.empty()) {str += "\n";} str += x; str += " "; b_fail = !dateToCalendar(*mstruct.datetime(), y, m, d, c); if(b_fail) {str += _("failed");} else {str += i2s(d); str += " "; str += monthName(m, c, true); str += " "; str += i2s(y);}
-                PRINT_CALENDAR(string(_("Gregorian:")), CALENDAR_GREGORIAN);
-                PRINT_CALENDAR(string(_("Hebrew:")), CALENDAR_HEBREW);
-                PRINT_CALENDAR(string(_("Islamic:")), CALENDAR_ISLAMIC);
-                PRINT_CALENDAR(string(_("Persian:")), CALENDAR_PERSIAN);
-                PRINT_CALENDAR(string(_("Indian national:")), CALENDAR_INDIAN);
-                PRINT_CALENDAR(string(_("Chinese:")), CALENDAR_CHINESE);
+                PRINT_CALENDAR(std::string(_("Gregorian:")), CALENDAR_GREGORIAN);
+                PRINT_CALENDAR(std::string(_("Hebrew:")), CALENDAR_HEBREW);
+                PRINT_CALENDAR(std::string(_("Islamic:")), CALENDAR_ISLAMIC);
+                PRINT_CALENDAR(std::string(_("Persian:")), CALENDAR_PERSIAN);
+                PRINT_CALENDAR(std::string(_("Indian national:")), CALENDAR_INDIAN);
+                PRINT_CALENDAR(std::string(_("Chinese:")), CALENDAR_CHINESE);
                 long int cy, yc, st, br;
                 chineseYearInfo(y, cy, yc, st, br);
-                if(!b_fail) {str += " ("; str += chineseStemName(st); str += string(" "); str += chineseBranchName(br); str += ")";}
-                PRINT_CALENDAR(string(_("Julian:")), CALENDAR_JULIAN);
-                PRINT_CALENDAR(string(_("Revised julian:")), CALENDAR_MILANKOVIC);
-                PRINT_CALENDAR(string(_("Coptic:")), CALENDAR_COPTIC);
-                PRINT_CALENDAR(string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
+                if(!b_fail) {str += " ("; str += chineseStemName(st); str += std::string(" "); str += chineseBranchName(br); str += ")";}
+                PRINT_CALENDAR(std::string(_("Julian:")), CALENDAR_JULIAN);
+                PRINT_CALENDAR(std::string(_("Revised julian:")), CALENDAR_MILANKOVIC);
+                PRINT_CALENDAR(std::string(_("Coptic:")), CALENDAR_COPTIC);
+                PRINT_CALENDAR(std::string(_("Ethiopian:")), CALENDAR_ETHIOPIAN);
                 stopControl();
                 return str;
         } else if(do_bases) {
@@ -3132,8 +3132,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
         priv->use_binary_prefixes = save_bin;
         return str;
 }
-bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
-        mstruct->set(string(_("calculating...")), false, true);
+bool Calculator::calculate(MathStructure *mstruct, std::string str, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+        mstruct->set(std::string(_("calculating...")), false, true);
         b_busy = true;
         if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
         bool had_msecs = msecs > 0;
@@ -3156,7 +3156,7 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
         }
         return true;
 }
-bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOptions &eo, string to_str) {
+bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOptions &eo, std::string to_str) {
         b_busy = true;
         if(!calculate_thread->running && !calculate_thread->start()) {mstruct->setAborted(); return false;}
         bool had_msecs = msecs > 0;
@@ -3181,21 +3181,21 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
         }
         return true;
 }
-bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const {
+bool Calculator::hasToExpression(const std::string &str, bool allow_empty_from) const {
         if(str.empty()) return false;
         size_t i = str.length() - 1, i2 = i;
         int l = 2;
         while(i != 0) {
                 i2 = str.rfind(_("to"), i - 1);
                 i = str.rfind("to", i - 1);
-                if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+                if(i2 != std::string::npos && (i == std::string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
                 else l = 2;
-                if(i == string::npos) break;
+                if(i == std::string::npos) break;
                 if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
         }
         return false;
 }
-bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const {
+bool Calculator::hasToExpression(const std::string &str, bool allow_empty_from, const EvaluationOptions &eo) const {
         if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
         if(str.empty()) return false;
         size_t i = str.length() - 1, i2 = i;
@@ -3203,14 +3203,14 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
         while(i != 0) {
                 i2 = str.rfind(_("to"), i - 1);
                 i = str.rfind("to", i - 1);
-                if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+                if(i2 != std::string::npos && (i == std::string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
                 else l = 2;
-                if(i == string::npos) break;
+                if(i == std::string::npos) break;
                 if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
         }
         return false;
 }
-bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
+bool Calculator::separateToExpression(std::string &str, std::string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
         if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
         to_str = "";
         if(str.empty()) return false;
@@ -3219,9 +3219,9 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
         while(i != 0) {
                 i2 = str.rfind(_("to"), i - 1);
                 i = str.rfind("to", i - 1);
-                if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
+                if(i2 != std::string::npos && (i == std::string::npos || i < i2)) {l = strlen(_("to")); i = i2;}
                 else l = 2;
-                if(i == string::npos) break;
+                if(i == std::string::npos) break;
                 if(((i > 0 && is_in(SPACES, str[i - 1])) || (allow_empty_from && i == 0)) && i + l < str.length() && is_in(SPACES, str[i + l])) {
                         to_str = str.substr(i + l , str.length() - i - l);
                         if(to_str.empty()) return false;
@@ -3244,7 +3244,7 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
         }
         return false;
 }
-bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &eo) const {
+bool Calculator::hasWhereExpression(const std::string &str, const EvaluationOptions &eo) const {
         if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
         if(str.empty()) return false;
         size_t i = str.length() - 1, i2 = i;
@@ -3253,19 +3253,19 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
                 //"where"-operator
                 i2 = str.rfind(_("where"), i - 1);
                 i = str.rfind("where", i - 1);
-                if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
+                if(i2 != std::string::npos && (i == std::string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
                 else l = 2;
-                if(i == string::npos) break;
+                if(i == std::string::npos) break;
                 if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
         }
-        if((i = str.rfind("/.", str.length() - 2)) != string::npos && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
+        if((i = str.rfind("/.", str.length() - 2)) != std::string::npos && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
         return false;
 }
-bool Calculator::separateWhereExpression(string &str, string &to_str, const EvaluationOptions &eo) const {
+bool Calculator::separateWhereExpression(std::string &str, std::string &to_str, const EvaluationOptions &eo) const {
         if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
         to_str = "";
         size_t i = 0;
-        if((i = str.rfind("/.", str.length() - 2)) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
+        if((i = str.rfind("/.", str.length() - 2)) != std::string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
                 to_str = str.substr(i + 2 , str.length() - i - 2);
         } else {
                 i = str.length() - 1;
@@ -3274,9 +3274,9 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
                 while(i != 0) {
                         i2 = str.rfind(_("where"), i - 1);
                         i = str.rfind("where", i - 1);
-                        if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
+                        if(i2 != std::string::npos && (i == std::string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
                         else l = 5;
-                        if(i == string::npos) break;
+                        if(i == std::string::npos) break;
                         if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) {
                                 to_str = str.substr(i + l , str.length() - i - l);
                                 break;
@@ -3287,7 +3287,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
                 remove_blank_ends(to_str);
                 str = str.substr(0, i);
                 parseSigns(str);
-                if(str.find("&&") == string::npos) {
+                if(str.find("&&") == std::string::npos) {
                         int par = 0;
                         int bra = 0;
                         for(size_t i = 0; i < str.length(); i++) {
@@ -3311,7 +3311,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
         }
         return false;
 }
-extern string format_and_print(const MathStructure &mstruct);
+extern std::string format_and_print(const MathStructure &mstruct);
 extern bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, const EvaluationOptions &eo);
 extern bool replace_intervals_f(MathStructure &mstruct);
 extern bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
@@ -3349,7 +3349,7 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
         }
         return ret;
 }
-bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<UnknownVariable*>& vars, vector<MathStructure>& varms, bool empty_func, bool do_eval = true) {
+bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, std::vector<UnknownVariable*>& vars, std::vector<MathStructure>& varms, bool empty_func, bool do_eval = true) {
         if(m.isComparison()) {
                 if(m.comparisonType() == COMPARISON_EQUALS) {
                         if(m[0].size() > 0 && do_eval) {
@@ -3458,9 +3458,9 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
         CALCULATOR->error(true, _("Unhandled \"where\" expression: %s"), format_and_print(m).c_str(), NULL);
         return false;
 }
-MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+MathStructure Calculator::calculate(std::string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 
-        string str2, str_where;
+        std::string str2, str_where;
 
         if(make_to_division) separateToExpression(str, str2, eo, true);
         separateWhereExpression(str, str_where, eo);
@@ -3490,16 +3490,16 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
                 endTemporaryStopMessages();
         }
 
-        vector<UnknownVariable*> vars;
-        vector<MathStructure> varms;
+        std::vector<UnknownVariable*> vars;
+        std::vector<MathStructure> varms;
         if(!str_where.empty()) {
                 MathStructure where_struct;
                 parse(&where_struct, str_where, eo.parse_options);
                 current_stage = MESSAGE_STAGE_CALCULATION;
                 calculate_ans(mstruct, eo);
-                string str_test = str_where;
+                std::string str_test = str_where;
                 remove_blanks(str_test);
-                bool empty_func = str_test.find("()=") != string::npos;
+                bool empty_func = str_test.find("()=") != std::string::npos;
                 if(mstruct.isComparison() || (mstruct.isFunction() && mstruct.function() == CALCULATOR->f_solve && mstruct.size() >= 1 && mstruct[0].isComparison())) {
                         beginTemporaryStopMessages();
                         MathStructure mbak(mstruct);
@@ -3570,7 +3570,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
         return mstruct;
 
 }
-MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, const EvaluationOptions &eo, string to_str) {
+MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, const EvaluationOptions &eo, std::string to_str) {
 
         remove_blank_ends(to_str);
         MathStructure mstruct(mstruct_to_calculate);
@@ -3606,15 +3606,15 @@ MathStructure Calculator::calculate(const MathStructure &mstruct_to_calculate, c
         return mstruct;
 }
 
-string Calculator::print(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
+std::string Calculator::print(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
         startControl(msecs);
         MathStructure mstruct2(mstruct);
         mstruct2.format(po);
-        string print_result = mstruct2.print(po);
+        std::string print_result = mstruct2.print(po);
         stopControl();
         return print_result;
 }
-string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
+std::string Calculator::printMathStructureTimeOut(const MathStructure &mstruct, int msecs, const PrintOptions &po) {
         return print(mstruct, msecs, po);
 }
 
@@ -3651,7 +3651,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
                                 if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u  && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
                                         AliasUnit *aui = (AliasUnit*) ui;
                                         int priority_i = aui->mixWithBase();
-                                        if(((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && ((eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && aui->expression().find_first_not_of(NUMBERS) == string::npos) || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (aui->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(aui->mixWithBaseMinimum()))) {
+                                        if(((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && ((eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && aui->expression().find_first_not_of(NUMBERS) == std::string::npos) || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (aui->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(aui->mixWithBaseMinimum()))) {
                                                 MathStructure mstruct_nr(nr);
                                                 MathStructure m_exp(m_one);
                                                 aui->convertFromFirstBaseUnit(mstruct_nr, m_exp);
@@ -3679,7 +3679,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
                         mstruct_new[0].set(last_nonobsolete_nr);
                         mstruct_new[1].set(u, p);
                 }
-                while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos)) && !nr.isInteger() && !nr.isZero()) {
+                while(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == std::string::npos)) && !nr.isInteger() && !nr.isZero()) {
                         Number int_nr(nr);
                         int_nr.trunc();
                         if(eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero()) break;
@@ -3690,7 +3690,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
                         mstruct_nr.eval(eo);
                         while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && abs(((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->mixWithBase()) > 1) {
                                 u = ((AliasUnit*) u)->firstBaseUnit();
-                                if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
+                                if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_ALL || (eo.mixed_units_conversion == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == std::string::npos))) {
                                         ((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
                                         mstruct_nr.eval(eo);
                                         if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
@@ -3746,10 +3746,10 @@ MathStructure Calculator::convert(double value, Unit *from_unit, Unit *to_unit, 
         return mstruct;
 
 }
-MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo) {
+MathStructure Calculator::convert(std::string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo) {
         return convertTimeOut(str, from_unit, to_unit, msecs, eo);
 }
-MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo) {
+MathStructure Calculator::convertTimeOut(std::string str, Unit *from_unit, Unit *to_unit, int msecs, const EvaluationOptions &eo) {
         MathStructure mstruct;
         parse(&mstruct, str, eo.parse_options);
         mstruct *= from_unit;
@@ -3793,7 +3793,7 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
         }
         return mstruct;
 }
-MathStructure Calculator::convert(string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo) {
+MathStructure Calculator::convert(std::string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo) {
         size_t n_messages = messages.size();
         MathStructure mstruct;
         parse(&mstruct, str, eo.parse_options);
@@ -4674,7 +4674,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, CompositeUnit *cu, const EvaluationOptions &eo, bool always_convert) {
         return convert(mstruct, cu, eo, always_convert);
 }
-MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, string str2, const EvaluationOptions &eo, MathStructure *to_struct) {
+MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, std::string str2, const EvaluationOptions &eo, MathStructure *to_struct) {
         if(to_struct) to_struct->setUndefined();
         remove_blank_ends(str2);
         if(str2.empty()) return mstruct_to_convert;
@@ -4763,7 +4763,7 @@ Unit* Calculator::addUnit(Unit *u, bool force, bool check_names) {
                 units.push_back(u);
         }
         unitNameChanged(u, true);
-        for(vector<Unit*>::iterator it = deleted_units.begin(); it != deleted_units.end(); ++it) {
+        for(std::vector<Unit*>::iterator it = deleted_units.begin(); it != deleted_units.end(); ++it) {
                 if(*it == u) {
                         deleted_units.erase(it);
                         break;
@@ -4775,7 +4775,7 @@ Unit* Calculator::addUnit(Unit *u, bool force, bool check_names) {
 }
 void Calculator::delPrefixUFV(Prefix *object) {
         int i = 0;
-        for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+        for(std::vector<void*>::iterator it = ufvl.begin(); ; ++it) {
                 del_ufvl:
                 if(it == ufvl.end()) {
                         break;
@@ -4791,7 +4791,7 @@ void Calculator::delPrefixUFV(Prefix *object) {
         }
         for(size_t i2 = 0; i2 < UFV_LENGTHS; i2++) {
                 i = 0;
-                for(vector<void*>::iterator it = ufv[0][i2].begin(); ; ++it) {
+                for(std::vector<void*>::iterator it = ufv[0][i2].begin(); ; ++it) {
                         del_ufv:
                         if(it == ufv[0][i2].end()) {
                                 break;
@@ -4808,7 +4808,7 @@ void Calculator::delPrefixUFV(Prefix *object) {
 }
 void Calculator::delUFV(ExpressionItem *object) {
         int i = 0;
-        for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+        for(std::vector<void*>::iterator it = ufvl.begin(); ; ++it) {
                 del_ufvl:
                 if(it == ufvl.end()) {
                         break;
@@ -4830,7 +4830,7 @@ void Calculator::delUFV(ExpressionItem *object) {
         }
         for(size_t i2 = 0; i2 < UFV_LENGTHS; i2++) {
                 i = 0;
-                for(vector<void*>::iterator it = ufv[i3][i2].begin(); ; ++it) {
+                for(std::vector<void*>::iterator it = ufv[i3][i2].begin(); ; ++it) {
                         del_ufv:
                         if(it == ufv[i3][i2].end()) {
                                 break;
@@ -4845,7 +4845,7 @@ void Calculator::delUFV(ExpressionItem *object) {
                 }
         }
 }
-Unit* Calculator::getUnit(string name_) {
+Unit* Calculator::getUnit(std::string name_) {
         if(name_.empty()) return NULL;
         for(size_t i = 0; i < units.size(); i++) {
                 if(units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && (units[i]->hasName(name_))) {
@@ -4854,7 +4854,7 @@ Unit* Calculator::getUnit(string name_) {
         }
         return NULL;
 }
-Unit* Calculator::getActiveUnit(string name_) {
+Unit* Calculator::getActiveUnit(std::string name_) {
         if(name_.empty()) return NULL;
         for(size_t i = 0; i < units.size(); i++) {
                 if(units[i]->isActive() && units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(name_)) {
@@ -4867,7 +4867,7 @@ Unit* Calculator::getLocalCurrency() {
         if(priv->local_currency) return priv->local_currency;
         struct lconv *lc = localeconv();
         if(lc) {
-                string local_currency = lc->int_curr_symbol;
+                std::string local_currency = lc->int_curr_symbol;
                 remove_blank_ends(local_currency);
                 if(!local_currency.empty()) {
                         if(local_currency.length() > 3) local_currency = local_currency.substr(0, 3);
@@ -4879,7 +4879,7 @@ Unit* Calculator::getLocalCurrency() {
 void Calculator::setLocalCurrency(Unit *u) {
         priv->local_currency = u;
 }
-Unit* Calculator::getCompositeUnit(string internal_name_) {
+Unit* Calculator::getCompositeUnit(std::string internal_name_) {
         if(internal_name_.empty()) return NULL;
         for(size_t i = 0; i < units.size(); i++) {
                 if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(internal_name_)) {
@@ -4901,7 +4901,7 @@ Variable* Calculator::addVariable(Variable *v, bool force, bool check_names) {
                 variables.push_back(v);
         }
         variableNameChanged(v, true);
-        for(vector<Variable*>::iterator it = deleted_variables.begin(); it != deleted_variables.end(); ++it) {
+        for(std::vector<Variable*>::iterator it = deleted_variables.begin(); it != deleted_variables.end(); ++it) {
                 if(*it == v) {
                         deleted_variables.erase(it);
                         break;
@@ -4924,7 +4924,7 @@ void Calculator::expressionItemActivated(ExpressionItem *item) {
 void Calculator::expressionItemDeleted(ExpressionItem *item) {
         switch(item->type()) {
                 case TYPE_VARIABLE: {
-                        for(vector<Variable*>::iterator it = variables.begin(); it != variables.end(); ++it) {
+                        for(std::vector<Variable*>::iterator it = variables.begin(); it != variables.end(); ++it) {
                                 if(*it == item) {
                                         variables.erase(it);
                                         deleted_variables.push_back((Variable*) item);
@@ -4934,7 +4934,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
                         break;
                 }
                 case TYPE_FUNCTION: {
-                        for(vector<MathFunction*>::iterator it = functions.begin(); it != functions.end(); ++it) {
+                        for(std::vector<MathFunction*>::iterator it = functions.begin(); it != functions.end(); ++it) {
                                 if(*it == item) {
                                         functions.erase(it);
                                         deleted_functions.push_back((MathFunction*) item);
@@ -4942,7 +4942,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
                                 }
                         }
                         if(item->subtype() == SUBTYPE_DATA_SET) {
-                                for(vector<DataSet*>::iterator it = data_sets.begin(); it != data_sets.end(); ++it) {
+                                for(std::vector<DataSet*>::iterator it = data_sets.begin(); it != data_sets.end(); ++it) {
                                         if(*it == item) {
                                                 data_sets.erase(it);
                                                 break;
@@ -4952,7 +4952,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
                         break;
                 }
                 case TYPE_UNIT: {
-                        for(vector<Unit*>::iterator it = units.begin(); it != units.end(); ++it) {
+                        for(std::vector<Unit*>::iterator it = units.begin(); it != units.end(); ++it) {
                                 if(*it == item) {
                                         units.erase(it);
                                         deleted_units.push_back((Unit*) item);
@@ -4989,7 +4989,7 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
                 l2 = item->getName(i2).name.length();
                 if(l2 > UFV_LENGTHS) {
                         size_t i = 0, l = 0;
-                        for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+                        for(std::vector<void*>::iterator it = ufvl.begin(); ; ++it) {
                                 if(it != ufvl.end()) {
                                         if(ufvl_t[i] == 'v')
                                                 l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
@@ -5063,7 +5063,7 @@ void Calculator::unitNameChanged(Unit *u, bool new_item) {
         nameChanged(u, new_item);
 }
 
-Variable* Calculator::getVariable(string name_) {
+Variable* Calculator::getVariable(std::string name_) {
         if(name_.empty()) return NULL;
         for(size_t i = 0; i < variables.size(); i++) {
                 if(variables[i]->hasName(name_)) {
@@ -5072,7 +5072,7 @@ Variable* Calculator::getVariable(string name_) {
         }
         return NULL;
 }
-Variable* Calculator::getActiveVariable(string name_) {
+Variable* Calculator::getActiveVariable(std::string name_) {
         if(name_.empty()) return NULL;
         for(size_t i = 0; i < variables.size(); i++) {
                 if(variables[i]->isActive() && variables[i]->hasName(name_)) {
@@ -5108,7 +5108,7 @@ MathFunction* Calculator::addFunction(MathFunction *f, bool force, bool check_na
                 functions.push_back(f);
         }
         functionNameChanged(f, true);
-        for(vector<MathFunction*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
+        for(std::vector<MathFunction*>::iterator it = deleted_functions.begin(); it != deleted_functions.end(); ++it) {
                 if(*it == f) {
                         deleted_functions.erase(it);
                         break;
@@ -5129,7 +5129,7 @@ DataSet* Calculator::getDataSet(size_t index) {
         }
         return 0;
 }
-DataSet* Calculator::getDataSet(string name) {
+DataSet* Calculator::getDataSet(std::string name) {
         if(name.empty()) return NULL;
         for(size_t i = 0; i < data_sets.size(); i++) {
                 if(data_sets[i]->hasName(name)) {
@@ -5138,7 +5138,7 @@ DataSet* Calculator::getDataSet(string name) {
         }
         return NULL;
 }
-MathFunction* Calculator::getFunction(string name_) {
+MathFunction* Calculator::getFunction(std::string name_) {
         if(name_.empty()) return NULL;
         for(size_t i = 0; i < functions.size(); i++) {
                 if(functions[i]->hasName(name_)) {
@@ -5147,7 +5147,7 @@ MathFunction* Calculator::getFunction(string name_) {
         }
         return NULL;
 }
-MathFunction* Calculator::getActiveFunction(string name_) {
+MathFunction* Calculator::getActiveFunction(std::string name_) {
         if(name_.empty()) return NULL;
         for(size_t i = 0; i < functions.size(); i++) {
                 if(functions[i]->isActive() && functions[i]->hasName(name_)) {
@@ -5156,14 +5156,14 @@ MathFunction* Calculator::getActiveFunction(string name_) {
         }
         return NULL;
 }
-bool Calculator::variableNameIsValid(const string &name_) {
-        return !name_.empty() && name_.find_first_of(ILLEGAL_IN_NAMES) == string::npos && is_not_in(NUMBERS, name_[0]);
+bool Calculator::variableNameIsValid(const std::string &name_) {
+        return !name_.empty() && name_.find_first_of(ILLEGAL_IN_NAMES) == std::string::npos && is_not_in(NUMBERS, name_[0]);
 }
-bool Calculator::functionNameIsValid(const string &name_) {
-        return !name_.empty() && name_.find_first_of(ILLEGAL_IN_NAMES) == string::npos && is_not_in(NUMBERS, name_[0]);
+bool Calculator::functionNameIsValid(const std::string &name_) {
+        return !name_.empty() && name_.find_first_of(ILLEGAL_IN_NAMES) == std::string::npos && is_not_in(NUMBERS, name_[0]);
 }
-bool Calculator::unitNameIsValid(const string &name_) {
-        return !name_.empty() && name_.find_first_of(ILLEGAL_IN_UNITNAMES) == string::npos;
+bool Calculator::unitNameIsValid(const std::string &name_) {
+        return !name_.empty() && name_.find_first_of(ILLEGAL_IN_UNITNAMES) == std::string::npos;
 }
 bool Calculator::variableNameIsValid(const char *name_) {
         if(strlen(name_) == 0) return false;
@@ -5189,13 +5189,13 @@ bool Calculator::unitNameIsValid(const char *name_) {
         return true;
 }
 #define VERSION_BEFORE(i1, i2, i3) (version_numbers[0] < i1 || (version_numbers[0] == i1 && (version_numbers[1] < i2 || (version_numbers[1] == i2 && version_numbers[2] < i3))))
-bool Calculator::variableNameIsValid(const string &name_, int version_numbers[3], bool is_user_defs) {
+bool Calculator::variableNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs) {
         return variableNameIsValid(name_.c_str(), version_numbers, is_user_defs);
 }
-bool Calculator::functionNameIsValid(const string &name_, int version_numbers[3], bool is_user_defs) {
+bool Calculator::functionNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs) {
         return functionNameIsValid(name_.c_str(), version_numbers, is_user_defs);
 }
-bool Calculator::unitNameIsValid(const string &name_, int version_numbers[3], bool is_user_defs) {
+bool Calculator::unitNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs) {
         return unitNameIsValid(name_.c_str(), version_numbers, is_user_defs);
 }
 bool Calculator::variableNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs) {
@@ -5251,12 +5251,12 @@ bool Calculator::unitNameIsValid(const char *name_, int version_numbers[3], bool
         }
         return true;
 }
-string Calculator::convertToValidVariableName(string name_) {
+std::string Calculator::convertToValidVariableName(std::string name_) {
         if(name_.empty()) return "var_1";
         size_t i = 0;
         while(true) {
                 i = name_.find_first_of(ILLEGAL_IN_NAMES_MINUS_SPACE_STR, i);
-                if(i == string::npos)
+                if(i == std::string::npos)
                         break;
                 name_.erase(name_.begin() + i);
         }
@@ -5266,24 +5266,24 @@ string Calculator::convertToValidVariableName(string name_) {
         }
         return name_;
 }
-string Calculator::convertToValidFunctionName(string name_) {
+std::string Calculator::convertToValidFunctionName(std::string name_) {
         if(name_.empty()) return "func_1";
         return convertToValidVariableName(name_);
 }
-string Calculator::convertToValidUnitName(string name_) {
+std::string Calculator::convertToValidUnitName(std::string name_) {
         if(name_.empty()) return "new_unit";
         size_t i = 0;
-        string stmp = ILLEGAL_IN_NAMES_MINUS_SPACE_STR + NUMBERS;
+        std::string stmp = ILLEGAL_IN_NAMES_MINUS_SPACE_STR + NUMBERS;
         while(true) {
                 i = name_.find_first_of(stmp, i);
-                if(i == string::npos)
+                if(i == std::string::npos)
                         break;
                 name_.erase(name_.begin() + i);
         }
         gsub(SPACE, UNDERSCORE, name_);
         return name_;
 }
-bool Calculator::nameTaken(string name, ExpressionItem *object) {
+bool Calculator::nameTaken(std::string name, ExpressionItem *object) {
         if(name.empty()) return false;
         if(object) {
                 switch(object->type()) {
@@ -5315,7 +5315,7 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
         }
         return false;
 }
-bool Calculator::variableNameTaken(string name, Variable *object) {
+bool Calculator::variableNameTaken(std::string name, Variable *object) {
         if(name.empty()) return false;
         for(size_t index = 0; index < variables.size(); index++) {
                 if(variables[index]->isActive() && variables[index]->hasName(name)) {
@@ -5330,7 +5330,7 @@ bool Calculator::variableNameTaken(string name, Variable *object) {
         }
         return false;
 }
-bool Calculator::unitNameTaken(string name, Unit *object) {
+bool Calculator::unitNameTaken(std::string name, Unit *object) {
         if(name.empty()) return false;
         for(size_t index = 0; index < variables.size(); index++) {
                 if(variables[index]->isActive() && variables[index]->hasName(name)) {
@@ -5345,7 +5345,7 @@ bool Calculator::unitNameTaken(string name, Unit *object) {
         }
         return false;
 }
-bool Calculator::functionNameTaken(string name, MathFunction *object) {
+bool Calculator::functionNameTaken(std::string name, MathFunction *object) {
         if(name.empty()) return false;
         for(size_t index = 0; index < functions.size(); index++) {
                 if(functions[index]->isActive() && functions[index]->hasName(name)) {
@@ -5370,7 +5370,7 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
         return false;
 }
 
-bool compare_name(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
+bool compare_name(const std::string &name, const std::string &str, const size_t &name_length, const size_t &str_index, int base) {
         if(name_length == 0) return false;
         if(name[0] != str[str_index]) return false;
         if(name_length == 1) {
@@ -5388,7 +5388,7 @@ bool compare_name(const string &name, const string &str, const size_t &name_leng
         }
         return true;
 }
-size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
+size_t compare_name_no_case(const std::string &name, const std::string &str, const size_t &name_length, const size_t &str_index, int base) {
         if(name_length == 0) return 0;
         size_t is = str_index;
         for(size_t i = 0; i < name_length; i++, is++) {
@@ -5442,18 +5442,18 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", 
 #define INTERNAL_OPERATORS "\a\b%\x1c"
 #define DUODECIMAL_CHARS "EX"
 
-void Calculator::parseSigns(string &str, bool convert_to_internal_representation) const {
-        vector<size_t> q_begin;
-        vector<size_t> q_end;
+void Calculator::parseSigns(std::string &str, bool convert_to_internal_representation) const {
+        std::vector<size_t> q_begin;
+        std::vector<size_t> q_end;
         size_t quote_index = 0;
         while(true) {
                 quote_index = str.find_first_of("\"\'", quote_index);
-                if(quote_index == string::npos) {
+                if(quote_index == std::string::npos) {
                         break;
                 }
                 q_begin.push_back(quote_index);
                 quote_index = str.find(str[quote_index], quote_index + 1);
-                if(quote_index == string::npos) {
+                if(quote_index == std::string::npos) {
                         q_end.push_back(str.length() - 1);
                         break;
                 }
@@ -5463,18 +5463,18 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
         for(size_t i = 0; i < signs.size(); i++) {
                 size_t ui = str.find(signs[i]);
                 size_t ui2 = 0;
-                while(ui != string::npos) {
+                while(ui != std::string::npos) {
                         for(size_t ui2 = 0; ui2 < q_end.size(); ui2++) {
                                 if(ui >= q_begin[ui2]) {
                                         if(ui <= q_end[ui2]) {
                                                 ui = str.find(signs[i], q_end[ui2] + 1);
-                                                if(ui == string::npos) break;
+                                                if(ui == std::string::npos) break;
                                         }
                                 } else {
                                         break;
                                 }
                         }
-                        if(ui == string::npos) break;
+                        if(ui == std::string::npos) break;
                         int index_shift = real_signs[i].length() - signs[i].length();
                         for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
                                 q_begin[ui3] += index_shift;
@@ -5485,26 +5485,26 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
                 }
         }
 
-        size_t prev_ui = string::npos, space_n = 0;
+        size_t prev_ui = std::string::npos, space_n = 0;
         while(true) {
-                size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
-                if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = string::npos;
-                size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-                if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
-                if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
-                if(ui != string::npos) {
+                size_t ui = str.find("\xe2\x81", prev_ui == std::string::npos ? 0 : prev_ui);
+                if(ui != std::string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = std::string::npos;
+                size_t ui2 = str.find('\xc2', prev_ui == std::string::npos ? 0 : prev_ui);
+                if(ui2 != std::string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = std::string::npos;
+                if(ui2 != std::string::npos && (ui == std::string::npos || ui2 < ui)) ui = ui2;
+                if(ui != std::string::npos) {
                         for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
                                 if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
                                         ui = str.find("\xe2\x81", q_end[ui3] + 1);
-                                        if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = string::npos;
+                                        if(ui != std::string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -71)))) ui = std::string::npos;
                                         ui2 = str.find('\xc2', q_end[ui3] + 1);
-                                        if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
-                                        if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
-                                        if(ui == string::npos) break;
+                                        if(ui2 != std::string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = std::string::npos;
+                                        if(ui2 != std::string::npos && (ui == std::string::npos || ui2 < ui)) ui = ui2;
+                                        if(ui == std::string::npos) break;
                                 }
                         }
                 }
-                if(ui == string::npos) break;
+                if(ui == std::string::npos) break;
                 int index_shift = (str[ui] == '\xc2' ? -2 : -3);
                 if(ui == prev_ui) index_shift += 1;
                 else index_shift += 4;
@@ -5539,20 +5539,20 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
                         prev_ui++;
                 }
         }
-        prev_ui = string::npos;
+        prev_ui = std::string::npos;
         while(true) {
-                size_t ui = str.find("\xe2\x85", prev_ui == string::npos ? 0 : prev_ui);
-                if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
-                if(ui != string::npos) {
+                size_t ui = str.find("\xe2\x85", prev_ui == std::string::npos ? 0 : prev_ui);
+                if(ui != std::string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = std::string::npos;
+                if(ui != std::string::npos) {
                         for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
                                 if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
                                         ui = str.find("\xe2\x85", q_end[ui3] + 1);
-                                        if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
-                                        if(ui == string::npos) break;
+                                        if(ui != std::string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = std::string::npos;
+                                        if(ui == std::string::npos) break;
                                 }
                         }
                 }
-                if(ui == string::npos) break;
+                if(ui == std::string::npos) break;
                 space_n = 0;
                 while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
                 bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
@@ -5582,20 +5582,20 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
                 if(b_add) prev_ui = ui + 6;
                 else prev_ui = ui + 5;
         }
-        prev_ui = string::npos;
+        prev_ui = std::string::npos;
         while(true) {
-                size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-                if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
-                if(ui != string::npos) {
+                size_t ui = str.find('\xc2', prev_ui == std::string::npos ? 0 : prev_ui);
+                if(ui != std::string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = std::string::npos;
+                if(ui != std::string::npos) {
                         for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
                                 if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
                                         ui = str.find('\xc2', q_end[ui3] + 1);
-                                        if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
-                                        if(ui == string::npos) break;
+                                        if(ui != std::string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = std::string::npos;
+                                        if(ui == std::string::npos) break;
                                 }
                         }
                 }
-                if(ui == string::npos) break;
+                if(ui == std::string::npos) break;
                 space_n = 0;
                 while(ui > 0 && ui - 1 - space_n != 0 && str[ui - 1 - space_n] == SPACE_CH) space_n++;
                 bool b_add = (ui > 0 && is_in(NUMBER_ELEMENTS, str[ui - 1 - space_n]));
@@ -5618,18 +5618,18 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
                 for(size_t i = 0; i < INTERNAL_SIGNS_COUNT; i += 2) {
                         size_t ui = str.find(internal_signs[i]);
                         size_t ui2 = 0;
-                        while(ui != string::npos) {
+                        while(ui != std::string::npos) {
                                 for(; ui2 < q_end.size(); ui2++) {
                                         if(ui >= q_begin[ui2]) {
                                                 if(ui <= q_end[ui2]) {
                                                         ui = str.find(internal_signs[i], q_end[ui2] + 1);
-                                                        if(ui == string::npos) break;
+                                                        if(ui == std::string::npos) break;
                                                 }
                                         } else {
                                                 break;
                                         }
                                 }
-                                if(ui == string::npos) break;
+                                if(ui == std::string::npos) break;
                                 int index_shift = strlen(internal_signs[i + 1]) - strlen(internal_signs[i]);
                                 for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
                                         q_begin[ui3] += index_shift;
@@ -5643,7 +5643,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 }
 
 
-MathStructure Calculator::parse(string str, const ParseOptions &po) {
+MathStructure Calculator::parse(std::string str, const ParseOptions &po) {
 
         MathStructure mstruct;
         parse(&mstruct, str, po);
@@ -5651,7 +5651,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 
 }
 
-void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
+void Calculator::parse(MathStructure *mstruct, std::string str, const ParseOptions &parseoptions) {
 
         ParseOptions po = parseoptions;
         MathStructure *unended_function = po.unended_function;
@@ -5678,34 +5678,34 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
         mstruct->clear();
 
-        const string *name = NULL;
-        string stmp, stmp2;
+        const std::string *name = NULL;
+        std::string stmp, stmp2;
 
         bool b_prime_quote = true;
 
         size_t i_degree = str.find(SIGN_DEGREE);
-        if(i_degree != string::npos && i_degree < str.length() - strlen(SIGN_DEGREE) && is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = string::npos;
+        if(i_degree != std::string::npos && i_degree < str.length() - strlen(SIGN_DEGREE) && is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBER_ELEMENTS, str[i_degree + strlen(SIGN_DEGREE)])) i_degree = std::string::npos;
 
         if(base != -1 && base <= BASE_HEXADECIMAL) {
-                if(i_degree == string::npos) {
+                if(i_degree == std::string::npos) {
                         size_t i_quote = str.find('\'', 0);
                         size_t i_dquote = str.find('\"', 0);
                         if(i_quote == 0 || i_dquote == 0) {
                                 b_prime_quote = false;
-                        } else if((i_quote != string::npos && i_quote < str.length() - 1 && str.find('\'', i_quote + 1) != string::npos) || (i_quote != string::npos && i_dquote == i_quote + 1) || (i_dquote != string::npos && i_dquote < str.length() - 1 && str.find('\"', i_dquote + 1) != string::npos)) {
+                        } else if((i_quote != std::string::npos && i_quote < str.length() - 1 && str.find('\'', i_quote + 1) != std::string::npos) || (i_quote != std::string::npos && i_dquote == i_quote + 1) || (i_dquote != std::string::npos && i_dquote < str.length() - 1 && str.find('\"', i_dquote + 1) != std::string::npos)) {
                                 b_prime_quote = false;
-                                while(i_dquote != string::npos) {
+                                while(i_dquote != std::string::npos) {
                                         i_quote = str.rfind('\'', i_dquote - 1);
-                                        if(i_quote != string::npos) {
+                                        if(i_quote != std::string::npos) {
                                                 size_t i_prev = str.find_last_not_of(SPACES, i_quote - 1);
-                                                if(i_prev != string::npos && is_in(NUMBER_ELEMENTS, str[i_prev])) {
+                                                if(i_prev != std::string::npos && is_in(NUMBER_ELEMENTS, str[i_prev])) {
                                                         if(is_in(NUMBER_ELEMENTS, str[str.find_first_not_of(SPACES, i_quote + 1)]) && str.find_first_not_of(SPACES NUMBER_ELEMENTS, i_quote + 1) == i_dquote) {
                                                                 if(i_prev == 0) {
                                                                         b_prime_quote = true;
                                                                         break;
                                                                 } else {
                                                                         i_prev = str.find_last_not_of(NUMBER_ELEMENTS, i_prev - 1);
-                                                                        if(i_prev == string::npos || (str[i_prev] != '\"' && str[i_prev] != '\'')) {
+                                                                        if(i_prev == std::string::npos || (str[i_prev] != '\"' && str[i_prev] != '\'')) {
                                                                                 b_prime_quote = true;
                                                                                 break;
                                                                         }
@@ -5732,7 +5732,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                         } else {
                                 size_t i = str.find(str[str_index], str_index + 1);
                                 size_t name_length;
-                                if(i == string::npos) {
+                                if(i == std::string::npos) {
                                         i = str.length();
                                         name_length = i - str_index;
                                 } else {
@@ -5756,9 +5756,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 
         size_t isave = 0;
-        if((isave = str.find(":=", 1)) != string::npos) {
-                string name = str.substr(0, isave);
-                string value = str.substr(isave + 2, str.length() - (isave + 2));
+        if((isave = str.find(":=", 1)) != std::string::npos) {
+                std::string name = str.substr(0, isave);
+                std::string value = str.substr(isave + 2, str.length() - (isave + 2));
                 str = value;
                 str += COMMA;
                 str += name;
@@ -5768,14 +5768,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
         if(po.default_dataset != NULL && str.length() > 1) {
                 size_t str_index = str.find(DOT_CH, 1);
-                while(str_index != string::npos) {
+                while(str_index != std::string::npos) {
                         if(str_index + 1 < str.length() && ((is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index + 1]) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index - 1])) || (is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index + 1]) && is_not_number(str[str_index - 1], base) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index - 1])))) {
                                 size_t dot_index = str.find_first_of(NOT_IN_NAMES INTERNAL_OPERATORS DOT, str_index + 1);
-                                if(dot_index != string::npos && str[dot_index] == DOT_CH) {
+                                if(dot_index != std::string::npos && str[dot_index] == DOT_CH) {
                                         str_index = dot_index;
                                 } else {
                                         size_t property_index = str.find_last_of(NOT_IN_NAMES INTERNAL_OPERATORS, str_index - 1);
-                                        if(property_index == string::npos) {
+                                        if(property_index == std::string::npos) {
                                                 str.insert(0, 1, '.');
                                                 str.insert(0, po.default_dataset->referenceName());
                                                 str_index += po.default_dataset->referenceName().length() + 1;
@@ -5794,7 +5794,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
         size_t space_i = 0;
         if(!po.rpn) {
                 space_i = str.find(SPACE_CH, 0);
-                while(space_i != string::npos) {
+                while(space_i != std::string::npos) {
                         if(is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[space_i + 1]) && is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[space_i - 1])) {
                                 str.erase(space_i, 1);
                                 space_i--;
@@ -5804,36 +5804,36 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
         }
 
         if(base != -1 && base <= BASE_HEXADECIMAL) {
-                bool b_degree = (i_degree != string::npos);
+                bool b_degree = (i_degree != std::string::npos);
                 size_t i_quote = str.find("′");
                 size_t i_dquote = str.find("″");
-                while(i_quote != string::npos || i_dquote != string::npos) {
+                while(i_quote != std::string::npos || i_dquote != std::string::npos) {
                         size_t i_op = 0;
-                        if(i_quote == string::npos || i_dquote < i_quote) {
+                        if(i_quote == std::string::npos || i_dquote < i_quote) {
                                 bool b = false;
                                 if(b_degree) {
                                         i_degree = str.rfind(SIGN_DEGREE, i_dquote - 1);
-                                        if(i_degree != string::npos && i_degree > 0 && i_degree < i_dquote) {
+                                        if(i_degree != std::string::npos && i_degree > 0 && i_degree < i_dquote) {
                                                 size_t i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
-                                                if(i_op != string::npos) {
+                                                if(i_op != std::string::npos) {
                                                         i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
                                                         if(is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
                                                         else i_op = 0;
                                                 }
-                                                size_t i_prev = string::npos;
+                                                size_t i_prev = std::string::npos;
                                                 if(i_op == i_dquote) {
                                                         i_prev = str.find_last_not_of(SPACE, i_degree - 1);
-                                                        if(i_prev != string::npos) {
+                                                        if(i_prev != std::string::npos) {
                                                                 if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
                                                                         i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
-                                                                        if(i_prev == string::npos) i_prev = 0;
+                                                                        if(i_prev == std::string::npos) i_prev = 0;
                                                                         else i_prev++;
                                                                 } else {
-                                                                        i_prev = string::npos;
+                                                                        i_prev = std::string::npos;
                                                                 }
                                                         }
                                                 }
-                                                if(i_prev != string::npos) {
+                                                if(i_prev != std::string::npos) {
                                                         str.insert(i_prev, LEFT_PARENTHESIS);
                                                         i_degree++;
                                                         i_op++;
@@ -5852,35 +5852,35 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                 bool b = false;
                                 if(b_degree) {
                                         i_degree = str.rfind(SIGN_DEGREE, i_quote - 1);
-                                        if(i_degree != string::npos && i_degree > 0 && i_degree < i_quote) {
+                                        if(i_degree != std::string::npos && i_degree > 0 && i_degree < i_quote) {
                                                 size_t i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
-                                                if(i_op != string::npos) {
+                                                if(i_op != std::string::npos) {
                                                         i_op = str.find_first_not_of(SPACE, i_degree + strlen(SIGN_DEGREE));
                                                         if(is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
                                                         else i_op = 0;
                                                 }
-                                                size_t i_prev = string::npos;
+                                                size_t i_prev = std::string::npos;
                                                 if(i_op == i_quote) {
                                                         i_prev = str.find_last_not_of(SPACE, i_degree - 1);
-                                                        if(i_prev != string::npos) {
+                                                        if(i_prev != std::string::npos) {
                                                                 if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
                                                                         i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
-                                                                        if(i_prev == string::npos) i_prev = 0;
+                                                                        if(i_prev == std::string::npos) i_prev = 0;
                                                                         else i_prev++;
                                                                 } else {
-                                                                        i_prev = string::npos;
+                                                                        i_prev = std::string::npos;
                                                                 }
                                                         }
                                                 }
-                                                if(i_prev != string::npos) {
+                                                if(i_prev != std::string::npos) {
                                                         str.insert(i_prev, LEFT_PARENTHESIS);
                                                         i_degree++;
                                                         i_quote++;
                                                         i_op++;
-                                                        if(i_dquote != string::npos) {
+                                                        if(i_dquote != std::string::npos) {
                                                                 i_dquote++;
                                                                 size_t i_op2 = str.find_first_not_of(SPACE, i_quote + strlen("′"));
-                                                                if(i_op2 != string::npos && is_in(NUMBER_ELEMENTS, str[i_op2])) i_op2 = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op2);
+                                                                if(i_op2 != std::string::npos && is_in(NUMBER_ELEMENTS, str[i_op2])) i_op2 = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op2);
                                                                 else i_op2 = 0;
                                                                 if(i_op2 == i_dquote) {
                                                                         str.replace(i_dquote, strlen("″"), "arcsec" RIGHT_PARENTHESIS);
@@ -5895,28 +5895,28 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                 }
                                 if(!b) {
                                         i_op = str.find_first_not_of(SPACE, i_quote + strlen("′"));
-                                        if(i_op != string::npos && is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
+                                        if(i_op != std::string::npos && is_in(NUMBER_ELEMENTS, str[i_op])) i_op = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op);
                                         else i_op = 0;
-                                        size_t i_prev = string::npos;
-                                        if(((!b_degree && i_op == string::npos) || i_op == i_dquote) && i_quote != 0) {
+                                        size_t i_prev = std::string::npos;
+                                        if(((!b_degree && i_op == std::string::npos) || i_op == i_dquote) && i_quote != 0) {
                                                 i_prev = str.find_last_not_of(SPACE, i_quote - 1);
-                                                if(i_prev != string::npos) {
+                                                if(i_prev != std::string::npos) {
                                                         if(is_in(NUMBER_ELEMENTS, str[i_prev])) {
                                                                 i_prev = str.find_last_not_of(NUMBER_ELEMENTS SPACE, i_prev);
-                                                                if(i_prev == string::npos) i_prev = 0;
+                                                                if(i_prev == std::string::npos) i_prev = 0;
                                                                 else i_prev++;
                                                         } else {
-                                                                i_prev = string::npos;
+                                                                i_prev = std::string::npos;
                                                         }
                                                 }
                                         }
-                                        if(i_prev != string::npos) {
+                                        if(i_prev != std::string::npos) {
                                                 str.insert(i_prev, LEFT_PARENTHESIS);
                                                 i_quote++;
-                                                if(i_op == string::npos) str += b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS;
+                                                if(i_op == std::string::npos) str += b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS;
                                                 else str.replace(i_op + 1, strlen("″"), b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS);
                                                 str.replace(i_quote, strlen("′"), b_degree ? "arcmin" PLUS : "ft" PLUS);
-                                                if(i_op == string::npos) break;
+                                                if(i_op == std::string::npos) break;
                                                 i_op++;
                                         } else {
                                                 if(str.length() >= i_quote + strlen("′") && is_in(NUMBERS, str[i_quote + strlen("′")])) str.insert(i_quote + strlen("′"), " ");
@@ -5925,14 +5925,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                         }
                                 }
                         }
-                        if(i_dquote != string::npos) i_dquote = str.find("″", i_op);
-                        if(i_quote != string::npos) i_quote = str.find("′", i_op);
+                        if(i_dquote != std::string::npos) i_dquote = str.find("″", i_op);
+                        if(i_quote != std::string::npos) i_quote = str.find("′", i_op);
                 }
         }
 
         size_t i_mod = str.find("%");
-        if(i_mod != string::npos && !v_percent->hasName("%")) i_mod = string::npos;
-        while(i_mod != string::npos) {
+        if(i_mod != std::string::npos && !v_percent->hasName("%")) i_mod = std::string::npos;
+        while(i_mod != std::string::npos) {
                 if(po.rpn) {
                         if(i_mod == 0 || is_not_in(OPERATORS "\\" INTERNAL_OPERATORS SPACE, str[i_mod - 1])) {
                                 str.replace(i_mod, 1, v_percent->referenceName());
@@ -5957,7 +5957,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                         size_t i3 = str_index;
                         while(true) {
                                 i3 = str.find_first_of(LEFT_VECTOR_WRAP RIGHT_VECTOR_WRAP, i3 + 1);
-                                if(i3 == string::npos) {
+                                if(i3 == std::string::npos) {
                                         for(; i4 > 0; i4--) {
                                                 str += RIGHT_VECTOR_WRAP;
                                         }
@@ -5968,7 +5968,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                         i4--;
                                         if(i4 > 0) {
                                                 size_t i5 = str.find_first_not_of(SPACE, i3 + 1);
-                                                if(i5 != string::npos && str[i5] == LEFT_VECTOR_WRAP_CH) {
+                                                if(i5 != std::string::npos && str[i5] == LEFT_VECTOR_WRAP_CH) {
                                                         str.insert(i5, COMMA);
                                                 }
                                         }
@@ -6007,7 +6007,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                 stmp2 = "";
                                 size_t i5 = str.find_last_not_of(SPACE, str_index - 1);
                                 size_t i3;
-                                if(i5 == string::npos) {
+                                if(i5 == std::string::npos) {
                                 } else if(str[i5] == RIGHT_PARENTHESIS_CH) {
                                         if(i5 == 0) {
                                                 stmp2 = str.substr(0, i5 + 1);
@@ -6016,7 +6016,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                                 size_t i4 = 1;
                                                 while(true) {
                                                         i3 = str.find_last_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, i3);
-                                                        if(i3 == string::npos) {
+                                                        if(i3 == std::string::npos) {
                                                                 stmp2 = str.substr(0, i5 + 1);
                                                                 break;
                                                         }
@@ -6036,11 +6036,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                                         i3--;
                                                 }
                                         }
-                                } else if(str[i5] == ID_WRAP_RIGHT_CH && (i3 = str.find_last_of(ID_WRAP_LEFT, i5 - 1)) != string::npos) {
+                                } else if(str[i5] == ID_WRAP_RIGHT_CH && (i3 = str.find_last_of(ID_WRAP_LEFT, i5 - 1)) != std::string::npos) {
                                         stmp2 = str.substr(i3, i5 + 1 - i3);
                                 } else if(is_not_in(RESERVED OPERATORS INTERNAL_OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, str[i5])) {
                                         i3 = str.find_last_of(RESERVED OPERATORS INTERNAL_OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, i5);
-                                        if(i3 == string::npos) {
+                                        if(i3 == std::string::npos) {
                                                 stmp2 = str.substr(0, i5 + 1);
                                         } else {
                                                 stmp2 = str.substr(i3 + 1, i5 - i3);
@@ -6051,7 +6051,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                         int ifac = 1;
                                         i3 = str_index + 1;
                                         size_t i4 = i3;
-                                        while((i3 = str.find_first_not_of(SPACE, i3)) != string::npos && str[i3] == '!') {
+                                        while((i3 = str.find_first_not_of(SPACE, i3)) != std::string::npos && str[i3] == '!') {
                                                 ifac++;
                                                 i3++;
                                                 i4 = i3;
@@ -6068,8 +6068,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                         str.replace(str_index, 6, BITWISE_NOT);
                 } else if(str[str_index] == SPACE_CH) {
                         size_t i = str.find(SPACE, str_index + 1);
-                        if(po.rpn && i == string::npos) i = str.length();
-                        if(i != string::npos) {
+                        if(po.rpn && i == std::string::npos) i = str.length();
+                        if(i != std::string::npos) {
                                 i -= str_index + 1;
                                 size_t il = 0;
                                 if(i == per_str_len && (il = compare_name_no_case(per_str, str, per_str_len, str_index + 1, base))) {
@@ -6133,7 +6133,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                         if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
                                         else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
                                         size_t name_length;
-                                        if(i == string::npos) i = str.length();
+                                        if(i == std::string::npos) i = str.length();
                                         while(str[i - 1] == SPACE_CH) i--;
                                         name_length = i - str_index;
                                         ParseOptions po_hex = po;
@@ -6155,7 +6155,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                         if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
                                         else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
                                         size_t name_length;
-                                        if(i == string::npos) i = str.length();
+                                        if(i == std::string::npos) i = str.length();
                                         while(str[i - 1] == SPACE_CH) i--;
                                         name_length = i - str_index;
                                         ParseOptions po_bin = po;
@@ -6176,7 +6176,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                         if(po.rpn) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
                                         else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
                                         size_t name_length;
-                                        if(i == string::npos) i = str.length();
+                                        if(i == std::string::npos) i = str.length();
                                         while(str[i - 1] == SPACE_CH) i--;
                                         name_length = i - str_index;
                                         ParseOptions po_oct = po;
@@ -6196,7 +6196,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                         size_t best_pl = 0;
                         size_t best_pnl = 0;
                         bool moved_forward = false;
-                        const string *found_function_name = NULL;
+                        const std::string *found_function_name = NULL;
                         bool case_sensitive = false;
                         size_t found_function_name_length = 0;
                         void *found_function = NULL, *object = NULL;
@@ -6206,7 +6206,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                         size_t vt3 = 0;
                         char ufvt = 0;
                         size_t last_name_char = str.find_first_of(NOT_IN_NAMES INTERNAL_OPERATORS, str_index + 1);
-                        if(last_name_char == string::npos) {
+                        if(last_name_char == std::string::npos) {
                                 last_name_char = str.length() - 1;
                         } else {
                                 last_name_char--;
@@ -6420,11 +6420,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                                                 size_t dot2_index = str.find(DOT_CH, str_index + name_length + 1);
                                                                 str[dot2_index] = COMMA_CH;
                                                                 size_t end_index = str.find_first_of(NOT_IN_NAMES INTERNAL_OPERATORS, dot2_index + 1);
-                                                                if(end_index == string::npos) str += RIGHT_PARENTHESIS_CH;
+                                                                if(end_index == std::string::npos) str += RIGHT_PARENTHESIS_CH;
                                                                 else str.insert(end_index, 1, RIGHT_PARENTHESIS_CH);
                                                         }
                                                         size_t not_space_index;
-                                                        if((not_space_index = str.find_first_not_of(SPACES, str_index + name_length)) == string::npos || str[not_space_index] != LEFT_PARENTHESIS_CH) {
+                                                        if((not_space_index = str.find_first_not_of(SPACES, str_index + name_length)) == std::string::npos || str[not_space_index] != LEFT_PARENTHESIS_CH) {
                                                                 found_function = object;
                                                                 found_function_name = name;
                                                                 found_function_name_length = name_length;
@@ -6436,9 +6436,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                                         size_t i6;
                                                         if(f->args() == 0) {
                                                                 size_t i7 = str.find_first_not_of(SPACES, str_index + name_length);
-                                                                if(i7 != string::npos && str[i7] == LEFT_PARENTHESIS_CH) {
+                                                                if(i7 != std::string::npos && str[i7] == LEFT_PARENTHESIS_CH) {
                                                                         i7 = str.find_first_not_of(SPACES, i7 + 1);
-                                                                        if(i7 != string::npos && str[i7] == RIGHT_PARENTHESIS_CH) {
+                                                                        if(i7 != std::string::npos && str[i7] == RIGHT_PARENTHESIS_CH) {
                                                                                 i4 = i7 - str_index + 1;
                                                                         }
                                                                 }
@@ -6446,7 +6446,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                                                 stmp += i2s(parseAddId(f, empty_string, po));
                                                                 stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
                                                                 if(i4 < 0) i4 = name_length;
-                                                        } else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+                                                        } else if(po.rpn && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != std::string::npos) {
                                                                 size_t i7 = i6;
                                                                 int nr_of_p = 0, nr_of_op = 0;
                                                                 bool b_started = false;
@@ -6557,13 +6557,13 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                                                                         size_t i8 = i7;
                                                                         while(true) {
                                                                                 i5 = str.find(RIGHT_PARENTHESIS_CH, i7);
-                                                                                if(i5 == string::npos) {
+                                                                                if(i5 == std::string::npos) {
                                                                                         b_unended_function = true;
                                                                                         //str.append(1, RIGHT_PARENTHESIS_CH);
                                                                                         //i5 = str.length() - 1;
                                                                                         i5 = str.length();
                                                                                 }
-                                                                                if(i5 < (i6 = str.find(LEFT_PARENTHESIS_CH, i8)) || i6 == string::npos) {
+                                                                                if(i5 < (i6 = str.find(LEFT_PARENTHESIS_CH, i8)) || i6 == std::string::npos) {
                                                                                         i6 = i5;
                                                                                         b = true;
                                                                                         break;
@@ -6752,12 +6752,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
         }
 
         size_t comma_i = str.find(COMMA, 0);
-        while(comma_i != string::npos) {
+        while(comma_i != std::string::npos) {
                 int i3 = 1;
                 size_t left_par_i = comma_i;
                 while(left_par_i > 0) {
                         left_par_i = str.find_last_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, left_par_i - 1);
-                        if(left_par_i == string::npos) break;
+                        if(left_par_i == std::string::npos) break;
                         if(str[left_par_i] == LEFT_PARENTHESIS_CH) {
                                 i3--;
                                 if(i3 == 0) break;
@@ -6776,7 +6776,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
                         size_t right_par_i = comma_i;
                         while(true) {
                                 right_par_i = str.find_first_of(LEFT_PARENTHESIS RIGHT_PARENTHESIS, right_par_i + 1);
-                                if(right_par_i == string::npos) {
+                                if(right_par_i == std::string::npos) {
                                         for(; i3 > 0; i3--) {
                                                 str += RIGHT_PARENTHESIS;
                                         }
@@ -6802,7 +6802,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
         if(po.rpn) {
                 size_t rpn_i = str.find(SPACE, 0);
-                while(rpn_i != string::npos) {
+                while(rpn_i != std::string::npos) {
                         if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\a\b\\\x1c", str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
                                 str.erase(rpn_i, 1);
                         } else {
@@ -6815,7 +6815,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
         } else {
                 //remove spaces between next to operators (except '/') and before/after parentheses
                 space_i = str.find(SPACE_CH, 0);
-                while(space_i != string::npos) {
+                while(space_i != std::string::npos) {
                         if((str[space_i + 1] != DIVISION_CH && is_in(OPERATORS INTERNAL_OPERATORS RIGHT_PARENTHESIS, str[space_i + 1])) || (str[space_i - 1] != DIVISION_CH && is_in(OPERATORS INTERNAL_OPERATORS LEFT_PARENTHESIS, str[space_i - 1]))) {
                                 str.erase(space_i, 1);
                                 space_i--;
@@ -6830,11 +6830,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 #define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
 
-bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
+bool Calculator::parseNumber(MathStructure *mstruct, std::string str, const ParseOptions &po) {
         mstruct->clear();
         if(str.empty()) return false;
-        if(str.find_first_not_of(OPERATORS "\a%\x1c" SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == string::npos)) {
-                gsub("\a", str.find_first_of("%" OPERATORS) != string::npos ? " xor " : "xor", str);
+        if(str.find_first_not_of(OPERATORS "\a%\x1c" SPACE) == std::string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find("|") == std::string::npos)) {
+                gsub("\a", str.find_first_of("%" OPERATORS) != std::string::npos ? " xor " : "xor", str);
                 gsub("\x1c", "∠", str);
                 error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
                 return false;
@@ -6931,7 +6931,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
                 return true;
         }
         size_t itmp;
-        if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
+        if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != std::string::npos) {
                 if(itmp == 0) {
                         error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
                         if(minus_count % 2 == 1 && !po.preserve_format) {
@@ -6947,7 +6947,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
                         }
                         return false;
                 } else {
-                        string stmp = str.substr(itmp, str.length() - itmp);
+                        std::string stmp = str.substr(itmp, str.length() - itmp);
                         error(true, _("Trailing characters \"%s\" (not a valid variable/function/unit) in number \"%s\" was ignored."), stmp.c_str(), str.c_str(), NULL);
                         str.erase(itmp, str.length() - itmp);
                 }
@@ -6980,7 +6980,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 
 }
 
-bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po) {
+bool Calculator::parseAdd(std::string &str, MathStructure *mstruct, const ParseOptions &po) {
         if(str.length() > 0) {
                 size_t i;
                 if(BASE_2_10) {
@@ -6988,7 +6988,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
                 } else {
                         i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
                 }
-                if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
+                if(i == std::string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
                         return parseNumber(mstruct, str, po);
                 } else {
                         return parseOperators(mstruct, str, po);
@@ -6996,7 +6996,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
         }
         return false;
 }
-bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s, bool append) {
+bool Calculator::parseAdd(std::string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s, bool append) {
         if(str.length() > 0) {
                 size_t i;
                 if(BASE_2_10) {
@@ -7004,7 +7004,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
                 } else {
                         i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
                 }
-                if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
+                if(i == std::string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1)) {
                         if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {
                                 ParseOptions po2 = po;
                                 po2.read_precision = READ_PRECISION_WHEN_DECIMALS;
@@ -7060,18 +7060,18 @@ MathStructure *get_out_of_negate(MathStructure &mstruct, int *i_neg) {
         return &mstruct;
 }
 
-bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseOptions &po) {
-        string save_str = str;
+bool Calculator::parseOperators(MathStructure *mstruct, std::string str, const ParseOptions &po) {
+        std::string save_str = str;
         mstruct->clear();
         size_t i = 0, i2 = 0, i3 = 0;
-        string str2, str3;
-        bool extended_roman = (po.base == BASE_ROMAN_NUMERALS && (i = str.find("|")) != string::npos && i + 1 < str.length() && str[i + 1] == RIGHT_PARENTHESIS_CH);
+        std::string str2, str3;
+        bool extended_roman = (po.base == BASE_ROMAN_NUMERALS && (i = str.find("|")) != std::string::npos && i + 1 < str.length() && str[i + 1] == RIGHT_PARENTHESIS_CH);
         while(!extended_roman) {
                 //find first right parenthesis and then the last left parenthesis before
                 i2 = str.find(RIGHT_PARENTHESIS_CH);
-                if(i2 == string::npos) {
+                if(i2 == std::string::npos) {
                         i = str.rfind(LEFT_PARENTHESIS_CH);
-                        if(i == string::npos) {
+                        if(i == std::string::npos) {
                                 //if no parenthesis break
                                 break;
                         } else {
@@ -7083,9 +7083,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         if(i2 > 0) {
                                 i = str.rfind(LEFT_PARENTHESIS_CH, i2 - 1);
                         } else {
-                                i = string::npos;
+                                i = std::string::npos;
                         }
-                        if(i == string::npos) {
+                        if(i == std::string::npos) {
                                 //left parenthesis missing -- prepend
                                 str.insert(str.begin(), 1, LEFT_PARENTHESIS_CH);
                                 i = 0;
@@ -7113,7 +7113,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (!BASE_2_10 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH))) {
                         if(po.rpn) {
                                 i3 = str.find(SPACE, i2 + 1);
-                                if(i3 == string::npos) {
+                                if(i3 == std::string::npos) {
                                         str += MULTIPLICATION;
                                 } else {
                                         str.replace(i3, 1, MULTIPLICATION);
@@ -7141,7 +7141,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
         bool b_abs_or = false, b_bit_or = false;
         i = 0;
         if(!po.rpn) {
-                while(po.base != BASE_ROMAN_NUMERALS && (i = str.find('|', i)) != string::npos) {
+                while(po.base != BASE_ROMAN_NUMERALS && (i = str.find('|', i)) != std::string::npos) {
                         if(i == 0 || i == str.length() - 1 || is_in(OPERATORS INTERNAL_OPERATORS SPACE, str[i - 1])) {b_abs_or = true; break;}
                         if(str[i + 1] == '|') {
                                 if(i == str.length() - 2) {b_abs_or = true; break;}
@@ -7157,36 +7157,36 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
         }
         if(b_abs_or) {
-                while((i = str.find('|', 0)) != string::npos && i + 1 != str.length()) {
+                while((i = str.find('|', 0)) != std::string::npos && i + 1 != str.length()) {
                         if(str[i + 1] == '|') {
                                 size_t depth = 1;
                                 i2 = i;
-                                while((i2 = str.find("||", i2 + 2)) != string::npos) {
+                                while((i2 = str.find("||", i2 + 2)) != std::string::npos) {
                                         if(is_in(OPERATORS INTERNAL_OPERATORS, str[i2 - 1])) depth++;
                                         else depth--;
                                         if(depth == 0) break;
                                 }
-                                if(i2 == string::npos) str2 = str.substr(i + 2);
+                                if(i2 == std::string::npos) str2 = str.substr(i + 2);
                                 else str2 = str.substr(i + 2, i2 - (i + 2));
                                 str3 = ID_WRAP_LEFT;
                                 str3 += i2s(parseAddId(f_magnitude, str2, po));
                                 str3 += ID_WRAP_RIGHT;
-                                if(i2 == string::npos) str.replace(i, str.length() - i, str3);
+                                if(i2 == std::string::npos) str.replace(i, str.length() - i, str3);
                                 else str.replace(i, i2 - i + 2, str3);
                         } else {
                                 size_t depth = 1;
                                 i2 = i;
-                                while((i2 = str.find('|', i2 + 1)) != string::npos) {
+                                while((i2 = str.find('|', i2 + 1)) != std::string::npos) {
                                         if(is_in(OPERATORS INTERNAL_OPERATORS, str[i2 - 1])) depth++;
                                         else depth--;
                                         if(depth == 0) break;
                                 }
-                                if(i2 == string::npos) str2 = str.substr(i + 1);
+                                if(i2 == std::string::npos) str2 = str.substr(i + 1);
                                 else str2 = str.substr(i + 1, i2 - (i + 1));
                                 str3 = ID_WRAP_LEFT;
                                 str3 += i2s(parseAddId(f_abs, str2, po));
                                 str3 += ID_WRAP_RIGHT;
-                                if(i2 == string::npos) str.replace(i, str.length() - i, str3);
+                                if(i2 == std::string::npos) str.replace(i, str.length() - i, str3);
                                 else str.replace(i, i2 - i + 1, str3);
                         }
                 }
@@ -7196,13 +7196,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 i3 = 0;
                 ParseOptions po2 = po;
                 po2.rpn = false;
-                vector<MathStructure*> mstack;
+                std::vector<MathStructure*> mstack;
                 bool b = false;
                 char last_operator = 0;
                 char last_operator2 = 0;
                 while(true) {
                         i = str.find_first_of(OPERATORS "\a%\x1c" SPACE "\\", i3 + 1);
-                        if(i == string::npos) {
+                        if(i == std::string::npos) {
                                 if(!b) {
                                         parseAdd(str, mstruct, po2);
                                         return true;
@@ -7381,7 +7381,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         remove_blank_ends(str2);
                         if(!str2.empty()) {
                                 mstack.push_back(new MathStructure());
-                                if((str[i] == GREATER_CH || str[i] == LESS_CH) && po2.base < 10 && po2.base >= 2 && i + 1 < str.length() && str[i + 1] == str[i] && str2.find_first_not_of(NUMBERS SPACE PLUS MINUS) == string::npos) {
+                                if((str[i] == GREATER_CH || str[i] == LESS_CH) && po2.base < 10 && po2.base >= 2 && i + 1 < str.length() && str[i + 1] == str[i] && str2.find_first_not_of(NUMBERS SPACE PLUS MINUS) == std::string::npos) {
                                         for(i = 0; i < str2.size(); i++) {
                                                 if(str2[i] >= '0' && str2[i] <= '9' && po.base <= str2[i] - '0') {
                                                         po2.base = BASE_DECIMAL;
@@ -7577,9 +7577,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
         if(po.rpn) remove_blanks(str);
         i = 0;
         i3 = 0;
-        if((i = str.find(LOGICAL_AND, 1)) != string::npos && i + 2 != str.length()) {
+        if((i = str.find(LOGICAL_AND, 1)) != std::string::npos && i + 2 != str.length()) {
                 bool b = false, append = false;
-                while(i != string::npos && i + 2 != str.length()) {
+                while(i != std::string::npos && i + 2 != str.length()) {
                         str2 = str.substr(0, i);
                         str = str.substr(i + 2, str.length() - (i + 2));
                         if(b) {
@@ -7598,9 +7598,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
                 return true;
         }
-        if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(LOGICAL_OR, 1)) != string::npos && i + 2 != str.length()) {
+        if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(LOGICAL_OR, 1)) != std::string::npos && i + 2 != str.length()) {
                 bool b = false, append = false;
-                while(i != string::npos && i + 2 != str.length()) {
+                while(i != std::string::npos && i + 2 != str.length()) {
                         str2 = str.substr(0, i);
                         str = str.substr(i + 2, str.length() - (i + 2));
                         if(b) {
@@ -7619,16 +7619,16 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
                 return true;
         }
-        /*if((i = str.find(LOGICAL_XOR, 1)) != string::npos && i + strlen(LOGICAL_XOR) != str.length()) {
+        /*if((i = str.find(LOGICAL_XOR, 1)) != std::string::npos && i + strlen(LOGICAL_XOR) != str.length()) {
                 str2 = str.substr(0, i);
                 str = str.substr(i + strlen(LOGICAL_XOR), str.length() - (i + strlen(LOGICAL_XOR)));
                 parseAdd(str2, mstruct, po);
                 parseAdd(str, mstruct, po, OPERATION_LOGICAL_XOR);
                 return true;
         }*/
-        if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
+        if(po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != std::string::npos && i + 1 != str.length()) {
                 bool b = false, append = false;
-                while(i != string::npos && i + 1 != str.length()) {
+                while(i != std::string::npos && i + 1 != str.length()) {
                         str2 = str.substr(0, i);
                         str = str.substr(i + 1, str.length() - (i + 1));
                         if(b) {
@@ -7647,16 +7647,16 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
                 return true;
         }
-        if((i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
+        if((i = str.find('\a', 1)) != std::string::npos && i + 1 != str.length()) {
                 str2 = str.substr(0, i);
                 str = str.substr(i + 1, str.length() - (i + 1));
                 parseAdd(str2, mstruct, po);
                 parseAdd(str, mstruct, po, OPERATION_BITWISE_XOR);
                 return true;
         }
-        if((i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
+        if((i = str.find(BITWISE_AND, 1)) != std::string::npos && i + 1 != str.length()) {
                 bool b = false, append = false;
-                while(i != string::npos && i + 1 != str.length()) {
+                while(i != std::string::npos && i + 1 != str.length()) {
                         str2 = str.substr(0, i);
                         str = str.substr(i + 1, str.length() - (i + 1));
                         if(b) {
@@ -7675,15 +7675,15 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
                 return true;
         }
-        if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != string::npos) {
-                while(i != string::npos && ((str[i] == LOGICAL_NOT_CH && (i + 1 >= str.length() || str[i + 1] != EQUALS_CH)) || (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
+        if((i = str.find_first_of(LESS GREATER EQUALS NOT, 0)) != std::string::npos) {
+                while(i != std::string::npos && ((str[i] == LOGICAL_NOT_CH && (i + 1 >= str.length() || str[i + 1] != EQUALS_CH)) || (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
                         i = str.find_first_of(LESS GREATER NOT EQUALS, i + 2);
                 }
         }
-        if(i != string::npos) {
+        if(i != std::string::npos) {
                 bool b = false;
                 bool c = false;
-                while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
+                while(i != std::string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
                         i++;
                         if(i + 1 == str.length()) {
                                 c = true;
@@ -7691,16 +7691,16 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
                 MathOperation s = OPERATION_ADD;
                 while(!c) {
-                        while(i != string::npos && ((str[i] == LOGICAL_NOT_CH && (i + 1 >= str.length() || str[i + 1] != EQUALS_CH)) || (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
+                        while(i != std::string::npos && ((str[i] == LOGICAL_NOT_CH && (i + 1 >= str.length() || str[i + 1] != EQUALS_CH)) || (str[i] == LESS_CH && i + 1 < str.length() && str[i + 1] == LESS_CH) || (str[i] == GREATER_CH && i + 1 < str.length() && str[i + 1] == GREATER_CH))) {
                                 i = str.find_first_of(LESS GREATER NOT EQUALS, i + 2);
-                                while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
+                                while(i != std::string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
                                         i++;
                                         if(i + 1 == str.length()) {
-                                                i = string::npos;
+                                                i = std::string::npos;
                                         }
                                 }
                         }
-                        if(i == string::npos) {
+                        if(i == std::string::npos) {
                                 str2 = str.substr(0, str.length());
                         } else {
                                 str2 = str.substr(0, i);
@@ -7716,7 +7716,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                                 }
                                 parseAdd(str2, mstruct, po, s);
                         }
-                        if(i == string::npos) {
+                        if(i == std::string::npos) {
                                 return true;
                         }
                         if(!b) {
@@ -7742,24 +7742,24 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         }
                         str = str.substr(i + 1, str.length() - (i + 1));
                         i = str.find_first_of(LESS GREATER NOT EQUALS, 0);
-                        while(i != string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
+                        while(i != std::string::npos && str[i] == NOT_CH && str.length() > i + 1 && str[i + 1] == NOT_CH) {
                                 i++;
                                 if(i + 1 == str.length()) {
-                                        i = string::npos;
+                                        i = std::string::npos;
                                 }
                         }
                 }
         }
         i = str.find(SHIFT_LEFT, 1);
         i2 = str.find(SHIFT_RIGHT, 1);
-        if(i2 != string::npos && (i == string::npos || i2 < i)) i = i2;
-        if(i != string::npos && i + 2 != str.length()) {
+        if(i2 != std::string::npos && (i == std::string::npos || i2 < i)) i = i2;
+        if(i != std::string::npos && i + 2 != str.length()) {
                 MathStructure mstruct1, mstruct2;
                 bool b_neg = (str[i] == '>');
                 str2 = str.substr(0, i);
                 str = str.substr(i + 2, str.length() - (i + 2));
                 parseAdd(str2, &mstruct1, po);
-                if(po.base < 10 && po.base >= 2 && str.find_first_not_of(NUMBERS SPACE PLUS MINUS) == string::npos) {
+                if(po.base < 10 && po.base >= 2 && str.find_first_not_of(NUMBERS SPACE PLUS MINUS) == std::string::npos) {
                         for(i = 0; i < str.size(); i++) {
                                 if(str[i] >= '0' && str[i] <= '9' && po.base <= str[i] - '0') {
                                         ParseOptions po2 = po;
@@ -7783,10 +7783,10 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 return true;
         }
 
-        if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos && i + 1 != str.length()) {
+        if((i = str.find_first_of(PLUS MINUS, 1)) != std::string::npos && i + 1 != str.length()) {
                 bool b = false, c = false, append = false;
                 bool min = false;
-                while(i != string::npos && i + 1 != str.length()) {
+                while(i != std::string::npos && i + 1 != str.length()) {
                         if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS, str[i - 1])) {
                                 str2 = str.substr(0, i);
                                 if(!c && b) {
@@ -7922,8 +7922,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         return true;
                 }
         }
-        if(!po.rpn && po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
-                while(i != string::npos && i + 1 != str.length()) {
+        if(!po.rpn && po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != std::string::npos && i + 1 != str.length()) {
+                while(i != std::string::npos && i + 1 != str.length()) {
                         bool b = false;
                         if(i > 2 && i < str.length() - 3 && str[i + 1] == ID_WRAP_LEFT_CH) {
                                 i2 = i;
@@ -7945,7 +7945,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                                         }
                                         i2 = str.rfind(ID_WRAP_LEFT_CH, i4 - 2);
                                         m_temp = NULL;
-                                        if(i2 != string::npos) {
+                                        if(i2 != std::string::npos) {
                                                 int id = s2i(str.substr(i2 + 1, (i4 - 1) - (i2 + 1)));
                                                 if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
                                         }
@@ -7962,7 +7962,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                                         size_t i4 = i3;
                                         i3 = str.find(ID_WRAP_RIGHT_CH, i4 + 2);
                                         m_temp2 = NULL;
-                                        if(i3 != string::npos) {
+                                        if(i3 != std::string::npos) {
                                                 int id = s2i(str.substr(i4 + 2, (i3 - 1) - (i4 + 1)));
                                                 if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
                                         }
@@ -8002,17 +8002,17 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         }
                         if(!b) {
                                 i2 = str.find_last_not_of(NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS, i - 1);
-                                if(i2 == string::npos || (i2 != i - 1 && str[i2] == MULTIPLICATION_2_CH)) b = true;
+                                if(i2 == std::string::npos || (i2 != i - 1 && str[i2] == MULTIPLICATION_2_CH)) b = true;
                                 i2 = str.rfind(MULTIPLICATION_2_CH, i - 1);
-                                if(i2 == string::npos) b = true;
+                                if(i2 == std::string::npos) b = true;
                                 if(b) {
                                         i3 = str.find_first_of(MULTIPLICATION_2 "%" MULTIPLICATION DIVISION, i + 1);
-                                        if(i3 == string::npos || i3 == i + 1 || str[i3] != MULTIPLICATION_2_CH) b = false;
+                                        if(i3 == std::string::npos || i3 == i + 1 || str[i3] != MULTIPLICATION_2_CH) b = false;
                                         if(i3 < str.length() + 1 && (str[i3 + 1] == '%' || str[i3 + 1] == DIVISION_CH || str[i3 + 1] == MULTIPLICATION_CH || str[i3 + 1] == POWER_CH)) b = false;
                                 }
                                 if(b) {
-                                        if(i3 != string::npos) str[i3] = MULTIPLICATION_CH;
-                                        if(i2 != string::npos) str[i2] = MULTIPLICATION_CH;
+                                        if(i3 != std::string::npos) str[i3] = MULTIPLICATION_CH;
+                                        if(i2 != std::string::npos) str[i2] = MULTIPLICATION_CH;
                                 } else {
                                         if(str[i + 1] == MULTIPLICATION_2_CH) {
                                                 str.erase(i + 1, 1);
@@ -8028,8 +8028,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
         }
         if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !po.rpn) remove_blanks(str);
         if(po.parsing_mode == PARSING_MODE_CONVENTIONAL) {
-                if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
-                        while(i != string::npos && i + 1 != str.length()) {
+                if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != std::string::npos && i + 1 != str.length()) {
+                        while(i != std::string::npos && i + 1 != str.length()) {
                                 if(is_in(NUMBERS ID_WRAP_LEFT, str[i + 1])) {
                                         str.insert(i + 1, 1, MULTIPLICATION_CH);
                                         i++;
@@ -8037,8 +8037,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                                 i = str.find(ID_WRAP_RIGHT_CH, i + 1);
                         }
                 }
-                if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
-                        while(i != string::npos) {
+                if((i = str.find(ID_WRAP_LEFT_CH, 1)) != std::string::npos) {
+                        while(i != std::string::npos) {
                                 if(is_in(NUMBERS, str[i - 1])) {
                                         str.insert(i, 1, MULTIPLICATION_CH);
                                         i++;
@@ -8047,13 +8047,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         }
                 }
         }
-        if((i = str.find_first_of(MULTIPLICATION DIVISION "%", 0)) != string::npos && i + 1 != str.length()) {
+        if((i = str.find_first_of(MULTIPLICATION DIVISION "%", 0)) != std::string::npos && i + 1 != str.length()) {
                 bool b = false, append = false;
                 int type = 0;
-                while(i != string::npos && i + 1 != str.length()) {
+                while(i != std::string::npos && i + 1 != str.length()) {
                         if(i < 1) {
-                                if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS) == string::npos) {
-                                        gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
+                                if(i < 1 && str.find_first_not_of(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS) == std::string::npos) {
+                                        gsub("\a", str.find_first_of(OPERATORS "%") != std::string::npos ? " xor " : "xor", str);
                                         error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
                                         return b;
                                 }
@@ -8061,8 +8061,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                                 while(i < str.length() && is_in(MULTIPLICATION DIVISION "%", str[i])) {
                                         i++;
                                 }
-                                string errstr = str.substr(0, i);
-                                gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
+                                std::string errstr = str.substr(0, i);
+                                gsub("\a", str.find_first_of(OPERATORS "%") != std::string::npos ? " xor " : "xor", errstr);
                                 error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
                                 str = str.substr(i, str.length() - i);
                                 i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
@@ -8116,8 +8116,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                                         while(i2 + i + 1 != str.length() && is_in(MULTIPLICATION DIVISION "%", str[i2 + i + 1])) {
                                                 i2++;
                                         }
-                                        string errstr = str.substr(i, i2);
-                                        gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", errstr);
+                                        std::string errstr = str.substr(i, i2);
+                                        gsub("\a", str.find_first_of(OPERATORS "%") != std::string::npos ? " xor " : "xor", errstr);
                                         error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
                                         i += i2;
                                 }
@@ -8158,7 +8158,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
         }
 
-        if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length()) {
+        if((i = str.find('\x1c', 0)) != std::string::npos && i + 1 != str.length()) {
                 if(i != 0) str2 = str.substr(0, i);
                 str = str.substr(i + 1, str.length() - (i + 1));
                 if(i != 0) parseAdd(str2, mstruct, po);
@@ -8177,8 +8177,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
         }
 
         if(str.empty()) return false;
-        if(str.find_first_not_of(OPERATORS INTERNAL_OPERATORS SPACE) == string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find_first_of("(|)") == string::npos)) {
-                gsub("\a", str.find_first_of(OPERATORS "%") != string::npos ? " xor " : "xor", str);
+        if(str.find_first_not_of(OPERATORS INTERNAL_OPERATORS SPACE) == std::string::npos && (po.base != BASE_ROMAN_NUMERALS || str.find_first_of("(|)") == std::string::npos)) {
+                gsub("\a", str.find_first_of(OPERATORS "%") != std::string::npos ? " xor " : "xor", str);
                 gsub("\x1c", "∠", str);
                 error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
                 return false;
@@ -8241,9 +8241,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 }
                 return false;
         }
-        if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
+        if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != std::string::npos && i + 1 != str.length()) {
                 bool b = false, append = false;
-                while(i != string::npos && i + 1 != str.length()) {
+                while(i != std::string::npos && i + 1 != str.length()) {
                         if(str[i + 1] != POWER_CH && str[i + 1] != '\b') {
                                 str2 = str.substr(0, i + 1);
                                 str = str.substr(i + 1, str.length() - (i + 1));
@@ -8313,9 +8313,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         return true;
                 }
         }
-        if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
+        if((i = str.find(ID_WRAP_LEFT_CH, 1)) != std::string::npos) {
                 bool b = false, append = false;
-                while(i != string::npos) {
+                while(i != std::string::npos) {
                         if(str[i - 1] != POWER_CH && (i < 2 || str[i - 1] != MINUS_CH || str[i - 2] != POWER_CH) && str[i - 1] != '\b') {
                                 str2 = str.substr(0, i);
                                 str = str.substr(i, str.length() - i);
@@ -8344,12 +8344,12 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                         return true;
                 }
         }
-        if((i = str.find(POWER_CH, 1)) != string::npos && i + 1 != str.length()) {
+        if((i = str.find(POWER_CH, 1)) != std::string::npos && i + 1 != str.length()) {
                 str2 = str.substr(0, i);
                 str = str.substr(i + 1, str.length() - (i + 1));
                 parseAdd(str2, mstruct, po);
                 parseAdd(str, mstruct, po, OPERATION_RAISE);
-        } else if((i = str.find("\b", 1)) != string::npos && i + 1 != str.length()) {
+        } else if((i = str.find("\b", 1)) != std::string::npos && i + 1 != str.length()) {
                 str2 = str.substr(0, i);
                 str = str.substr(i + 1, str.length() - (i + 1));
                 MathStructure *mstruct2 = new MathStructure;
@@ -8365,17 +8365,17 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
                 mstruct->transform(f_uncertainty);
                 mstruct->addChild_nocopy(mstruct2);
                 mstruct->addChild(m_zero);
-        } else if(BASE_2_10 && (i = str.find_first_of(EXPS, 1)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
+        } else if(BASE_2_10 && (i = str.find_first_of(EXPS, 1)) != std::string::npos && i + 1 != str.length() && str.find("\b") == std::string::npos) {
                 str2 = str.substr(0, i);
                 str = str.substr(i + 1, str.length() - (i + 1));
                 parseAdd(str2, mstruct, po);
                 parseAdd(str, mstruct, po, OPERATION_EXP10);
-        } else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos && i + 1 != str.length() && str.find(ID_WRAP_RIGHT_CH, i + 1) && str.find_first_not_of(PLUS MINUS, 0) != i) {
+        } else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != std::string::npos && i + 1 != str.length() && str.find(ID_WRAP_RIGHT_CH, i + 1) && str.find_first_not_of(PLUS MINUS, 0) != i) {
                 str2 = str.substr(0, i);
                 str = str.substr(i, str.length() - i);
                 parseAdd(str2, mstruct, po);
                 parseAdd(str, mstruct, po, OPERATION_MULTIPLY);
-        } else if(str.length() > 0 && str[0] == ID_WRAP_LEFT_CH && (i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
+        } else if(str.length() > 0 && str[0] == ID_WRAP_LEFT_CH && (i = str.find(ID_WRAP_RIGHT_CH, 1)) != std::string::npos && i + 1 != str.length()) {
                 str2 = str.substr(0, i + 1);
                 str = str.substr(i + 1, str.length() - (i + 1));
                 parseAdd(str2, mstruct, po);
@@ -8394,7 +8394,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
         return ret;
 }
 
-string Calculator::getName(string name, ExpressionItem *object, bool force, bool always_append) {
+std::string Calculator::getName(std::string name, ExpressionItem *object, bool force, bool always_append) {
         ExpressionItem *item = NULL;
         if(!object) {
         } else if(object->type() == TYPE_FUNCTION) {
@@ -8432,7 +8432,7 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
                 item = NULL;
                 changed = true;
         }
-        string stmp = name;
+        std::string stmp = name;
         if(always_append) {
                 stmp += NAME_NUMBER_PRE_STR;
                 stmp += "1";
@@ -8493,7 +8493,7 @@ bool Calculator::loadGlobalDefinitions() {
         if(!loadDefinitions(buildPath(getGlobalDefinitionsDir(), "variables.xml").c_str(), false)) b = false;
         return b;
 }
-bool Calculator::loadGlobalDefinitions(string filename) {
+bool Calculator::loadGlobalDefinitions(std::string filename) {
         return loadDefinitions(buildPath(getGlobalDefinitionsDir(), filename).c_str(), false);
 }
 bool Calculator::loadGlobalPrefixes() {
@@ -8516,15 +8516,15 @@ bool Calculator::loadGlobalDataSets() {
         return loadGlobalDefinitions("datasets.xml");
 }
 bool Calculator::loadLocalDefinitions() {
-        string homedir = buildPath(getLocalDataDir(), "definitions");
+        std::string homedir = buildPath(getLocalDataDir(), "definitions");
         if(!dirExists(homedir)) {
-                string homedir_old = buildPath(getOldLocalDir(), "definitions");
+                std::string homedir_old = buildPath(getOldLocalDir(), "definitions");
                 if(dirExists(homedir)) {
                         if(!dirExists(getLocalDataDir())) {
                                 recursiveMakeDir(getLocalDataDir());
                         }
                         if(makeDir(homedir)) {
-                                list<string> eps_old;
+                                std::list<std::string> eps_old;
                                 struct dirent *ep_old;
                                 DIR *dp_old = opendir(homedir_old.c_str());
                                 if(dp_old) {
@@ -8541,7 +8541,7 @@ bool Calculator::loadLocalDefinitions() {
                                         }
                                         closedir(dp_old);
                                 }
-                                for(list<string>::iterator it = eps_old.begin(); it != eps_old.end(); ++it) {
+                                for(std::list<std::string>::iterator it = eps_old.begin(); it != eps_old.end(); ++it) {
                                         move_file(buildPath(homedir_old, *it).c_str(), buildPath(homedir, *it).c_str());
                                 }
                                 if(removeDir(homedir_old)) {
@@ -8550,7 +8550,7 @@ bool Calculator::loadLocalDefinitions() {
                         }
                 }
         }
-        list<string> eps;
+        std::list<std::string> eps;
         struct dirent *ep;
         DIR *dp = opendir(homedir.c_str());
         if(dp) {
@@ -8568,7 +8568,7 @@ bool Calculator::loadLocalDefinitions() {
                 closedir(dp);
         }
         eps.sort();
-        for(list<string>::iterator it = eps.begin(); it != eps.end(); ++it) {
+        for(std::list<std::string>::iterator it = eps.begin(); it != eps.end(); ++it) {
                 loadDefinitions(buildPath(homedir, *it).c_str(), (*it) == "functions.xml" || (*it) == "variables.xml" || (*it) == "units.xml" || (*it) == "datasets.xml", true);
         }
         for(size_t i = 0; i < variables.size(); i++) {
@@ -8599,7 +8599,7 @@ bool Calculator::loadLocalDefinitions() {
 
 #define ITEM_SET_BEST_NAMES(validation) \
         size_t names_i = 0, i2 = 0; \
-        string *str_names; \
+        std::string *str_names; \
         if(best_names == "-") {best_names = ""; nextbest_names = "";} \
         if(!best_names.empty()) {str_names = &best_names;} \
         else if(!nextbest_names.empty()) {str_names = &nextbest_names;} \
@@ -8640,7 +8640,7 @@ bool Calculator::loadLocalDefinitions() {
                         i3++; \
                         i2 = 0; \
                 } \
-                if(names_i == string::npos) {ename.name = str_names->substr(i3, str_names->length() - i3);} \
+                if(names_i == std::string::npos) {ename.name = str_names->substr(i3, str_names->length() - i3);} \
                 else {ename.name = str_names->substr(i3, names_i - i3);} \
                 remove_blank_ends(ename.name); \
                 if(!ename.name.empty() && validation(ename.name, version_numbers, is_user_defs)) { \
@@ -8649,7 +8649,7 @@ bool Calculator::loadLocalDefinitions() {
                         } \
                         item->addName(ename); \
                 } \
-                if(names_i == string::npos) {break;} \
+                if(names_i == std::string::npos) {break;} \
                 names_i++; \
         }
 
@@ -8721,7 +8721,7 @@ bool Calculator::loadLocalDefinitions() {
                                 i2 = 0; \
                         } \
                         if(ename.reference) { \
-                                if(names_i == string::npos) {ename.name = default_names.substr(i3, default_names.length() - i3);} \
+                                if(names_i == std::string::npos) {ename.name = default_names.substr(i3, default_names.length() - i3);} \
                                 else {ename.name = default_names.substr(i3, names_i - i3);} \
                                 remove_blank_ends(ename.name); \
                                 size_t i4 = item->hasName(ename.name, ename.case_sensitive); \
@@ -8741,7 +8741,7 @@ bool Calculator::loadLocalDefinitions() {
                                         item->addName(ename); \
                                 } \
                         } \
-                        if(names_i == string::npos) {break;} \
+                        if(names_i == std::string::npos) {break;} \
                         names_i++; \
                 } \
         }
@@ -8953,7 +8953,7 @@ bool Calculator::loadLocalDefinitions() {
                                         item->setDescription(description);\
                                         if(!title.empty() && title[0] == '!') {\
                                                 size_t i = title.find('!', 1);\
-                                                if(i == string::npos) {\
+                                                if(i == std::string::npos) {\
                                                         item->setTitle(title);\
                                                 } else if(i + 1 == title.length()) {\
                                                         item->setTitle("");\
@@ -9075,24 +9075,24 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 
         xmlDocPtr doc;
         xmlNodePtr cur, child, child2, child3;
-        string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
+        std::string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
         bool unc_rel;
         bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
         bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname, best_countries, next_best_countries;
         bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
-        string proptitle, propdescr;
+        std::string proptitle, propdescr;
         ExpressionName names[10];
         ExpressionName ref_names[10];
-        string prop_names[10];
-        string ref_prop_names[10];
+        std::string prop_names[10];
+        std::string ref_prop_names[10];
         bool best_name[10];
         bool nextbest_name[10];
-        string best_names, nextbest_names, default_names;
-        string best_prop_names, nextbest_prop_names, default_prop_names;
+        std::string best_names, nextbest_names, default_names;
+        std::string best_prop_names, nextbest_prop_names, default_prop_names;
         int name_index, prec;
         ExpressionName ename;
 
-        string locale;
+        std::string locale;
 #ifdef _WIN32
         WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
         if(LCIDToLocaleName(LOCALE_USER_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
@@ -9106,11 +9106,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                 locale = "";
         } else {
                 size_t i = locale.find('.');
-                if(i != string::npos) locale = locale.substr(0, i);
+                if(i != std::string::npos) locale = locale.substr(0, i);
         }
 
         int fulfilled_translation = 0;
-        string localebase;
+        std::string localebase;
         if(locale.length() > 2) {
                 localebase = locale.substr(0, 2);
                 if(locale == "en_US") {
@@ -9176,10 +9176,10 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 
         ParseOptions po;
 
-        vector<xmlNodePtr> unfinished_nodes;
-        vector<string> unfinished_cats;
-        queue<xmlNodePtr> sub_items;
-        vector<queue<xmlNodePtr> > nodes;
+        std::vector<xmlNodePtr> unfinished_nodes;
+        std::vector<std::string> unfinished_cats;
+        std::queue<xmlNodePtr> sub_items;
+        std::vector<std::queue<xmlNodePtr> > nodes;
 
         category = "";
         nodes.resize(1);
@@ -9205,7 +9205,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                         }
                         if(!category_title.empty() && category_title[0] == '!') {\
                                 size_t i = category_title.find('!', 1);
-                                if(i == string::npos) {
+                                if(i == std::string::npos) {
                                         category += category_title;
                                 } else if(i + 1 < category_title.length()) {
                                         category += category_title.substr(i + 1, category_title.length() - (i + 1));
@@ -9351,7 +9351,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                 }
                                                 if(!argname.empty() && argname[0] == '!') {
                                                         size_t i = argname.find('!', 1);
-                                                        if(i == string::npos) {
+                                                        if(i == std::string::npos) {
                                                                 arg->setName(argname);
                                                         } else if(i + 1 < argname.length()) {
                                                                 arg->setName(argname.substr(i + 1, argname.length() - (i + 1)));
@@ -9544,7 +9544,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                 }
                                                 if(!proptitle.empty() && proptitle[0] == '!') {\
                                                         size_t i = proptitle.find('!', 1);
-                                                        if(i == string::npos) {
+                                                        if(i == std::string::npos) {
                                                                 dp->setTitle(proptitle);
                                                         } else if(i + 1 < proptitle.length()) {
                                                                 dp->setTitle(proptitle.substr(i + 1, proptitle.length() - (i + 1)));
@@ -9555,7 +9555,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                 dp->setDescription(propdescr);
                                                 if(new_names) {
                                                         size_t names_i = 0, i2 = 0;
-                                                        string *str_names;
+                                                        std::string *str_names;
                                                         bool had_ref = false;
                                                         if(best_prop_names == "-") {best_prop_names = ""; nextbest_prop_names = "";}
                                                         if(!best_prop_names.empty()) {str_names = &best_prop_names;}
@@ -9582,14 +9582,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                                         i3++;
                                                                         i2 = 0;
                                                                 }
-                                                                if(names_i == string::npos) {stmp = str_names->substr(i3, str_names->length() - i3);}
+                                                                if(names_i == std::string::npos) {stmp = str_names->substr(i3, str_names->length() - i3);}
                                                                 else {stmp = str_names->substr(i3, names_i - i3);}
                                                                 remove_blank_ends(stmp);
                                                                 if(!stmp.empty()) {
                                                                         if(b_prop_ref) had_ref = true;
                                                                         dp->addName(stmp, b_prop_ref);
                                                                 }
-                                                                if(names_i == string::npos) {break;}
+                                                                if(names_i == std::string::npos) {break;}
                                                                 names_i++;
                                                         }
                                                         if(str_names != &default_prop_names && !default_prop_names.empty()) {
@@ -9617,9 +9617,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                                                 i3++;
                                                                                 i2 = 0;
                                                                         }
-                                                                        if(b_prop_ref || (!had_ref && names_i == string::npos)) {
+                                                                        if(b_prop_ref || (!had_ref && names_i == std::string::npos)) {
                                                                                 had_ref = true;
-                                                                                if(names_i == string::npos) {stmp = default_prop_names.substr(i3, default_prop_names.length() - i3);}
+                                                                                if(names_i == std::string::npos) {stmp = default_prop_names.substr(i3, default_prop_names.length() - i3);}
                                                                                 else {stmp = default_prop_names.substr(i3, names_i - i3);}
                                                                                 remove_blank_ends(stmp);
                                                                                 size_t i4 = dp->hasName(stmp);
@@ -9629,7 +9629,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                                                         dp->addName(stmp, true);
                                                                                 }
                                                                         }
-                                                                        if(names_i == string::npos) {break;}
+                                                                        if(names_i == std::string::npos) {break;}
                                                                         names_i++;
                                                                 }
                                                         }
@@ -9688,7 +9688,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                 if(dc->getArgumentDefinition(itmp)) {
                                                         if(!argname.empty() && argname[0] == '!') {
                                                                 size_t i = argname.find('!', 1);
-                                                                if(i == string::npos) {
+                                                                if(i == std::string::npos) {
                                                                         dc->getArgumentDefinition(itmp)->setName(argname);
                                                                 } else if(i + 1 < argname.length()) {
                                                                         dc->getArgumentDefinition(itmp)->setName(argname.substr(i + 1, argname.length() - (i + 1)));
@@ -9710,7 +9710,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                 if(dc->getArgumentDefinition(itmp)) {
                                                         if(!argname.empty() && argname[0] == '!') {
                                                                 size_t i = argname.find('!', 1);
-                                                                if(i == string::npos) {
+                                                                if(i == std::string::npos) {
                                                                         dc->getArgumentDefinition(itmp)->setName(argname);
                                                                 } else if(i + 1 < argname.length()) {
                                                                         dc->getArgumentDefinition(itmp)->setName(argname.substr(i + 1, argname.length() - (i + 1)));
@@ -9794,7 +9794,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                         if(f->getArgumentDefinition(itmp)) {
                                                                 if(!argname.empty() && argname[0] == '!') {
                                                                         size_t i = argname.find('!', 1);
-                                                                        if(i == string::npos) {
+                                                                        if(i == std::string::npos) {
                                                                                 f->getArgumentDefinition(itmp)->setName(argname);
                                                                         } else if(i + 1 < argname.length()) {
                                                                                 f->getArgumentDefinition(itmp)->setName(argname.substr(i + 1, argname.length() - (i + 1)));
@@ -9805,7 +9805,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                                                         } else if(itmp <= f->maxargs() || itmp <= f->minargs()) {
                                                                 if(!argname.empty() && argname[0] == '!') {
                                                                         size_t i = argname.find('!', 1);
-                                                                        if(i == string::npos) {
+                                                                        if(i == std::string::npos) {
                                                                                 f->setArgumentDefinition(itmp, new Argument(argname, false));
                                                                         } else if(i + 1 < argname.length()) {
                                                                                 f->setArgumentDefinition(itmp, new Argument(argname.substr(i + 1, argname.length() - (i + 1)), false));
@@ -10493,7 +10493,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
                 }
                 while(!nodes.empty() && nodes.back().empty()) {
                         size_t cat_i = category.rfind("/");
-                        if(cat_i == string::npos) {
+                        if(cat_i == std::string::npos) {
                                 category = "";
                         } else {
                                 category = category.substr(0, cat_i);
@@ -10524,7 +10524,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 bool Calculator::saveDefinitions() {
 
         recursiveMakeDir(getLocalDataDir());
-        string homedir = buildPath(getLocalDataDir(), "definitions");
+        std::string homedir = buildPath(getLocalDataDir(), "definitions");
         makeDir(homedir);
         bool b = true;
         if(!saveFunctions(buildPath(homedir, "functions.xml").c_str())) b = false;
@@ -10537,8 +10537,8 @@ bool Calculator::saveDefinitions() {
 
 struct node_tree_item {
         xmlNodePtr node;
-        string category;
-        vector<node_tree_item> items;
+        std::string category;
+        std::vector<node_tree_item> items;
 };
 
 int Calculator::saveDataObjects() {
@@ -10626,12 +10626,12 @@ int Calculator::savePrefixes(const char* file_name, bool save_global) {
                                         str += ',';\
                                 }
 
-string Calculator::temporaryCategory() const {
+std::string Calculator::temporaryCategory() const {
         return _("Temporary");
 }
 
 int Calculator::saveVariables(const char* file_name, bool save_global) {
-        string str;
+        std::string str;
         const ExpressionName *ename;
         xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
         xmlNodePtr cur, newnode, newnode2;
@@ -10641,7 +10641,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
         top.category = "";
         top.node = doc->children;
         node_tree_item *item;
-        string cat, cat_sub;
+        std::string cat, cat_sub;
         for(size_t i = 0; i < variables.size(); i++) {
                 if((save_global || variables[i]->isLocal() || variables[i]->hasChanged()) && variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") {
                         item = &top;
@@ -10650,7 +10650,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
                                 size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
                                 bool b = false;
                                 while(true) {
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
                                         } else {
                                                 cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
@@ -10674,7 +10674,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
                                                         xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
                                                 }
                                         }
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 break;
                                         }
                                         cat_i_prev = cat_i + 1;
@@ -10806,7 +10806,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 }
 
 int Calculator::saveUnits(const char* file_name, bool save_global) {
-        string str;
+        std::string str;
         xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
         xmlNodePtr cur, newnode, newnode2, newnode3;
         doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
@@ -10819,7 +10819,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
         top.category = "";
         top.node = doc->children;
         node_tree_item *item;
-        string cat, cat_sub;
+        std::string cat, cat_sub;
         for(size_t i = 0; i < units.size(); i++) {
                 u = units[i];
                 if(save_global || u->isLocal() || u->hasChanged()) {
@@ -10829,7 +10829,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
                                 size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
                                 bool b = false;
                                 while(true) {
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
                                         } else {
                                                 cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
@@ -10853,7 +10853,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
                                                         xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
                                                 }
                                         }
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 break;
                                         }
                                         cat_i_prev = cat_i + 1;
@@ -10985,11 +10985,11 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
         top.category = "";
         top.node = doc->children;
         node_tree_item *item;
-        string cat, cat_sub;
+        std::string cat, cat_sub;
         Argument *arg;
         IntegerArgument *iarg;
         NumberArgument *farg;
-        string str;
+        std::string str;
         for(size_t i = 0; i < functions.size(); i++) {
                 if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged())) {
                         item = &top;
@@ -10998,7 +10998,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
                                 size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
                                 bool b = false;
                                 while(true) {
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
                                         } else {
                                                 cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
@@ -11022,7 +11022,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
                                                         xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
                                                 }
                                         }
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 break;
                                         }
                                         cat_i_prev = cat_i + 1;
@@ -11190,11 +11190,11 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
         top.category = "";
         top.node = doc->children;
         node_tree_item *item;
-        string cat, cat_sub;
+        std::string cat, cat_sub;
         Argument *arg;
         DataSet *ds;
         DataProperty *dp;
-        string str;
+        std::string str;
         for(size_t i = 0; i < functions.size(); i++) {
                 if(functions[i]->subtype() == SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged())) {
                         item = &top;
@@ -11204,7 +11204,7 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
                                 size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
                                 bool b = false;
                                 while(true) {
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
                                         } else {
                                                 cat_sub = cat.substr(cat_i_prev, cat_i - cat_i_prev);
@@ -11228,7 +11228,7 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
                                                         xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
                                                 }
                                         }
-                                        if(cat_i == string::npos) {
+                                        if(cat_i == std::string::npos) {
                                                 break;
                                         }
                                         cat_i_prev = cat_i + 1;
@@ -11382,7 +11382,7 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
         return returnvalue;
 }
 
-bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int first_row, string delimiter, vector<string> *headers) {
+bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int first_row, std::string delimiter, std::vector<std::string> *headers) {
         FILE *file = fopen(file_name, "r");
         if(file == NULL) {
                 return false;
@@ -11391,7 +11391,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
                 first_row = 1;
         }
         char line[10000];
-        string stmp, str1, str2;
+        std::string stmp, str1, str2;
         long int row = 0, rows = 1;
         int columns = 1;
         int column;
@@ -11408,7 +11408,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
                                         row--;
                                 } else {
                                         is = 0;
-                                        while((is_n = stmp.find(delimiter, is)) != string::npos) {
+                                        while((is_n = stmp.find(delimiter, is)) != std::string::npos) {
                                                 columns++;
                                                 if(headers) {
                                                         str1 = stmp.substr(is, is_n - is);
@@ -11434,7 +11434,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
                                 }
                                 while(column <= columns) {
                                         is_n = stmp.find(delimiter, is);
-                                        if(is_n == string::npos) {
+                                        if(is_n == std::string::npos) {
                                                 str1 = stmp.substr(is, stmp.length() - is);
                                         } else {
                                                 str1 = stmp.substr(is, is_n - is);
@@ -11442,7 +11442,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
                                         }
                                         parse(&mstruct[rows - 1][column - 1], str1);
                                         column++;
-                                        if(is_n == string::npos) {
+                                        if(is_n == std::string::npos) {
                                                 break;
                                         }
                                 }
@@ -11453,7 +11453,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
         return true;
 }
 
-bool Calculator::importCSV(const char *file_name, int first_row, bool headers, string delimiter, bool to_matrix, string name, string title, string category) {
+bool Calculator::importCSV(const char *file_name, int first_row, bool headers, std::string delimiter, bool to_matrix, std::string name, std::string title, std::string category) {
         FILE *file = fopen(file_name, "r");
         if(file == NULL) {
                 return false;
@@ -11461,28 +11461,28 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
         if(first_row < 1) {
                 first_row = 1;
         }
-        string filestr = file_name;
+        std::string filestr = file_name;
         remove_blank_ends(filestr);
         size_t i = filestr.find_last_of("/");
-        if(i != string::npos) {
+        if(i != std::string::npos) {
                 filestr = filestr.substr(i + 1, filestr.length() - (i + 1));
         }
         remove_blank_ends(name);
         if(name.empty()) {
                 name = filestr;
                 i = name.find_last_of("/");
-                if(i != string::npos) name = name.substr(i + 1, name.length() - i);
+                if(i != std::string::npos) name = name.substr(i + 1, name.length() - i);
                 i = name.find_last_of(".");
-                if(i != string::npos) name = name.substr(0, i);
+                if(i != std::string::npos) name = name.substr(0, i);
         }
 
         char line[10000];
-        string stmp, str1, str2;
+        std::string stmp, str1, str2;
         int row = 0;
         int columns = 1, rows = 1;
         int column;
-        vector<string> header;
-        vector<MathStructure> vectors;
+        std::vector<std::string> header;
+        std::vector<MathStructure> vectors;
         MathStructure mstruct = m_empty_matrix;
         size_t is, is_n;
         bool v_added = false;
@@ -11496,7 +11496,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
                                         row--;
                                 } else {
                                         is = 0;
-                                        while((is_n = stmp.find(delimiter, is)) != string::npos) {
+                                        while((is_n = stmp.find(delimiter, is)) != std::string::npos) {
                                                 columns++;
                                                 if(headers) {
                                                         str1 = stmp.substr(is, is_n - is);
@@ -11529,7 +11529,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
                                 column = 1;
                                 while(column <= columns) {
                                         is_n = stmp.find(delimiter, is);
-                                        if(is_n == string::npos) {
+                                        if(is_n == std::string::npos) {
                                                 str1 = stmp.substr(is, stmp.length() - is);
                                         } else {
                                                 str1 = stmp.substr(is, is_n - is);
@@ -11541,7 +11541,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
                                                 vectors[column - 1].addChild(parse(str1));
                                         }
                                         column++;
-                                        if(is_n == string::npos) {
+                                        if(is_n == std::string::npos) {
                                                 break;
                                         }
                                 }
@@ -11601,7 +11601,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
         }
         return true;
 }
-bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, string delimiter) {
+bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, std::string delimiter) {
         FILE *file = fopen(file_name, "w+");
         if(file == NULL) {
                 return false;
@@ -11634,7 +11634,7 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
         fclose(file);
         return true;
 }
-int Calculator::testCondition(string expression) {
+int Calculator::testCondition(std::string expression) {
         MathStructure mstruct = calculate(expression);
         if(mstruct.isNumber()) {
                 if(mstruct.number().isPositive()) {
@@ -11655,10 +11655,10 @@ void Calculator::abortPrint() {
 bool Calculator::printingAborted() {
         return aborted();
 }
-string Calculator::printingAbortedMessage() const {
+std::string Calculator::printingAbortedMessage() const {
         return abortedMessage();
 }
-string Calculator::timedOutString() const {
+std::string Calculator::timedOutString() const {
         return _("timed out");
 }
 bool Calculator::printingControlled() const {
@@ -11705,7 +11705,7 @@ bool Calculator::aborted() {
         }
         return false;
 }
-string Calculator::abortedMessage() const {
+std::string Calculator::abortedMessage() const {
         if(i_aborted == 2) return _("timed out");
         return _("aborted");
 }
@@ -11724,13 +11724,13 @@ bool Calculator::loadExchangeRates() {
         xmlNodePtr cur = NULL;
         xmlChar *value;
         bool global_file = false;
-        string currency, rate, sdate;
-        string filename = buildPath(getLocalDataDir(), "eurofxref-daily.xml");
+        std::string currency, rate, sdate;
+        std::string filename = buildPath(getLocalDataDir(), "eurofxref-daily.xml");
         if(fileExists(filename)) {
                 doc = xmlParseFile(filename.c_str());
         } else {
 #ifndef _WIN32
-                string filename_old = buildPath(getOldLocalDir(), "eurofxref-daily.xml");
+                std::string filename_old = buildPath(getOldLocalDir(), "eurofxref-daily.xml");
                 if(fileExists(filename)) {
                         doc = xmlParseFile(filename_old.c_str());
                         if(doc) {
@@ -11835,15 +11835,15 @@ bool Calculator::loadExchangeRates() {
         }
 
         filename = buildPath(getLocalDataDir(), "btc.json");
-        ifstream file2(filename.c_str());
+        std::ifstream file2(filename.c_str());
         if(file2.is_open()) {
                 std::stringstream ssbuffer2;
                 ssbuffer2 << file2.rdbuf();
-                string sbuffer = ssbuffer2.str();
+                std::string sbuffer = ssbuffer2.str();
                 size_t i = sbuffer.find("\"amount\":");
-                if(i != string::npos) {
+                if(i != std::string::npos) {
                         i = sbuffer.find("\"", i + 9);
-                        if(i != string::npos) {
+                        if(i != std::string::npos) {
                                 size_t i2 = sbuffer.find("\"", i + 1);
                                 ((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
                         }
@@ -11862,9 +11862,9 @@ bool Calculator::loadExchangeRates() {
         Unit *u_usd = getUnit("USD");
         if(!u_usd) return true;
 
-        string sbuffer;
+        std::string sbuffer;
         filename = buildPath(getLocalDataDir(), "rates.html");
-        ifstream file(filename.c_str());
+        std::ifstream file(filename.c_str());
         if(file.is_open()) {
                 std::stringstream ssbuffer;
                 ssbuffer << file.rdbuf();
@@ -11879,29 +11879,29 @@ bool Calculator::loadExchangeRates() {
                 std::stringstream ssbuffer;
                 ssbuffer << file.rdbuf();
                 sbuffer = ssbuffer.str();
-                string sname;
+                std::string sname;
                 size_t i = sbuffer.find("\"currency_code\":");
-                while(i != string::npos) {
+                while(i != std::string::npos) {
                         i += 16;
                         size_t i2 = sbuffer.find("\"", i);
-                        if(i2 == string::npos) break;
+                        if(i2 == std::string::npos) break;
                         size_t i3 = sbuffer.find("\"", i2 + 1);
-                        if(i3 != string::npos && i3 - (i2 + 1) == 3) {
+                        if(i3 != std::string::npos && i3 - (i2 + 1) == 3) {
                                 currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
                                 if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z') {
                                         u = getUnit(currency);
                                         if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
                                                 i2 = sbuffer.find("\"rate\":", i3 + 1);
                                                 size_t i4 = sbuffer.find("}", i3 + 1);
-                                                if(i2 != string::npos && i2 < i4) {
+                                                if(i2 != std::string::npos && i2 < i4) {
                                                         i3 = sbuffer.find(",", i2 + 7);
                                                         rate = sbuffer.substr(i2 + 7, i3 - (i2 + 7));
                                                         rate = "1/" + rate;
                                                         if(!u) {
                                                                 i2 = sbuffer.find("\"name\":\"", i3 + 1);
-                                                                if(i2 != string::npos && i2 < i4) {
+                                                                if(i2 != std::string::npos && i2 < i4) {
                                                                         i3 = sbuffer.find("\"", i2 + 8);
-                                                                        if(i3 != string::npos) {
+                                                                        if(i3 != std::string::npos) {
                                                                                 sname = sbuffer.substr(i2 + 8, i3 - (i2 + 8));
                                                                                 remove_blank_ends(sname);
                                                                         }
@@ -11929,34 +11929,34 @@ bool Calculator::loadExchangeRates() {
                 exchange_rates_time[2] = ((time_t) 1527199L) * 1000;
                 if(exchange_rates_time[2] > exchange_rates_check_time[2]) exchange_rates_check_time[2] = exchange_rates_time[2];
         } else {
-                string sname;
+                std::string sname;
                 size_t i = sbuffer.find("class=\'country\'");
-                while(i != string::npos) {
+                while(i != std::string::npos) {
                         currency = ""; sname = ""; rate = "";
                         i += 15;
                         size_t i2 = sbuffer.find("data-currency-code=\"", i);
-                        if(i2 != string::npos) {
+                        if(i2 != std::string::npos) {
                                 i2 += 19;
                                 size_t i3 = sbuffer.find("\"", i2 + 1);
-                                if(i3 != string::npos) {
+                                if(i3 != std::string::npos) {
                                         currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
                                         remove_blank_ends(currency);
                                 }
                         }
                         i2 = sbuffer.find("data-currency-name=\'", i);
-                        if(i2 != string::npos) {
+                        if(i2 != std::string::npos) {
                                 i2 += 19;
                                 size_t i3 = sbuffer.find("|", i2 + 1);
-                                if(i3 != string::npos) {
+                                if(i3 != std::string::npos) {
                                         sname = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
                                         remove_blank_ends(sname);
                                 }
                         }
                         i2 = sbuffer.find("data-rate=\'", i);
-                        if(i2 != string::npos) {
+                        if(i2 != std::string::npos) {
                                 i2 += 10;
                                 size_t i3 = sbuffer.find("'", i2 + 1);
-                                if(i3 != string::npos) {
+                                if(i3 != std::string::npos) {
                                         rate = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
                                         remove_blank_ends(rate);
                                 }
@@ -12005,7 +12005,7 @@ bool Calculator::canFetch() {
         return false;
 #endif
 }
-string Calculator::getExchangeRatesFileName(int index) {
+std::string Calculator::getExchangeRatesFileName(int index) {
         switch(index) {
                 case 1: {return buildPath(getLocalDataDir(), "eurofxref-daily.xml");}
                 case 2: {return buildPath(getLocalDataDir(), "btc.json");}
@@ -12028,7 +12028,7 @@ time_t Calculator::getExchangeRatesTime(int index) {
         index--;
         return exchange_rates_time[index];
 }
-string Calculator::getExchangeRatesUrl(int index) {
+std::string Calculator::getExchangeRatesUrl(int index) {
         switch(index) {
                 case 1: {return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";}
                 case 2: {return "https://api.coinbase.com/v2/prices/spot?currency=EUR";}
@@ -12038,8 +12038,8 @@ string Calculator::getExchangeRatesUrl(int index) {
         }
         return "";
 }
-bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
-size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
+bool Calculator::fetchExchangeRates(int timeout, std::string) {return fetchExchangeRates(timeout);}
+size_t write_data(void *ptr, size_t size, size_t nmemb, std::string *sbuffer) {
         sbuffer->append((char*) ptr, size * nmemb);
         return size * nmemb;
 }
@@ -12049,7 +12049,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
         if(n <= 0) n = 3;
 
         recursiveMakeDir(getLocalDataDir());
-        string sbuffer;
+        std::string sbuffer;
         char error_buffer[CURL_ERROR_SIZE];
         CURL *curl;
         CURLcode res;
@@ -12067,10 +12067,10 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 #ifdef _WIN32
         char exepath[MAX_PATH];
         GetModuleFileName(NULL, exepath, MAX_PATH);
-        string datadir(exepath);
+        std::string datadir(exepath);
         datadir.resize(datadir.find_last_of('\\'));
         if(datadir.substr(datadir.length() - 4) != "\\bin" && datadir.substr(datadir.length() - 6) != "\\.libs") {
-                string cainfo = buildPath(datadir, "ssl", "certs", "ca-bundle.crt");
+                std::string cainfo = buildPath(datadir, "ssl", "certs", "ca-bundle.crt");
                 gsub("\\", "/", cainfo);
                 curl_easy_setopt(curl, CURLOPT_CAINFO, cainfo.c_str());
         }
@@ -12084,7 +12084,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
                 return false;
         }
         if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
-        ofstream file(getExchangeRatesFileName(1).c_str(), ios::out | ios::trunc | ios::binary);
+        std::ofstream file(getExchangeRatesFileName(1).c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
         if(!file.is_open()) {
                 error(true, _("Failed to download exchange rates from %s: %s."), "ECB", strerror(errno), NULL);
                 FETCH_FAIL_CLEANUP
@@ -12120,7 +12120,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
                 if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
                 if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
-                ofstream file3(getExchangeRatesFileName(2).c_str(), ios::out | ios::trunc | ios::binary);
+                std::ofstream file3(getExchangeRatesFileName(2).c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
                 if(!file3.is_open()) {
                         error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", strerror(errno), NULL);
                         FETCH_FAIL_CLEANUP
@@ -12142,8 +12142,8 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
                 res = curl_easy_perform(curl);
 
                 if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
-                if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
-                ofstream file2(getExchangeRatesFileName(3).c_str(), ios::out | ios::trunc | ios::binary);
+                if(sbuffer.empty() || sbuffer.find("Internal Server Error") != std::string::npos) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
+                std::ofstream file2(getExchangeRatesFileName(3).c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
                 if(!file2.is_open()) {
                         error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", strerror(errno), NULL);
                         FETCH_FAIL_CLEANUP
@@ -12206,7 +12206,7 @@ bool Calculator::canPlot() {
 }
 
 extern bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
-void parse_and_precalculate_plot(string &expression, MathStructure &mstruct, const ParseOptions &po, EvaluationOptions &eo) {
+void parse_and_precalculate_plot(std::string &expression, MathStructure &mstruct, const ParseOptions &po, EvaluationOptions &eo) {
         eo.approximation = APPROXIMATION_APPROXIMATE;
         ParseOptions po2 = po;
         po2.read_precision = DONT_READ_PRECISION;
@@ -12224,7 +12224,7 @@ void parse_and_precalculate_plot(string &expression, MathStructure &mstruct, con
         eo.expand = true;
 }
 
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
+MathStructure Calculator::expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, std::string x_var, const ParseOptions &po, int msecs) {
         Variable *v = getActiveVariable(x_var);
         MathStructure x_mstruct;
         if(v) x_mstruct = v;
@@ -12247,14 +12247,14 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
         }
         return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
+MathStructure Calculator::expressionToPlotVector(std::string expression, float min, float max, int steps, MathStructure *x_vector, std::string x_var, const ParseOptions &po, int msecs) {
         MathStructure min_mstruct(min), max_mstruct(max);
         ParseOptions po2 = po;
         po2.read_precision = DONT_READ_PRECISION;
         MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var, po2, msecs));
         return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
+MathStructure Calculator::expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, std::string x_var, const ParseOptions &po, int msecs) {
         Variable *v = getActiveVariable(x_var);
         MathStructure x_mstruct;
         if(v) x_mstruct = v;
@@ -12277,14 +12277,14 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
         }
         return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, float min, float max, float step, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
+MathStructure Calculator::expressionToPlotVector(std::string expression, float min, float max, float step, MathStructure *x_vector, std::string x_var, const ParseOptions &po, int msecs) {
         MathStructure min_mstruct(min), max_mstruct(max), step_mstruct(step);
         ParseOptions po2 = po;
         po2.read_precision = DONT_READ_PRECISION;
         MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var, po2, msecs));
         return y_vector;
 }
-MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var, const ParseOptions &po, int msecs) {
+MathStructure Calculator::expressionToPlotVector(std::string expression, const MathStructure &x_vector, std::string x_var, const ParseOptions &po, int msecs) {
         Variable *v = getActiveVariable(x_var);
         MathStructure x_mstruct;
         if(v) x_mstruct = v;
@@ -12307,20 +12307,20 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 
 extern bool testComplexZero(const Number *this_nr, const Number *i_nr);
 
-bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
+bool Calculator::plotVectors(PlotParameters *param, const std::vector<MathStructure> &y_vectors, const std::vector<MathStructure> &x_vectors, std::vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
-        string homedir = getLocalTmpDir();
+        std::string homedir = getLocalTmpDir();
         recursiveMakeDir(homedir);
 
-        string commandline_extra;
-        string title;
+        std::string commandline_extra;
+        std::string title;
 
         if(!param) {
                 PlotParameters pp;
                 param = &pp;
         }
 
-        string plot;
+        std::string plot;
 
         if(param->filename.empty()) {
                 if(!param->color) {
@@ -12331,11 +12331,11 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
                 persistent = true;
                 if(param->filetype == PLOT_FILETYPE_AUTO) {
                         size_t i = param->filename.rfind(".");
-                        if(i == string::npos) {
+                        if(i == std::string::npos) {
                                 param->filetype = PLOT_FILETYPE_PNG;
                                 error(false, _("No extension in file name. Saving as PNG image."), NULL);
                         } else {
-                                string ext = param->filename.substr(i + 1, param->filename.length() - (i + 1));
+                                std::string ext = param->filename.substr(i + 1, param->filename.length() - (i + 1));
                                 if(ext == "png") {
                                         param->filetype = PLOT_FILETYPE_PNG;
                                 } else if(ext == "ps") {
@@ -12432,7 +12432,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
                 plot += "\"\n";
         }
         if(!param->y_label.empty()) {
-                string title = param->y_label;
+                std::string title = param->y_label;
                 gsub("\"", "\\\"", title);
                 plot += "set ylabel \"";
                 plot += title;
@@ -12504,7 +12504,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
                         if(i != 0) {
                                 plot += ",";
                         }
-                        string filename = "gnuplot_data";
+                        std::string filename = "gnuplot_data";
                         filename += i2s(i + 1);
                         filename = buildPath(homedir, filename);
 #ifdef _WIN32
@@ -12556,7 +12556,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
         }
         plot += "\n";
 
-        string plot_data;
+        std::string plot_data;
         PrintOptions po;
         po.number_fraction_format = FRACTION_DECIMAL;
         po.interval_display = INTERVAL_DISPLAY_MIDPOINT;
@@ -12564,9 +12564,9 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
         po.comma_sign = ",";
         for(size_t serie = 0; serie < y_vectors.size(); serie++) {
                 if(!y_vectors[serie].isUndefined()) {
-                        string filename = "gnuplot_data";
+                        std::string filename = "gnuplot_data";
                         filename += i2s(serie + 1);
-                        string filepath = buildPath(homedir, filename);
+                        std::string filepath = buildPath(homedir, filename);
                         FILE *fdata = fopen(filepath.c_str(), "w+");
                         if(!fdata) {
                                 error(true, _("Could not create temporary file %s"), filepath.c_str(), NULL);
@@ -12574,10 +12574,10 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
                         }
                         plot_data = "";
                         int non_numerical = 0, non_real = 0;
-                        //string str = "";
+                        //std::string str = "";
                         if(msecs > 0) startControl(msecs);
                         ComparisonResult ct1 = COMPARISON_RESULT_EQUAL, ct2 = COMPARISON_RESULT_EQUAL;
-                        size_t last_index = string::npos, last_index2 = string::npos;
+                        size_t last_index = std::string::npos, last_index2 = std::string::npos;
                         bool check_continuous = pdps[serie]->test_continuous && (pdps[serie]->style == PLOT_STYLE_LINES || pdps[serie]->style == PLOT_STYLE_POINTS_LINES);
                         bool prev_failed = false;
                         for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
@@ -12619,7 +12619,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
                                                 if(i == 1 || ct2 == COMPARISON_RESULT_UNKNOWN) ct = COMPARISON_RESULT_EQUAL;
                                                 else ct = y_vectors[serie].getChild(i - 1)->number().compare(y_vectors[serie].getChild(i)->number());
                                                 if((ct == COMPARISON_RESULT_GREATER || ct == COMPARISON_RESULT_LESS) && (ct1 == COMPARISON_RESULT_GREATER || ct1 == COMPARISON_RESULT_LESS) && (ct2 == COMPARISON_RESULT_GREATER || ct2 == COMPARISON_RESULT_LESS) && ct1 != ct2 && ct != ct2) {
-                                                        if(last_index2 != string::npos) plot_data.insert(last_index2 + 1, "  \n");
+                                                        if(last_index2 != std::string::npos) plot_data.insert(last_index2 + 1, "  \n");
                                                 }
                                         }
                                         if(b_imagzero_x) plot_data += y_vectors[serie].getChild(i)->number().realPart().print(po);
@@ -12646,7 +12646,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
                         }
                         if(msecs > 0) stopControl();
                         /*if(non_numerical > 0 || non_real > 0) {
-                                string stitle;
+                                std::string stitle;
                                 if(serie < pdps.size() && !pdps[serie]->title.empty()) {
                                         stitle = pdps[serie]->title.c_str();
                                 } else {
@@ -12666,13 +12666,13 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 
         return invokeGnuplot(plot, commandline_extra, persistent);
 }
-bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
+bool Calculator::invokeGnuplot(std::string commands, std::string commandline_extra, bool persistent) {
         FILE *pipe = NULL;
         if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
                 if(!persistent) {
                         closeGnuplot();
                 }
-                string commandline = "gnuplot";
+                std::string commandline = "gnuplot";
                 if(persistent) {
                         commandline += " -persist";
                 }

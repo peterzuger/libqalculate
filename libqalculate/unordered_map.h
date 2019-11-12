@@ -12,7 +12,9 @@
 #	if (defined(__clang__) && __has_include(<tr1/unordered_map>)) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 3)
 #		include <tr1/unordered_map>
                 namespace Sgi = std;
-#		define unordered_map std::tr1::unordered_map
+namespace std{
+    using unordered_map = std::tr1::unordered_map;
+}
 #	else
 #		if __GNUC__ < 3
 #			include <hash_map.h>
@@ -25,11 +27,15 @@
                                 namespace Sgi = ::__gnu_cxx;       // GCC 3.1 and later
 #			endif
 #		endif
-#		define unordered_map Sgi::hash_map
+namespace std{
+using unordered_map = Sgi::hash_map;
+}
 #	endif
 #else      // ...  there are other compilers, right?
         namespace Sgi = std;
-#	define unordered_map Sgi::hash_map
+namespace std{
+using unordered_map = Sgi::hash_map;
+}
 #endif
 
 #endif

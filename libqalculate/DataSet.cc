@@ -45,7 +45,7 @@ void DataObject::eraseProperty(DataProperty *property) {
                 }
         }
 }
-void DataObject::setProperty(DataProperty *property, string s_value, int is_approximate) {
+void DataObject::setProperty(DataProperty *property, std::string s_value, int is_approximate) {
         if(s_value.empty()) eraseProperty(property);
         for(size_t i = 0; i < properties.size(); i++) {
                 if(properties[i] == property) {
@@ -64,7 +64,7 @@ void DataObject::setProperty(DataProperty *property, string s_value, int is_appr
         a_properties.push_back(is_approximate);
         s_nonlocalized_properties.push_back("");
 }
-void DataObject::setNonlocalizedKeyProperty(DataProperty *property, string s_value) {
+void DataObject::setNonlocalizedKeyProperty(DataProperty *property, std::string s_value) {
         for(size_t i = 0; i < properties.size(); i++) {
                 if(properties[i] == property) {
                         s_nonlocalized_properties[i] = s_value;
@@ -78,7 +78,7 @@ void DataObject::setNonlocalizedKeyProperty(DataProperty *property, string s_val
         s_nonlocalized_properties.push_back(s_value);
 }
 
-const string &DataObject::getProperty(DataProperty *property, int *is_approximate) {
+const std::string &DataObject::getProperty(DataProperty *property, int *is_approximate) {
         if(!property) return empty_string;
         for(size_t i = 0; i < properties.size(); i++) {
                 if(properties[i] == property) {
@@ -88,7 +88,7 @@ const string &DataObject::getProperty(DataProperty *property, int *is_approximat
         }
         return empty_string;
 }
-const string &DataObject::getNonlocalizedKeyProperty(DataProperty *property) {
+const std::string &DataObject::getNonlocalizedKeyProperty(DataProperty *property) {
         if(!property) return empty_string;
         for(size_t i = 0; i < properties.size(); i++) {
                 if(properties[i] == property) {
@@ -97,7 +97,7 @@ const string &DataObject::getNonlocalizedKeyProperty(DataProperty *property) {
         }
         return empty_string;
 }
-string DataObject::getPropertyInputString(DataProperty *property) {
+std::string DataObject::getPropertyInputString(DataProperty *property) {
         if(!property) return empty_string;
         for(size_t i = 0; i < properties.size(); i++) {
                 if(properties[i] == property) {
@@ -106,7 +106,7 @@ string DataObject::getPropertyInputString(DataProperty *property) {
         }
         return empty_string;
 }
-string DataObject::getPropertyDisplayString(DataProperty *property) {
+std::string DataObject::getPropertyDisplayString(DataProperty *property) {
         if(!property) return empty_string;
         for(size_t i = 0; i < properties.size(); i++) {
                 if(properties[i] == property) {
@@ -137,7 +137,7 @@ DataSet *DataObject::parentSet() const {
         return parent;
 }
 
-DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, string s_description) {
+DataProperty::DataProperty(DataSet *parent_set, std::string s_name, std::string s_title, std::string s_description) {
         if(!s_name.empty()) {
                 names.push_back(s_name);
                 name_is_ref.push_back(false);
@@ -176,7 +176,7 @@ void DataProperty::set(const DataProperty &dp) {
         }
 }
 
-void DataProperty::setName(string s_name, bool is_ref) {
+void DataProperty::setName(std::string s_name, bool is_ref) {
         if(s_name.empty()) return;
         names.clear();
         name_is_ref.clear();
@@ -194,7 +194,7 @@ void DataProperty::clearNames() {
         names.clear();
         name_is_ref.clear();
 }
-void DataProperty::addName(string s_name, bool is_ref, size_t index) {
+void DataProperty::addName(std::string s_name, bool is_ref, size_t index) {
         if(s_name.empty()) return;
         if(index < 1 || index > names.size()) {
                 names.push_back(s_name);
@@ -204,17 +204,17 @@ void DataProperty::addName(string s_name, bool is_ref, size_t index) {
                 name_is_ref.insert(name_is_ref.begin() + (index - 1), is_ref);
         }
 }
-const string &DataProperty::getName(size_t index) const {
+const std::string &DataProperty::getName(size_t index) const {
         if(index < 1 || index > names.size()) return empty_string;
         return names[index - 1];
 }
-const string &DataProperty::getReferenceName() const {
+const std::string &DataProperty::getReferenceName() const {
         for(size_t i = 0; i < name_is_ref.size(); i++) {
                 if(name_is_ref[i]) return names[i];
         }
         return getName();
 }
-size_t DataProperty::hasName(const string &s_name) {
+size_t DataProperty::hasName(const std::string &s_name) {
         for(size_t i = 0; i < names.size(); i++) {
                 if(equalsIgnoreCase(s_name, names[i])) return i + 1;
         }
@@ -223,29 +223,29 @@ size_t DataProperty::hasName(const string &s_name) {
 size_t DataProperty::countNames() const {
         return names.size();
 }
-const string &DataProperty::title(bool return_name_if_no_title) const {
+const std::string &DataProperty::title(bool return_name_if_no_title) const {
         if(return_name_if_no_title && stitle.empty()) {
                 return getName();
         }
         return stitle;
 }
-void DataProperty::setTitle(string s_title) {
+void DataProperty::setTitle(std::string s_title) {
         remove_blank_ends(s_title);
         stitle = s_title;
 }
-const string &DataProperty::description() const {
+const std::string &DataProperty::description() const {
         return sdescr;
 }
-void DataProperty::setDescription(string s_description) {
+void DataProperty::setDescription(std::string s_description) {
         remove_blank_ends(s_description);
         sdescr = s_description;
 }
-void DataProperty::setUnit(string s_unit) {
+void DataProperty::setUnit(std::string s_unit) {
         sunit = s_unit;
         if(m_unit) m_unit->unref();
         m_unit = NULL;
 }
-const string &DataProperty::getUnitString() const {
+const std::string &DataProperty::getUnitString() const {
         return sunit;
 }
 const MathStructure *DataProperty::getUnitStruct() {
@@ -255,8 +255,8 @@ const MathStructure *DataProperty::getUnitStruct() {
         }
         return m_unit;
 }
-string DataProperty::getInputString(const string &valuestr) {
-        string str;
+std::string DataProperty::getInputString(const std::string &valuestr) {
+        std::string str;
         if(b_brackets && valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
                 str = valuestr.substr(1, valuestr.length() - 2);
         } else {
@@ -268,15 +268,15 @@ string DataProperty::getInputString(const string &valuestr) {
         }
         return str;
 }
-string DataProperty::getDisplayString(const string &valuestr) {
-        string str = valuestr;
+std::string DataProperty::getDisplayString(const std::string &valuestr) {
+        std::string str = valuestr;
         if(!sunit.empty()) {
                 str += " ";
                 str += sunit;
         }
         return str;
 }
-MathStructure *DataProperty::generateStruct(const string &valuestr, int is_approximate) {
+MathStructure *DataProperty::generateStruct(const std::string &valuestr, int is_approximate) {
         MathStructure *mstruct = NULL;
         switch(ptype) {
                 case PROPERTY_EXPRESSION: {
@@ -294,13 +294,13 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
                 case PROPERTY_NUMBER: {
                         if(valuestr.length() > 1 && valuestr[0] == '[' && valuestr[valuestr.length() - 1] == ']') {
                                 size_t i = valuestr.find(",");
-                                if(i != string::npos) {
+                                if(i != std::string::npos) {
                                         Number nr;
                                         nr.setInterval(Number(valuestr.substr(1, i - 1)), Number(valuestr.substr(i + 1, valuestr.length() - i - 2)));
                                         mstruct = new MathStructure(nr);
                                         break;
                                 } else if(b_brackets) {
-                                        if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find(SIGN_PLUSMINUS) == string::npos && valuestr.find("+/-") == string::npos) {
+                                        if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find(SIGN_PLUSMINUS) == std::string::npos && valuestr.find("+/-") == std::string::npos) {
                                                 ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
                                                 mstruct = new MathStructure(Number(valuestr.substr(1, valuestr.length() - 2), po));
                                         } else {
@@ -309,7 +309,7 @@ MathStructure *DataProperty::generateStruct(const string &valuestr, int is_appro
                                         break;
                                 }
                         }
-                        if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find(SIGN_PLUSMINUS) == string::npos && valuestr.find("+/-") == string::npos) {
+                        if(((b_approximate && is_approximate < 0) || is_approximate > 0) && valuestr.find(SIGN_PLUSMINUS) == std::string::npos && valuestr.find("+/-") == std::string::npos) {
                                 ParseOptions po; po.read_precision = ALWAYS_READ_PRECISION;
                                 mstruct = new MathStructure(Number(valuestr, po));
                         } else {
@@ -352,7 +352,7 @@ DataSet *DataProperty::parentSet() const {
         return parent;
 }
 
-DataSet::DataSet(string s_category, string s_name, string s_default_file, string s_title, string s_description, bool is_local) : MathFunction(s_name, 1, 2, s_category, s_title, s_description) {
+DataSet::DataSet(std::string s_category, std::string s_name, std::string s_default_file, std::string s_title, std::string s_description, bool is_local) : MathFunction(s_name, 1, 2, s_category, s_title, s_description) {
         b_local = is_local;
         sfile = s_default_file;
         b_loaded = false;
@@ -385,8 +385,8 @@ int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const
                 CALCULATOR->error(true, _("Object %s not available in data set."), vargs[0].symbol().c_str(), NULL);
                 return 0;
         }
-        if(equalsIgnoreCase(vargs[1].symbol(), string("info")) || equalsIgnoreCase(vargs[1].symbol(), string(_("info")))) {
-                string str = printProperties(o);
+        if(equalsIgnoreCase(vargs[1].symbol(), std::string("info")) || equalsIgnoreCase(vargs[1].symbol(), std::string(_("info")))) {
+                std::string str = printProperties(o);
                 CALCULATOR->message(MESSAGE_INFORMATION, str.c_str(), NULL);
                 return 1;
         }
@@ -404,26 +404,26 @@ int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const
         return 1;
 }
 
-void DataSet::setDefaultProperty(string property) {
+void DataSet::setDefaultProperty(std::string property) {
         setDefaultValue(2, property);
         setChanged(true);
 }
-const string &DataSet::defaultProperty() const {
+const std::string &DataSet::defaultProperty() const {
         return getDefaultValue(2);
 }
 
-void DataSet::setCopyright(string s_copyright) {
+void DataSet::setCopyright(std::string s_copyright) {
         scopyright = s_copyright;
         setChanged(true);
 }
-const string &DataSet::copyright() const {
+const std::string &DataSet::copyright() const {
         return scopyright;
 }
-void DataSet::setDefaultDataFile(string s_file) {
+void DataSet::setDefaultDataFile(std::string s_file) {
         sfile = s_file;
         setChanged(true);
 }
-const string &DataSet::defaultDataFile() const {
+const std::string &DataSet::defaultDataFile() const {
         return sfile;
 }
 #ifdef _WIN32
@@ -435,16 +435,16 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
         if(file_name) {
         } else if(sfile.empty()) {
                 return false;
-        } else if(sfile.find(FILE_SEPARATOR_CHAR) != string::npos) {
+        } else if(sfile.find(FILE_SEPARATOR_CHAR) != std::string::npos) {
                 bool b = loadObjects(file_name, false);
                 size_t i = sfile.find_last_of(FILE_SEPARATOR_CHAR);
                 if(i != sfile.length() - 1) {
-                        string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
+                        std::string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
                         if(loadObjects(filepath.c_str(), true)) {
                                 b = true;
                         } else {
 #ifndef _WIN32
-                                string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
+                                std::string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile.substr(i + 1, sfile.length() - (i + 1)));
                                 if(loadObjects(filepath_old.c_str(), true)) {
                                         b = true;
                                         recursiveMakeDir(getLocalDataDir());
@@ -460,13 +460,13 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
                 return b;
         } else {
                 bool b = loadObjects(buildPath(getGlobalDefinitionsDir(), sfile).c_str(), false);
-                string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile);
+                std::string filepath = buildPath(getLocalDataDir(), "definitions", "datasets", sfile);
                 if(b && !fileExists(filepath)) return true;
                 if(loadObjects(filepath.c_str(), true)) {
                         b = true;
                 } else {
 #ifndef _WIN32
-                        string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile);
+                        std::string filepath_old = buildPath(getOldLocalDir(), "definitions", "datasets", sfile);
                         if(loadObjects(filepath_old.c_str(), true)) {
                                 b = true;
                                 recursiveMakeDir(getLocalDataDir());
@@ -483,7 +483,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
         xmlDocPtr doc;
         xmlNodePtr cur, child;
 
-        string locale, lang_tmp;
+        std::string locale, lang_tmp;
 #ifdef _WIN32
         WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
         if(LCIDToLocaleName(LOCALE_USER_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
@@ -496,10 +496,10 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
                 locale = "";
         } else {
                 size_t i = locale.find('.');
-                if(i != string::npos) locale = locale.substr(0, i);
+                if(i != std::string::npos) locale = locale.substr(0, i);
         }
 
-        string localebase;
+        std::string localebase;
         if(locale.length() > 2) {
                 localebase = locale.substr(0, 2);
         } else {
@@ -522,7 +522,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
                 }
                 return false;
         }
-        string version;
+        std::string version;
         xmlChar *value, *lang, *uncertainty;
         bool unc_rel;
         while(cur != NULL) {
@@ -539,16 +539,16 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
         }
         DataObject *o = NULL;
         cur = cur->xmlChildrenNode;
-        string str, str2;
-        vector<DataProperty*> lang_status_p;
-        vector<int> lang_status;
+        std::string str, str2;
+        std::vector<DataProperty*> lang_status_p;
+        std::vector<int> lang_status;
         int ils = 0;
         int i_approx = 0;
         bool cmp = false;
         bool b = false, old_object = false;
         size_t objects_before = objects.size();
-        vector<DataProperty*> p_refs;
-        vector<string> s_refs;
+        std::vector<DataProperty*> p_refs;
+        std::vector<std::string> s_refs;
         while(cur) {
                 b = false;
                 if(!xmlStrcmp(cur->name, (const xmlChar*) "object")) {
@@ -573,7 +573,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
                         for(size_t i = 0; i < properties.size(); i++) {
                                 if(properties[i]->isKey()) {
                                         for(size_t i2 = 1; i2 <= properties[i]->countNames(); i2++) {
-                                                if(properties[i]->getName(i2).find(' ') != string::npos) {
+                                                if(properties[i]->getName(i2).find(' ') != std::string::npos) {
                                                         str2 = properties[i]->getName(i2);
                                                         gsub(" ", "_", str2);
                                                         XML_GET_STRING_FROM_PROP(cur, str2.c_str(), str)
@@ -614,7 +614,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
                                 b = false;
                                 for(size_t i = 0; i < properties.size(); i++) {
                                         for(size_t i2 = 1; i2 <= properties[i]->countNames(); i2++) {
-                                                if(properties[i]->getName(i2).find(' ') != string::npos) {
+                                                if(properties[i]->getName(i2).find(' ') != std::string::npos) {
                                                         str2 = properties[i]->getName(i2);
                                                         gsub(" ", "_", str2);
                                                         cmp = !xmlStrcmp(child->name, (const xmlChar*) str2.c_str());
@@ -649,7 +649,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
                                                                                 remove_blank_ends(str);
                                                                                 if(!str.empty() && str[0] == '!') {
                                                                                         size_t i4 = str.find('!', 1);
-                                                                                        if(i4 != string::npos) {
+                                                                                        if(i4 != std::string::npos) {
                                                                                                 if(i4 + 1 < str.length()) {
                                                                                                         str = str.substr(i4 + 1, str.length() - (i4 + 1));
                                                                                                 } else {
@@ -739,7 +739,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
         return true;
 }
 int DataSet::saveObjects(const char *file_name, bool save_global) {
-        string str, filename;
+        std::string str, filename;
         if(!save_global && !file_name) {
                 recursiveMakeDir(getLocalDataDir());
                 filename = buildPath(getLocalDataDir(), "definitions");
@@ -750,7 +750,7 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
         } else {
                 filename = file_name;
         }
-        const string *vstr;
+        const std::string *vstr;
         xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
         xmlNodePtr cur, newnode, newnode2;
         doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
@@ -787,7 +787,7 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
                                 }
                                 if(save_global || approx >= 0 || !properties[i2]->isKey()) {
                                         if(!vstr->empty()) {
-                                                if(properties[i2]->getReferenceName().find(' ') != string::npos) {
+                                                if(properties[i2]->getReferenceName().find(' ') != std::string::npos) {
                                                         if(save_global && properties[i2]->propertyType() == PROPERTY_STRING) {
                                                                 str = "_";
                                                         } else {
@@ -851,7 +851,7 @@ DataProperty *DataSet::getPrimaryKeyProperty() {
         }
         return NULL;
 }
-DataProperty *DataSet::getProperty(string property) {
+DataProperty *DataSet::getProperty(std::string property) {
         if(property.empty()) return NULL;
         for(size_t i = 0; i < properties.size(); i++) {
                 if(properties[i]->hasName(property)) return properties[i];
@@ -868,12 +868,12 @@ DataProperty *DataSet::getNextProperty(DataPropertyIter *it) {
         if(*it != properties.end()) return **it;
         return NULL;
 }
-const string &DataSet::getFirstPropertyName(DataPropertyIter *it) {
+const std::string &DataSet::getFirstPropertyName(DataPropertyIter *it) {
         *it = properties.begin();
         if(*it != properties.end()) return (**it)->getName();
         return empty_string;
 }
-const string &DataSet::getNextPropertyName(DataPropertyIter *it) {
+const std::string &DataSet::getNextPropertyName(DataPropertyIter *it) {
         ++(*it);
         if(*it != properties.end()) return (**it)->getName();
         return empty_string;
@@ -895,7 +895,7 @@ void DataSet::delObject(DataObjectIter *it) {
         *it = objects.erase(*it);
         --(*it);
 }
-DataObject *DataSet::getObject(string object) {
+DataObject *DataSet::getObject(std::string object) {
         if(!objectsLoaded()) loadObjects();
         if(object.empty()) return NULL;
         DataProperty *dp;
@@ -951,7 +951,7 @@ DataObject *DataSet::getNextObject(DataObjectIter *it) {
         return NULL;
 }
 
-const MathStructure *DataSet::getObjectProperyStruct(string property, string object) {
+const MathStructure *DataSet::getObjectProperyStruct(std::string property, std::string object) {
         DataObject *o = getObject(object);
         DataProperty *dp = getProperty(property);
         if(o && dp) {
@@ -959,7 +959,7 @@ const MathStructure *DataSet::getObjectProperyStruct(string property, string obj
         }
         return NULL;
 }
-const string &DataSet::getObjectProperty(string property, string object) {
+const std::string &DataSet::getObjectProperty(std::string property, std::string object) {
         DataObject *o = getObject(object);
         DataProperty *dp = getProperty(property);
         if(o && dp) {
@@ -967,7 +967,7 @@ const string &DataSet::getObjectProperty(string property, string object) {
         }
         return empty_string;
 }
-string DataSet::getObjectPropertyInputString(string property, string object) {
+std::string DataSet::getObjectPropertyInputString(std::string property, std::string object) {
         DataObject *o = getObject(object);
         DataProperty *dp = getProperty(property);
         if(o && dp) {
@@ -975,7 +975,7 @@ string DataSet::getObjectPropertyInputString(string property, string object) {
         }
         return empty_string;
 }
-string DataSet::getObjectPropertyDisplayString(string property, string object) {
+std::string DataSet::getObjectPropertyDisplayString(std::string property, std::string object) {
         DataObject *o = getObject(object);
         DataProperty *dp = getProperty(property);
         if(o && dp) {
@@ -984,12 +984,12 @@ string DataSet::getObjectPropertyDisplayString(string property, string object) {
         return empty_string;
 }
 
-string DataSet::printProperties(string object) {
+std::string DataSet::printProperties(std::string object) {
         return printProperties(getObject(object));
 }
-string DataSet::printProperties(DataObject *o) {
+std::string DataSet::printProperties(DataObject *o) {
         if(o) {
-                string str, stmp;
+                std::string str, stmp;
                 str = "-------------------------------------\n";
                 bool started = false;
                 for(size_t i = 0; i < properties.size(); i++) {
@@ -1022,7 +1022,7 @@ string DataSet::printProperties(DataObject *o) {
         return empty_string;
 }
 
-DataPropertyArgument::DataPropertyArgument(DataSet *data_set, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+DataPropertyArgument::DataPropertyArgument(DataSet *data_set, std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
         b_text = true;
         o_data = data_set;
 }
@@ -1032,13 +1032,13 @@ bool DataPropertyArgument::subtest(MathStructure &value, const EvaluationOptions
         if(!value.isSymbolic()) {
                 value.eval(eo);
         }
-        return value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), string("info")) || equalsIgnoreCase(value.symbol(), string(_("info"))));
+        return value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), std::string("info")) || equalsIgnoreCase(value.symbol(), std::string(_("info"))));
 }
 int DataPropertyArgument::type() const {return ARGUMENT_TYPE_DATA_PROPERTY;}
 Argument *DataPropertyArgument::copy() const {return new DataPropertyArgument(this);}
-string DataPropertyArgument::print() const {return _("data property");}
-string DataPropertyArgument::subprintlong() const {
-        string str = _("name of a data property");
+std::string DataPropertyArgument::print() const {return _("data property");}
+std::string DataPropertyArgument::subprintlong() const {
+        std::string str = _("name of a data property");
         str += " (";
         DataPropertyIter it;
         DataProperty *o = NULL;
@@ -1048,7 +1048,7 @@ string DataPropertyArgument::subprintlong() const {
         if(!o) {
                 str += _("no properties available");
         } else {
-                string stmp;
+                std::string stmp;
                 size_t l_last = 0;
                 while(true) {
                         if(!o->isHidden()) {
@@ -1077,7 +1077,7 @@ string DataPropertyArgument::subprintlong() const {
 DataSet *DataPropertyArgument::dataSet() const {return o_data;}
 void DataPropertyArgument::setDataSet(DataSet *data_set) {o_data = data_set;}
 
-DataObjectArgument::DataObjectArgument(DataSet *data_set, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+DataObjectArgument::DataObjectArgument(DataSet *data_set, std::string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
         b_text = true;
         o_data = data_set;
 }
@@ -1101,10 +1101,10 @@ bool DataObjectArgument::subtest(MathStructure &value, const EvaluationOptions &
 }
 int DataObjectArgument::type() const {return ARGUMENT_TYPE_DATA_OBJECT;}
 Argument *DataObjectArgument::copy() const {return new DataObjectArgument(this);}
-string DataObjectArgument::print() const {return _("data object");}
-string DataObjectArgument::subprintlong() const {
+std::string DataObjectArgument::print() const {return _("data object");}
+std::string DataObjectArgument::subprintlong() const {
         if(!o_data) return print();
-        string str = _("an object from");
+        std::string str = _("an object from");
         str += " \"";
         str += o_data->title();
         str += "\"";
@@ -1112,7 +1112,7 @@ string DataObjectArgument::subprintlong() const {
         DataProperty *o = NULL;
         o = o_data->getFirstProperty(&it);
         if(o) {
-                string stmp;
+                std::string stmp;
                 size_t l_last = 0;
                 while(true) {
                         if(o->isKey()) {

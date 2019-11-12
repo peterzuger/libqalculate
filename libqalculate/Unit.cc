@@ -17,7 +17,7 @@
 #include "MathStructure.h"
 #include "Prefix.h"
 
-Unit::Unit(string cat_, string name_, string plural_, string singular_, string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, "", title_, "", is_local, is_builtin, is_active) {
+Unit::Unit(std::string cat_, std::string name_, std::string plural_, std::string singular_, std::string title_, bool is_local, bool is_builtin, bool is_active) : ExpressionItem(cat_, "", title_, "", is_local, is_builtin, is_active) {
         remove_blank_ends(plural_);
         remove_blank_ends(singular_);
         if(!name_.empty()) {
@@ -27,7 +27,7 @@ Unit::Unit(string cat_, string name_, string plural_, string singular_, string t
                 names[0].abbreviation = true;
                 names[0].case_sensitive = true;
                 size_t i = name_.find('_');
-                if(i != string::npos && i > 0 && i < name_.length() - 1 && name_.find('_', i + 1) == string::npos) names[0].suffix = true;
+                if(i != std::string::npos && i > 0 && i < name_.length() - 1 && name_.find('_', i + 1) == std::string::npos) names[0].suffix = true;
                 else names[0].suffix = false;
                 names[0].avoid_input = false;
                 names[0].reference = true;
@@ -88,7 +88,7 @@ void Unit::setAsSIUnit() {
                 setChanged(true);
         }
 }
-void Unit::setSystem(string s_system) {
+void Unit::setSystem(std::string s_system) {
         if(s_system != ssystem) {
                 ssystem = s_system;
                 if(ssystem == "SI" || ssystem == "si" || ssystem == "Si") {
@@ -103,7 +103,7 @@ void Unit::setSystem(string s_system) {
                 setChanged(true);
         }
 }
-const string &Unit::system() const {
+const std::string &Unit::system() const {
         return ssystem;
 }
 bool Unit::useWithPrefixesByDefault() const {
@@ -115,8 +115,8 @@ void Unit::setUseWithPrefixesByDefault(bool use_with_prefixes) {
 bool Unit::isCurrency() const {
         return baseUnit() == CALCULATOR->u_euro;
 }
-const string &Unit::countries() const {return scountries;}
-void Unit::setCountries(string country_names) {
+const std::string &Unit::countries() const {return scountries;}
+void Unit::setCountries(std::string country_names) {
         remove_blank_ends(country_names);
         if(scountries != country_names) {
                 scountries = country_names;
@@ -126,20 +126,20 @@ void Unit::setCountries(string country_names) {
 bool Unit::isUsedByOtherUnits() const {
         return CALCULATOR->unitIsUsedByOtherUnits(this);
 }
-string Unit::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+std::string Unit::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
         return preferredName(short_, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
 }
-const string &Unit::plural(bool return_singular_if_no_plural, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+const std::string &Unit::plural(bool return_singular_if_no_plural, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
         const ExpressionName *ename = &preferredName(false, use_unicode, true, false, can_display_unicode_string_function, can_display_unicode_string_arg);
         if(!return_singular_if_no_plural && !ename->plural) return empty_string;
         return ename->name;
 }
-const string &Unit::singular(bool return_abbreviation_if_no_singular, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+const std::string &Unit::singular(bool return_abbreviation_if_no_singular, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
         const ExpressionName *ename = &preferredName(false, use_unicode, false, false, can_display_unicode_string_function, can_display_unicode_string_arg);
         if(!return_abbreviation_if_no_singular && ename->abbreviation) return empty_string;
         return ename->name;
 }
-const string &Unit::abbreviation(bool return_singular_if_no_abbreviation, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+const std::string &Unit::abbreviation(bool return_singular_if_no_abbreviation, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
         const ExpressionName *ename = &preferredName(true, use_unicode, false, false, can_display_unicode_string_function, can_display_unicode_string_arg);
         if(!return_singular_if_no_abbreviation && !ename->abbreviation) return empty_string;
         return ename->name;
@@ -267,7 +267,7 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
         return false;
 }
 
-AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_name_, string title_, Unit *alias, string relation, int exp, string inverse, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, plural_, short_name_, title_, is_local, is_builtin, is_active) {
+AliasUnit::AliasUnit(std::string cat_, std::string name_, std::string plural_, std::string short_name_, std::string title_, Unit *alias, std::string relation, int exp, std::string inverse, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, plural_, short_name_, title_, is_local, is_builtin, is_active) {
         o_unit = (Unit*) alias;
         remove_blank_ends(relation);
         remove_blank_ends(inverse);
@@ -323,17 +323,17 @@ void AliasUnit::setBaseUnit(Unit *alias) {
         o_unit = (Unit*) alias;
         setChanged(true);
 }
-string AliasUnit::expression() const {
+std::string AliasUnit::expression() const {
         return svalue;
 }
-string AliasUnit::inverseExpression() const {
+std::string AliasUnit::inverseExpression() const {
         return sinverse;
 }
-string AliasUnit::uncertainty(bool *is_relative) const {
+std::string AliasUnit::uncertainty(bool *is_relative) const {
         if(is_relative) *is_relative = b_relative_uncertainty;
         return suncertainty;
 }
-void AliasUnit::setExpression(string relation) {
+void AliasUnit::setExpression(std::string relation) {
         remove_blank_ends(relation);
         if(relation.empty()) {
                 svalue = "1";
@@ -342,12 +342,12 @@ void AliasUnit::setExpression(string relation) {
         }
         setChanged(true);
 }
-void AliasUnit::setInverseExpression(string inverse) {
+void AliasUnit::setInverseExpression(std::string inverse) {
         remove_blank_ends(inverse);
         sinverse = inverse;
         setChanged(true);
 }
-void AliasUnit::setUncertainty(string standard_uncertainty, bool is_relative) {
+void AliasUnit::setUncertainty(std::string standard_uncertainty, bool is_relative) {
         remove_blank_ends(standard_uncertainty);
         suncertainty = standard_uncertainty;
         b_relative_uncertainty = is_relative;
@@ -403,20 +403,20 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
         if(i_exp != 1) mexp /= i_exp;
         ParseOptions po;
         if(isApproximate() && suncertainty.empty() && precision() == -1) {
-                if(sinverse.find(DOT) != string::npos || svalue.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+                if(sinverse.find(DOT) != std::string::npos || svalue.find(DOT) != std::string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
                 else po.read_precision = ALWAYS_READ_PRECISION;
         }
         if(sinverse.empty()) {
-                if(svalue.find("\\x") != string::npos) {
-                        string stmp = svalue;
-                        string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+                if(svalue.find("\\x") != std::string::npos) {
+                        std::string stmp = svalue;
+                        std::string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
                         int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
                         stmp2 += i2s(x_id);
                         stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
                         gsub("\\x", stmp2, stmp);
                         stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
                         int y_id = -1;
-                        if(svalue.find("\\y") != string::npos) {
+                        if(svalue.find("\\y") != std::string::npos) {
                                 stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
                                 y_id = CALCULATOR->addId(new MathStructure(mexp), true);
                                 stmp2 += i2s(y_id);
@@ -439,10 +439,10 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
                                 b_number = true;
                         } else {
                                 size_t i = svalue.rfind(')');
-                                if(i != string::npos && i > 2 && (i == svalue.length() - 1 || (i < svalue.length() - 2 && (svalue[i + 1] == 'E' || svalue[i + 1] == 'e')))) {
+                                if(i != std::string::npos && i > 2 && (i == svalue.length() - 1 || (i < svalue.length() - 2 && (svalue[i + 1] == 'E' || svalue[i + 1] == 'e')))) {
                                         size_t i2 = svalue.rfind('(');
-                                        if(i2 != string::npos && i2 < i - 1) {
-                                                if(svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[0] == '-' || svalue[0] == '+' ? 1 : 0) == i2 && svalue.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == svalue.length() - 1 || svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[i + 2] == '-' || svalue[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+                                        if(i2 != std::string::npos && i2 < i - 1) {
+                                                if(svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[0] == '-' || svalue[0] == '+' ? 1 : 0) == i2 && svalue.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == svalue.length() - 1 || svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[i + 2] == '-' || svalue[i + 2] == '+' ? i + 3 : i + 2) == std::string::npos)) {
                                                         b_number = true;
                                                 }
                                         }
@@ -491,15 +491,15 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
                         mvalue.divide_nocopy(mstruct, true);
                 }
         } else {
-                if(sinverse.find("\\x") != string::npos) {
-                        string stmp = sinverse;
-                        string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+                if(sinverse.find("\\x") != std::string::npos) {
+                        std::string stmp = sinverse;
+                        std::string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
                         int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
                         stmp2 += i2s(x_id);
                         stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
                         gsub("\\x", stmp2, stmp);
                         int y_id = -1;
-                        if(svalue.find("\\y") != string::npos) {
+                        if(svalue.find("\\y") != std::string::npos) {
                                 stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
                                 y_id = CALCULATOR->addId(new MathStructure(mexp), true);
                                 stmp2 += i2s(y_id);
@@ -545,18 +545,18 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
         ParseOptions po;
         if(isApproximate() && suncertainty.empty() && precision() == -1) {
-                if(svalue.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+                if(svalue.find(DOT) != std::string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
                 else po.read_precision = ALWAYS_READ_PRECISION;
         }
-        if(svalue.find("\\x") != string::npos) {
-                string stmp = svalue;
-                string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+        if(svalue.find("\\x") != std::string::npos) {
+                std::string stmp = svalue;
+                std::string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
                 int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
                 int y_id = -1;
                 stmp2 += i2s(x_id);
                 stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
                 gsub("\\x", stmp2, stmp);
-                if(svalue.find("\\y") != string::npos) {
+                if(svalue.find("\\y") != std::string::npos) {
                         stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
                         y_id = CALCULATOR->addId(new MathStructure(mexp), true);
                         stmp2 += i2s(y_id);
@@ -579,10 +579,10 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
                         b_number = true;
                 } else {
                         size_t i = svalue.rfind(')');
-                        if(i != string::npos && i > 2 && (i == svalue.length() - 1 || (i < svalue.length() - 2 && (svalue[i + 1] == 'E' || svalue[i + 1] == 'e')))) {
+                        if(i != std::string::npos && i > 2 && (i == svalue.length() - 1 || (i < svalue.length() - 2 && (svalue[i + 1] == 'E' || svalue[i + 1] == 'e')))) {
                                 size_t i2 = svalue.rfind('(');
-                                if(i2 != string::npos && i2 < i - 1) {
-                                        if(svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[0] == '-' || svalue[0] == '+' ? 1 : 0) == i2 && svalue.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == svalue.length() - 1 || svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[i + 2] == '-' || svalue[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+                                if(i2 != std::string::npos && i2 < i - 1) {
+                                        if(svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[0] == '-' || svalue[0] == '+' ? 1 : 0) == i2 && svalue.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == svalue.length() - 1 || svalue.find_first_not_of(NUMBER_ELEMENTS SPACES, svalue[i + 2] == '-' || svalue[i + 2] == '+' ? i + 3 : i + 2) == std::string::npos)) {
                                                 b_number = true;
                                         }
                                 }
@@ -670,7 +670,7 @@ bool AliasUnit::isParentOf(Unit *u) const {
         return false;
 }
 bool AliasUnit::hasNonlinearExpression() const {
-        return svalue.find("\\x") != string::npos;
+        return svalue.find("\\x") != std::string::npos;
 }
 bool AliasUnit::hasNonlinearRelationTo(Unit *u) const {
         if(u == this) return false;
@@ -711,7 +711,7 @@ bool AliasUnit::hasNonlinearRelationTo(Unit *u) const {
 }
 bool AliasUnit::hasApproximateExpression(bool check_variables, bool ignore_high_precision_intervals) const {
         if(isApproximate()) return true;
-        if(svalue.find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos) return false;
+        if(svalue.find_first_not_of(NUMBER_ELEMENTS EXPS) == std::string::npos) return false;
         MathStructure m(1, 1, 0), mexp(1, 1, 0);
         convertToFirstBaseUnit(m, mexp);
         return m.containsInterval(true, check_variables, false, ignore_high_precision_intervals ? 1 : 0, true);
@@ -784,8 +784,8 @@ void AliasUnit_Composite::set(const ExpressionItem *item) {
                 ExpressionItem::set(item);
         }
 }
-string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
-        string str = "";
+std::string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+        std::string str = "";
         if(prefixv) {
                 str += prefixv->name(short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
         }
@@ -824,7 +824,7 @@ MathStructure &AliasUnit_Composite::convertFromFirstBaseUnit(MathStructure &mval
         return mvalue;
 }
 
-CompositeUnit::CompositeUnit(string cat_, string name_, string title_, string base_expression_, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, "", "", title_, is_local, is_builtin, is_active) {
+CompositeUnit::CompositeUnit(std::string cat_, std::string name_, std::string title_, std::string base_expression_, bool is_local, bool is_builtin, bool is_active) : Unit(cat_, name_, "", "", title_, is_local, is_builtin, is_active) {
         setBaseExpression(base_expression_);
         setChanged(false);
 }
@@ -920,8 +920,8 @@ void CompositeUnit::del(size_t index) {
                 units.erase(units.begin() + (index - 1));
         }
 }
-string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
-        string str = "";
+std::string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
+        std::string str = "";
         bool b = false, b2 = false;
         for(size_t i = 0; i < units.size(); i++) {
                 if(units[i]->firstBaseExponent() != 0) {
@@ -1039,7 +1039,7 @@ MathStructure CompositeUnit::generateMathStructure(bool make_division, bool set_
         }
         return mstruct;
 }
-void CompositeUnit::setBaseExpression(string base_expression_) {
+void CompositeUnit::setBaseExpression(std::string base_expression_) {
         clear();
         if(base_expression_.empty()) {
                 setChanged(true);

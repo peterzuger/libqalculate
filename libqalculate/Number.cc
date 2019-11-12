@@ -28,8 +28,8 @@
 #define TO_BIT_PRECISION(p) ((::ceil((p) * 3.3219281)))
 #define FROM_BIT_PRECISION(p) ((::floor((p) / 3.3219281)))
 
-#define PRINT_MPFR(x, y) mpfr_out_str(stdout, y, 0, x, MPFR_RNDU); cout << endl;
-#define PRINT_MPZ(x, y) mpz_out_str(stdout, y, x); cout << endl;
+#define PRINT_MPFR(x, y) mpfr_out_str(stdout, y, 0, x, MPFR_RNDU); std::cout << std::endl;
+#define PRINT_MPZ(x, y) mpz_out_str(stdout, y, x); std::cout << std::endl;
 
 #define CREATE_INTERVAL (CALCULATOR ? CALCULATOR->usesIntervalArithmetic() : true)
 
@@ -44,11 +44,11 @@ int char2val(const char &c, const int &base) {
         else return c - 'A' + 10;
 }
 
-void insert_thousands_separator(string &str, const PrintOptions &po) {
+void insert_thousands_separator(std::string &str, const PrintOptions &po) {
         if(po.digit_grouping != DIGIT_GROUPING_NONE && (po.digit_grouping != DIGIT_GROUPING_LOCALE || !CALCULATOR->local_digit_group_separator.empty())) {
                 size_t i_deci = str.rfind(po.decimalpoint());
                 size_t i;
-                if(i_deci != string::npos) {
+                if(i_deci != std::string::npos) {
                         i = i_deci;
                         /*i += 5 + po.decimalpoint().length();
                         while(i < str.length()) {
@@ -90,11 +90,11 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
         }
 }
 
-string format_number_string(string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true, const PrintOptions &po = default_print_options) {
+std::string format_number_string(std::string cl_str, int base, BaseDisplay base_display, bool show_neg, bool format_base_two = true, const PrintOptions &po = default_print_options) {
         if(format_base_two && (base == 2 || (base == 16 && po.binary_bits >= 8)) && base_display != BASE_DISPLAY_NONE) {
                 unsigned int bits = po.binary_bits;
                 size_t l = cl_str.find(po.decimalpoint());
-                if(l == string::npos) l = cl_str.length();
+                if(l == std::string::npos) l = cl_str.length();
                 if(bits == 0) {
                         bits = l;
                         if(bits % 4 != 0) bits += 4 - bits % 4;
@@ -103,7 +103,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
                         bits /= 4;
                 }
                 if(l < bits) {
-                        string str;
+                        std::string str;
                         str.resize(bits - l, '0');
                         cl_str = str + cl_str;
                         l = bits;
@@ -114,7 +114,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
                         }
                 }
         }
-        string str = "";
+        std::string str = "";
         if(show_neg) {
                 if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
                 else str += '-';
@@ -151,11 +151,11 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
         return str;
 }
 
-string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false, bool negative_base = false) {
+std::string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false, bool negative_base = false) {
         int sign = mpz_sgn(integ_pre);
         if(base == BASE_ROMAN_NUMERALS) {
                 if(sign != 0 && mpz_cmpabs_ui(integ_pre, 10000) == -1) {
-                        string str;
+                        std::string str;
                         int value = (int) mpz_get_si(integ_pre);
                         if(value < 0) {
                                 value = -value;
@@ -244,7 +244,7 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool
                 base = 10;
         }
 
-        string cl_str;
+        std::string cl_str;
 
         mpz_t integ;
         mpz_init_set(integ, integ_pre);
@@ -282,10 +282,10 @@ string printMPZ(mpz_ptr integ_pre, int base = 10, bool display_sign = true, bool
 
         return cl_str;
 }
-string printMPZ(mpz_srcptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false, bool negative_base = false) {
+std::string printMPZ(mpz_srcptr integ_pre, int base = 10, bool display_sign = true, bool lower_case = false, bool negative_base = false) {
         mpz_t integ;
         mpz_init_set(integ, integ_pre);
-        string str = printMPZ(integ, base, display_sign, lower_case, negative_base);
+        std::string str = printMPZ(integ, base, display_sign, lower_case, negative_base);
         mpz_clear(integ);
         return str;
 }
@@ -297,7 +297,7 @@ Number::Number() {
         mpq_init(r_value);
         clear();
 }
-Number::Number(string number, const ParseOptions &po) {
+Number::Number(std::string number, const ParseOptions &po) {
         b_imag = false;
         i_value = NULL;
         n_type = NUMBER_TYPE_RATIONAL;
@@ -324,12 +324,12 @@ Number::~Number() {
         if(i_value) delete i_value;
 }
 
-void Number::set(string number, const ParseOptions &po) {
+void Number::set(std::string number, const ParseOptions &po) {
 
         if(po.base == BASE_BIJECTIVE_26) {
                 remove_blanks(number);
                 clear();
-                string str = number;
+                std::string str = number;
                 for(size_t i = 0; i < str.length();) {
                         if(!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z')) {
                                 size_t n = 1;
@@ -389,7 +389,7 @@ void Number::set(string number, const ParseOptions &po) {
                 abs_base.ceil();
                 if(abs_base < 2) abs_base = 2;
                 size_t i_dot = number.length();
-                vector<Number> digits;
+                std::vector<Number> digits;
                 bool b_minus = false;
                 if(abs_base <= 62) {
                         remove_blanks(number);
@@ -409,7 +409,7 @@ void Number::set(string number, const ParseOptions &po) {
                                 } else if(number[i] == '-' && digits.empty()) {
                                         b_minus = !b_minus;
                                 } else {
-                                        string str_char = number.substr(i, 1);
+                                        std::string str_char = number.substr(i, 1);
                                         while(i + 1 < number.length() && number[i + 1] < 0 && (unsigned char) number[i + 1] < 0xC0) {
                                                 i++;
                                                 str_char += number[i];
@@ -433,14 +433,14 @@ void Number::set(string number, const ParseOptions &po) {
                                         Number nrd;
                                         if(is_in(NUMBERS, number[i])) {
                                                 size_t i2 = number.find_first_not_of(NUMBERS, i);
-                                                if(i2 == string::npos) i2 = number.length();
+                                                if(i2 == std::string::npos) i2 = number.length();
                                                 nrd.set(number.substr(i, i2 - i));
                                                 i = i2 - 1;
                                                 b_esc = true;
                                         } else if(number[i] == 'x' && i < number.length() - 1 && is_in(NUMBERS "ABCDEFabcdef", number[i + 1])) {
                                                 i++;
                                                 size_t i2 = number.find_first_not_of(NUMBERS "ABCDEFabcdef", i);
-                                                if(i2 == string::npos) i2 = number.length();
+                                                if(i2 == std::string::npos) i2 = number.length();
                                                 ParseOptions po;
                                                 po.base = BASE_HEXADECIMAL;
                                                 nrd.set(number.substr(i, i2 - i), po);
@@ -509,8 +509,8 @@ void Number::set(string number, const ParseOptions &po) {
         }
 
         size_t pm_index = number.find(SIGN_PLUSMINUS);
-        if(pm_index == string::npos) pm_index = number.find("+/-");
-        if(pm_index != string::npos) {
+        if(pm_index == std::string::npos) pm_index = number.find("+/-");
+        if(pm_index != std::string::npos) {
                 ParseOptions po2 = po;
                 po2.read_precision = DONT_READ_PRECISION;
                 set(number.substr(0, pm_index), po2);
@@ -524,17 +524,17 @@ void Number::set(string number, const ParseOptions &po) {
 
         if(po.base == BASE_ROMAN_NUMERALS) {
                 remove_blanks(number);
-                string number_bak = number;
-                bool rev_c = (number.find("Ɔ") != string::npos);
+                std::string number_bak = number;
+                bool rev_c = (number.find("Ɔ") != std::string::npos);
                 if(rev_c) gsub("Ɔ", ")", number);
                 Number nr;
                 Number cur;
                 bool large = false;
-                vector<Number> numbers;
+                std::vector<Number> numbers;
                 for(size_t i = 0; i < number.length(); i++) {
                         switch(number[i]) {
                                 case 'I': {
-                                        if(i > 0 && i == number.length() - 1 && number[i - 1] != 'i' && number[i - 1] != 'j' && number.find_first_of("jvxlcdm") != string::npos && number.find_first_of("IJVXLCDM") == i) {
+                                        if(i > 0 && i == number.length() - 1 && number[i - 1] != 'i' && number[i - 1] != 'j' && number.find_first_of("jvxlcdm") != std::string::npos && number.find_first_of("IJVXLCDM") == i) {
                                                 cur.set(2);
                                                 CALCULATOR->error(false, _("Assuming the unusual practice of letting a last capital I mean 2 in a roman numeral."), NULL);
                                                 break;
@@ -565,7 +565,7 @@ void Number::set(string number, const ParseOptions &po) {
                                 case 'c': {
                                         if(rev_c) {
                                                 size_t i2 = number.find_first_not_of("Cc", i);
-                                                if(i2 != string::npos && number[i2] == '|' && i2 + (i2 - i) < number.length() && number[i2 + (i2 - i)] == ')') {
+                                                if(i2 != std::string::npos && number[i2] == '|' && i2 + (i2 - i) < number.length() && number[i2 + (i2 - i)] == ')') {
                                                         bool b = true;
                                                         for(size_t i3 = i2 + 1; i3 < i2 + (i2 - i); i3++) {
                                                                 if(number[i3] != ')') {b = false; break;}
@@ -575,7 +575,7 @@ void Number::set(string number, const ParseOptions &po) {
                                                                 i = i2 + (i2 - i);
                                                                 if(i + 1 < number.length() && number[i + 1] == ')') {
                                                                         i2 = number.find_first_not_of(")", i + 2);
-                                                                        if(i2 == string::npos) {
+                                                                        if(i2 == std::string::npos) {
                                                                                 cur += Number(5, 1, number.length() - i);
                                                                                 i = number.length() - 1;
                                                                         } else {
@@ -607,7 +607,7 @@ void Number::set(string number, const ParseOptions &po) {
                                                 break;
                                         } else if(i + 1 < number.length() && number[i + 1] == ')') {
                                                 size_t i2 = number.find_first_not_of(")", i + 2);
-                                                if(i2 == string::npos) {
+                                                if(i2 == std::string::npos) {
                                                         cur.set(5, 1, number.length() - i - 1);
                                                         i = number.length() - 1;
                                                 } else {
@@ -615,7 +615,7 @@ void Number::set(string number, const ParseOptions &po) {
                                                         i = i2 - 1;
                                                 }
                                                 break;
-                                        } else if(i + 2 < number.length() && number.find("|", i + 2) != string::npos) {
+                                        } else if(i + 2 < number.length() && number.find("|", i + 2) != std::string::npos) {
                                                 cur.clear();
                                                 large = true;
                                                 break;
@@ -626,7 +626,7 @@ void Number::set(string number, const ParseOptions &po) {
                                 case '(': {
                                         if(!rev_c) {
                                                 size_t i2 = number.find_first_not_of("(", i);
-                                                if(i2 != string::npos && number[i2] == '|' && i2 + (i2 - i) < number.length() && number[i2 + (i2 - i)] == ')') {
+                                                if(i2 != std::string::npos && number[i2] == '|' && i2 + (i2 - i) < number.length() && number[i2 + (i2 - i)] == ')') {
                                                         bool b = true;
                                                         for(size_t i3 = i2 + 1; i3 < i2 + (i2 - i); i3++) {
                                                                 if(number[i3] != ')') {b = false; break;}
@@ -636,7 +636,7 @@ void Number::set(string number, const ParseOptions &po) {
                                                                 i = i2 + (i2 - i);
                                                                 if(i + 1 < number.length() && number[i + 1] == ')') {
                                                                         i2 = number.find_first_not_of(")", i + 2);
-                                                                        if(i2 == string::npos) {
+                                                                        if(i2 == std::string::npos) {
                                                                                 cur += Number(5, 1, number.length() - i);
                                                                                 i = number.length() - 1;
                                                                         } else {
@@ -668,7 +668,7 @@ void Number::set(string number, const ParseOptions &po) {
                                 numbers[numbers.size() - 1].set(cur);
                         }
                 }
-                vector<Number> values;
+                std::vector<Number> values;
                 values.resize(numbers.size());
                 bool error = false;
                 int rep = 1;
@@ -712,7 +712,7 @@ void Number::set(string number, const ParseOptions &po) {
                         }
                         values[i].set(nr);
                 }
-                if(error && number.find('|') == string::npos) {
+                if(error && number.find('|') == std::string::npos) {
                         PrintOptions pro;
                         pro.base = BASE_ROMAN_NUMERALS;
                         CALCULATOR->error(false, _("Errors in roman numerals: \"%s\". Interpreted as %s, which should be written as %s."), number.c_str(), nr.print().c_str(), nr.print(pro).c_str(), NULL);
@@ -867,7 +867,7 @@ void Number::set(string number, const ParseOptions &po) {
                         b_cplx = true;
                 } else if(base == 10 && number[index] == '(' && index <= number.length() - 2) {
                         size_t par_i = number.find(')', index + 1);
-                        if(par_i == string::npos) {
+                        if(par_i == std::string::npos) {
                                 i_unc = s2i(number.substr(index + 1));
                                 index = number.length() - 1;
                         } else if(par_i > index + 1) {
@@ -880,7 +880,7 @@ void Number::set(string number, const ParseOptions &po) {
                                 mpz_set_ui(mpq_numref(unc), i_unc);
                         }
                 } else if(number[index] != ' ') {
-                        string str_char = number.substr(index, 1);
+                        std::string str_char = number.substr(index, 1);
                         while(index + 1 < number.length() && number[index + 1] < 0 && (unsigned char) number[index + 1] < 0xC0) {
                                 index++;
                                 str_char += number[index];
@@ -1295,7 +1295,7 @@ void Number::intervalToMidValue() {
         }
         if(i_value) i_value->intervalToMidValue();
 }
-void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
+void Number::splitInterval(unsigned int nr_of_parts, std::vector<Number> &v) const {
         if(n_type == NUMBER_TYPE_FLOAT && isReal()) {
                 if(nr_of_parts == 2) {
                         mpfr_t f_mid;
@@ -1326,7 +1326,7 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
                 }
         }
 }
-bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, vector<Number> *v) const {
+bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, std::vector<Number> *v) const {
         if(!isInterval() || !isReal()) {
                 if(b_multiple) *b_multiple = false;
                 return false;
@@ -4187,7 +4187,7 @@ bool Number::root(const Number &o) {
         }
         return true;
 }
-bool Number::allroots(const Number &o, vector<Number> &roots) {
+bool Number::allroots(const Number &o, std::vector<Number> &roots) {
         if(!o.isInteger() || !o.isPositive()) return false;
         if(isOne() || o.isOne() || isZero()) {
                 roots.push_back(*this);
@@ -7450,7 +7450,7 @@ bool Number::binomial(const Number &m, const Number &k) {
         return true;
 }
 
-bool Number::factorize(vector<Number> &factors) {
+bool Number::factorize(std::vector<Number> &factors) {
         if(isZero() || !isInteger()) return false;
         if(mpz_cmp_si(mpq_numref(r_value), 1) == 0) {
                 factors.push_back(nr_one);
@@ -7703,25 +7703,25 @@ bool Number::add(const Number &o, MathOperation op) {
         }
         return false;
 }
-string Number::printNumerator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
+std::string Number::printNumerator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
         return format_number_string(printMPZ(mpq_numref(r_value), base, false, lower_case), base, base_display, display_sign);
 }
-string Number::printDenominator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
+std::string Number::printDenominator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
         return format_number_string(printMPZ(mpq_denref(r_value), base, false, lower_case), base, base_display, display_sign);
 }
-string Number::printImaginaryNumerator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
+std::string Number::printImaginaryNumerator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
         return format_number_string(printMPZ(mpq_numref(i_value ? i_value->internalRational() : nr_zero.internalRational()), base, false, lower_case), base, base_display, display_sign);
 }
-string Number::printImaginaryDenominator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
+std::string Number::printImaginaryDenominator(int base, bool display_sign, BaseDisplay base_display, bool lower_case) const {
         return format_number_string(printMPZ(mpq_denref(i_value ? i_value->internalRational() : nr_zero.internalRational()), base, false, lower_case), base, base_display, display_sign);
 }
 
-ostream& operator << (ostream &os, const Number &nr) {
+std::ostream& operator << (std::ostream &os, const Number &nr) {
         os << nr.print();
         return os;
 }
 
-string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
+std::string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
         if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
         if(ips.minus) *ips.minus = false;
         if(ips.exp_minus) *ips.exp_minus = false;
@@ -7742,7 +7742,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                 bool neg = nr.isNegative();
                 if(neg) nr.negate();
                 Number nri, nra;
-                string str;
+                std::string str;
                 do {
                         nri = nr;
                         nri /= 26;
@@ -7839,7 +7839,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                 precmax.floor();
                 precision_base = precmax.lintValue();
 
-                string str;
+                std::string str;
 
                 if(isZero()) {
                         if(b_num) str += '\\';
@@ -7881,7 +7881,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                         po2.base = BASE_DECIMAL;
                         return print(po2, ips);
                 }
-                vector<long int> digits;
+                std::vector<long int> digits;
                 Number nr_digit;
                 if(base.isNegative()) {
                         CALCULATOR->beginTemporaryStopIntervalArithmetic();
@@ -8095,7 +8095,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                                         str += (char) c;
                                         prev_esc = false;
                                 } else {
-                                        string str_c;
+                                        std::string str_c;
                                         if(c <= 0x7ff) {
                                                 if(c > 0xa0) {
                                                         str_c += (char) ((c >> 6) | 0xc0);
@@ -8156,7 +8156,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                 PrintOptions po2 = po;
                 po2.base = 10;
                 po2.number_fraction_format = FRACTION_FRACTIONAL;
-                string str = nr.print(po2);
+                std::string str = nr.print(po2);
                 if(po.base == BASE_SEXAGESIMAL) {
                         if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DEGREE, po.can_display_unicode_string_arg))) {
                                 str += SIGN_DEGREE;
@@ -8220,7 +8220,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
                 return str;
         }
-        string str;
+        std::string str;
         int base;
         long int min_decimals = 0;
         if(po.use_min_decimals && po.min_decimals > 0) min_decimals = po.min_decimals;
@@ -8247,7 +8247,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                         nr.set(*this, false, true);
                         return nr.print(po, ips);
                 }
-                string str_i = (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
+                std::string str_i = (CALCULATOR ? CALCULATOR->v_i->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name : "i");
                 bool bre = hasRealPart();
                 if(bre) {
                         Number r_nr(*this);
@@ -8257,7 +8257,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                         InternalPrintStruct ips_n = ips;
                         bool neg = false;
                         ips_n.minus = &neg;
-                        string str2 = i_value->print(po, ips_n);
+                        std::string str2 = i_value->print(po, ips_n);
                         if(ips.im) *ips.im = str2;
                         if(!po.short_multiplication && (str2 != "1" || po.base == BASE_UNICODE)) {
                                 if(po.spacious) {
@@ -8359,7 +8359,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                                                 po2.twos_complement = false;
                                                 po2.hexadecimal_twos_complement = false;
                                                 po2.binary_bits = 0;
-                                                string str_bexp = nrl.print(po2);
+                                                std::string str_bexp = nrl.print(po2);
                                                 if(ips.exp) {
                                                         if(ips.exp_minus) *ips.exp_minus = false;
                                                         *ips.exp = str_bexp;
@@ -8411,9 +8411,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                                 PrintOptions po2 = po;
                                 po2.twos_complement = false;
                                 if(!nr.isInteger() && po2.number_fraction_format == FRACTION_DECIMAL) {
-                                        string str = print(po2);
+                                        std::string str = print(po2);
                                         size_t i = str.find(po2.decimalpoint());
-                                        if(i != string::npos) {
+                                        if(i != std::string::npos) {
                                                 po2.min_decimals = str.length() - (i + po2.decimalpoint().length());
                                                 po2.max_decimals = po2.min_decimals;
                                                 po2.use_max_decimals = true;
@@ -8452,7 +8452,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
                 integer_rerun:
 
-                string mpz_str = printMPZ(ivalue, base, false, base != BASE_ROMAN_NUMERALS && po.lower_case_numbers);
+                std::string mpz_str = printMPZ(ivalue, base, false, base != BASE_ROMAN_NUMERALS && po.lower_case_numbers);
 
                 if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 
@@ -8714,9 +8714,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                         ips2.parent_approximate = ips.parent_approximate;
                         ips2.parent_precision = ips.parent_precision;
                         po2.interval_display = INTERVAL_DISPLAY_LOWER;
-                        string str1 = print(po2, ips2);
+                        std::string str1 = print(po2, ips2);
                         po2.interval_display = INTERVAL_DISPLAY_UPPER;
-                        string str2 = print(po2, ips2);
+                        std::string str2 = print(po2, ips2);
                         if(str1 == str2) return print(po2, ips);
                         str = CALCULATOR->f_interval->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
                         str += LEFT_PARENTHESIS;
@@ -8894,9 +8894,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                         mpz_t ivalue;
                         mpz_init(ivalue);
                         mpfr_get_z(ivalue, vl, MPFR_RNDN);
-                        string str_l = printMPZ(ivalue, base, false, false);
+                        std::string str_l = printMPZ(ivalue, base, false, false);
                         mpfr_get_z(ivalue, vu, MPFR_RNDN);
-                        string str_u = printMPZ(ivalue, base, false, false);
+                        std::string str_u = printMPZ(ivalue, base, false, false);
 
                         if(str_u.length() > str_l.length()) {
                                 str_l.insert(0, str_u.length() - str_l.length(), '0');
@@ -9048,7 +9048,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
                 float_rerun:
 
-                string str_bexp;
+                std::string str_bexp;
                 bool neg_bexp = false;
 
                 mpfr_t f_log, f_base, f_log_base;
@@ -9161,7 +9161,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
                 bool show_ending_zeroes = po.show_ending_zeroes;
 
-                string str_unc;
+                std::string str_unc;
 
                 if(b_pm_zero) {
                         if(!rerun && !po.preserve_precision && l10 > 0 && str.length() > 2) {
@@ -9415,7 +9415,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                                                 po2.twos_complement = false;
                                                 po2.hexadecimal_twos_complement = false;
                                                 po2.binary_bits = 0;
-                                                string str_bexp = nrl.print(po2);
+                                                std::string str_bexp = nrl.print(po2);
                                                 if(ips.exp) {
                                                         if(ips.exp_minus) *ips.exp_minus = false;
                                                         *ips.exp = str_bexp;
@@ -9450,7 +9450,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                 if(neg) mpz_neg(num, num);
                 mpz_tdiv_qr(num, remainder, num, d);
                 bool exact = (mpz_sgn(remainder) == 0);
-                vector<mpz_t*> remainders;
+                std::vector<mpz_t*> remainders;
                 bool started = false;
                 long int expo = 0;
                 long int precision2 = precision_base;
@@ -9808,7 +9808,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                 }
                 if(infinite_series) {
                         size_t i_dp = str.find(po.decimalpoint());
-                        if(i_dp != string::npos && ((infinite_series == 1 && i_dp + po.decimalpoint().length() + 2 < str.length() - infinite_series) || (infinite_series > 1 && i_dp + po.decimalpoint().length() < str.length() - infinite_series))) {
+                        if(i_dp != std::string::npos && ((infinite_series == 1 && i_dp + po.decimalpoint().length() + 2 < str.length() - infinite_series) || (infinite_series > 1 && i_dp + po.decimalpoint().length() < str.length() - infinite_series))) {
 #ifdef _WIN32
                                 str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
 #else
@@ -9872,7 +9872,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
                 if(po.spacious) str += " ";
                 InternalPrintStruct ips_n = ips;
                 ips_n.minus = NULL;
-                string str2 = den.print(po2, ips_n);
+                std::string str2 = den.print(po2, ips_n);
                 if(approximately_displayed && base != BASE_ROMAN_NUMERALS) {
                         po2 = po;
                         po2.number_fraction_format = FRACTION_DECIMAL;

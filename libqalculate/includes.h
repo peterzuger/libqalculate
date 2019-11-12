@@ -34,11 +34,7 @@
 #define QALCULATE_MINOR_VERSION (6)
 #define QALCULATE_MICRO_VERSION (0)
 
-/// \cond
-using namespace std;
-/// \endcond
-
-static string empty_string;
+static std::string empty_string;
 
 struct ExpressionName;
 class Calculator;
@@ -464,9 +460,9 @@ static const struct PrintOptions {
         /// Options for the order of values in the displayed expression. Default: default_sort_options
         SortOptions sort_options;
         /// Comma sign or empty string to use default comma sign. Default: empty string
-        string comma_sign;
+        std::string comma_sign;
         /// Decimal sign or empty string to use default decimal sign. Default: empty string
-        string decimalpoint_sign;
+        std::string decimalpoint_sign;
         /// Function that returns true if a text string with unicode signs can be properly displayed. Default: NULL
         bool (*can_display_unicode_string_function) (const char*, void*);
         /// Argument passed to can_display_unicode_string_function. Default: NULL
@@ -505,16 +501,16 @@ static const struct PrintOptions {
         unsigned int binary_bits;
         PrintOptions();
         /// Returns the comma sign used (default sign or comma_sign)
-        const string &comma() const;
+        const std::string &comma() const;
         /// Returns the decimal sign used (default sign or decimalpoint_sign)
-        const string &decimalpoint() const;
+        const std::string &decimalpoint() const;
         /// Returns the digit grouping separator used
 } default_print_options;
 
 static const struct InternalPrintStruct {
         int depth, power_depth, division_depth;
         bool wrap;
-        string *num, *den, *re, *im, *exp;
+        std::string *num, *den, *re, *im, *exp;
         bool *minus, *exp_minus;
         bool parent_approximate;
         int parent_precision;

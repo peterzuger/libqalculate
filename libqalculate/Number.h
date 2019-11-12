@@ -78,7 +78,7 @@ class Number {
                 * @param number Text string to read number from.
                 * @param po Options for parsing the text string.
                 */
-                Number(string number, const ParseOptions &po = default_parse_options);
+                Number(std::string number, const ParseOptions &po = default_parse_options);
                 /**
                 * Constructs a rational number.
                 *
@@ -93,7 +93,7 @@ class Number {
                 Number(const Number &o);
                 virtual ~Number();
 
-                void set(string number, const ParseOptions &po = default_parse_options);
+                void set(std::string number, const ParseOptions &po = default_parse_options);
                 void set(long int numerator, long int denominator = 1, long int exp_10 = 0, bool keep_precision = false, bool keep_imag = false);
                 void setPlusInfinity(bool keep_precision = false, bool keep_imag = false);
                 void setMinusInfinity(bool keep_precision = false, bool keep_imag = false);
@@ -126,8 +126,8 @@ class Number {
                 void precisionToInterval();
                 bool intervalToPrecision(long int min_precision = 2);
                 void intervalToMidValue();
-                void splitInterval(unsigned int nr_of_parts, vector<Number> &v) const;
-                bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, vector<Number> *v = NULL) const;
+                void splitInterval(unsigned int nr_of_parts, std::vector<Number> &v) const;
+                bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, std::vector<Number> *v = NULL) const;
                 bool mergeInterval(const Number &o, bool set_to_overlap = false);
                 void setUncertainty(const Number &o, bool to_precision = false);
                 void setRelativeUncertainty(const Number &o, bool to_precision = false);
@@ -378,7 +378,7 @@ class Number {
                 bool sqrt();
                 bool cbrt();
                 bool root(const Number &o);
-                bool allroots(const Number &o, vector<Number> &roots);
+                bool allroots(const Number &o, std::vector<Number> &roots);
                 /** Multiply the number with a power of ten (x*10^o).
                 *
                 * @param o Number to raise 10 by.
@@ -503,7 +503,7 @@ class Number {
                 bool multiFactorial(const Number &o);
                 bool doubleFactorial();
                 bool binomial(const Number &m, const Number &k);
-                bool factorize(vector<Number> &factors);
+                bool factorize(std::vector<Number> &factors);
 
                 void rand();
                 void randn();
@@ -511,15 +511,15 @@ class Number {
 
                 bool add(const Number &o, MathOperation op);
 
-                string printNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
-                string printDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
-                string printImaginaryNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
-                string printImaginaryDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+                std::string printNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+                std::string printDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+                std::string printImaginaryNumerator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
+                std::string printImaginaryDenominator(int base = 10, bool display_sign = true, BaseDisplay base_display = BASE_DISPLAY_NORMAL, bool lower_case = false) const;
 
-                string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
+                std::string print(const PrintOptions &po = default_print_options, const InternalPrintStruct &ips = top_ips) const;
 
 };
 
-ostream& operator << (ostream &os, const Number&);
+std::ostream& operator << (std::ostream &os, const Number&);
 
 #endif
