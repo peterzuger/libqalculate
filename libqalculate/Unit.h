@@ -16,12 +16,12 @@
 
 /// Type of unit
 typedef enum {
-	/// class Unit
-	SUBTYPE_BASE_UNIT,
-	/// class AliasUnit
-	SUBTYPE_ALIAS_UNIT,
-	/// class CompositeUnit
-	SUBTYPE_COMPOSITE_UNIT
+        /// class Unit
+        SUBTYPE_BASE_UNIT,
+        /// class AliasUnit
+        SUBTYPE_ALIAS_UNIT,
+        /// class CompositeUnit
+        SUBTYPE_COMPOSITE_UNIT
 } UnitSubtype;
 
 #include <libqalculate/ExpressionItem.h>
@@ -39,109 +39,109 @@ class Unit : public ExpressionItem {
 
   protected:
 
-	string ssystem, scountries;
-	bool b_si;
-	bool b_use_with_prefixes;
+        string ssystem, scountries;
+        bool b_si;
+        bool b_use_with_prefixes;
 
   public:
 
-	Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
-	Unit();	
-	Unit(const Unit *unit);	
-	virtual ~Unit();
+        Unit(string cat_, string name_, string plural_ = "", string singular_ = "", string title_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+        Unit();
+        Unit(const Unit *unit);
+        virtual ~Unit();
 
-	virtual ExpressionItem *copy() const;
-	virtual void set(const ExpressionItem *item);
+        virtual ExpressionItem *copy() const;
+        virtual void set(const ExpressionItem *item);
 
-	/** Returns if the unit is part of the SI standard.
-	*
-	* @returns true if the unit is part of the SI standard.
-	*/
-	bool isSIUnit() const;
-	/** State that the unit is part of the SI standard.
-	* Sets system to "SI".
-	*/
-	void setAsSIUnit();
-	/** Sets which system/standard ("SI", "CGS", etc.) the unit is part of.
-	* Setting system to "SI" (case-insensitive), is equivalent to setAsSIUnit().
-	*/
-	void setSystem(string s_system);
-	/** Returns the system/standard that the unit is part of.
-	*
-	* @returns System string.
-	*/
-	const string &system() const;	
-	/** Returns wether prefixes should be used with this unit or not.
-	*
-	* @returns true if the prefixes is appropriate for this unit.
-	*/
-	bool useWithPrefixesByDefault() const;
-	/** Sets wether prefixes are approriate with this unit or not.
-	*/
-	void setUseWithPrefixesByDefault(bool use_with_prefixes);
-	/** Returns if the unit is a currency (Euro is base unit).
-	*
-	* @returns true if the unit is a currency.
-	*/
-	bool isCurrency() const;
-	const string &countries() const;
-	void setCountries(string country_names);
-	/** Returns a display string representing the unit in an expression.
-	*
-	* Equivalent to preferredName() for Unit and AliasUnit, but closer to MathStructure::print() for CompositeUnit (prints out base expression).
-	*/
-	virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual const string &singular(bool return_abbreviation_if_no_singular = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual const string &abbreviation(bool return_singular_if_no_abbreviation = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual bool isUsedByOtherUnits() const;
-	virtual Unit* baseUnit() const;
-	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
-	virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
-	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue) const;
-	virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue) const;
-	virtual MathStructure convertToBaseUnit() const;
-	virtual MathStructure convertFromBaseUnit() const;
-	virtual int baseExponent(int exp = 1) const;
-	virtual int type() const;
-	/** Returns the subtype of the unit, corresponding to which subsubclass the object belongs to.
-	*
-	* @returns ::UnitSubtype.
-	*/
-	virtual int subtype() const;
-	/** If specified unit is a base unit for this unit, directly or with other units in between.
-	* Equivalent to u->isParentOf(this).
-	*/
-	virtual bool isChildOf(Unit *u) const;
-	/** If this unit is a base unit for specified unit, directly or with other units in between.
-	* Equivalent to u->isChildOf(this).
-	*/
-	virtual bool isParentOf(Unit *u) const;
-	virtual bool hasNonlinearRelationTo(Unit *u) const;
-	virtual bool hasApproximateRelationTo(Unit *u, bool check_variables = false, bool ignore_high_precision_intervals = false) const;
-	virtual bool containsRelativeTo(Unit *u) const;
-	virtual bool hasNonlinearRelationToBase() const;
-	virtual bool hasApproximateRelationToBase(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
-	/** Converts a value from specified unit and exponent to this unit.
-	* value * (unit^exponent) = new value * (this^new exponent)
-	* This function cannot convert to or from CompositeUnit.
-	*
-	* @param u Unit to convert from.
-	* @param[in,out] mvalue Quantity value.
-	* @param[in,out] exp Exponent.
-	* @returns true if the value was successfully converted.
-	*/
-	bool convert(Unit *u, MathStructure &mvalue, MathStructure &exp) const;
-	/** Converts a value from specified unit and exponent to this unit.
-	* value * unit = new value * this
-	* This function cannot convert to or from CompositeUnit.
-	*
-	* @param u Unit to convert from.
-	* @param[in,out] mvalue Quantity value.
-	* @returns true if the value was successfully converted.
-	*/
-	bool convert(Unit *u, MathStructure &mvalue) const;
-	MathStructure convert(Unit *u, bool *converted = NULL) const;
+        /** Returns if the unit is part of the SI standard.
+        *
+        * @returns true if the unit is part of the SI standard.
+        */
+        bool isSIUnit() const;
+        /** State that the unit is part of the SI standard.
+        * Sets system to "SI".
+        */
+        void setAsSIUnit();
+        /** Sets which system/standard ("SI", "CGS", etc.) the unit is part of.
+        * Setting system to "SI" (case-insensitive), is equivalent to setAsSIUnit().
+        */
+        void setSystem(string s_system);
+        /** Returns the system/standard that the unit is part of.
+        *
+        * @returns System string.
+        */
+        const string &system() const;
+        /** Returns wether prefixes should be used with this unit or not.
+        *
+        * @returns true if the prefixes is appropriate for this unit.
+        */
+        bool useWithPrefixesByDefault() const;
+        /** Sets wether prefixes are approriate with this unit or not.
+        */
+        void setUseWithPrefixesByDefault(bool use_with_prefixes);
+        /** Returns if the unit is a currency (Euro is base unit).
+        *
+        * @returns true if the unit is a currency.
+        */
+        bool isCurrency() const;
+        const string &countries() const;
+        void setCountries(string country_names);
+        /** Returns a display string representing the unit in an expression.
+        *
+        * Equivalent to preferredName() for Unit and AliasUnit, but closer to MathStructure::print() for CompositeUnit (prints out base expression).
+        */
+        virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+        virtual const string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+        virtual const string &singular(bool return_abbreviation_if_no_singular = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+        virtual const string &abbreviation(bool return_singular_if_no_abbreviation = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+        virtual bool isUsedByOtherUnits() const;
+        virtual Unit* baseUnit() const;
+        virtual MathStructure &convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual MathStructure &convertToBaseUnit(MathStructure &mvalue) const;
+        virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue) const;
+        virtual MathStructure convertToBaseUnit() const;
+        virtual MathStructure convertFromBaseUnit() const;
+        virtual int baseExponent(int exp = 1) const;
+        virtual int type() const;
+        /** Returns the subtype of the unit, corresponding to which subsubclass the object belongs to.
+        *
+        * @returns ::UnitSubtype.
+        */
+        virtual int subtype() const;
+        /** If specified unit is a base unit for this unit, directly or with other units in between.
+        * Equivalent to u->isParentOf(this).
+        */
+        virtual bool isChildOf(Unit *u) const;
+        /** If this unit is a base unit for specified unit, directly or with other units in between.
+        * Equivalent to u->isChildOf(this).
+        */
+        virtual bool isParentOf(Unit *u) const;
+        virtual bool hasNonlinearRelationTo(Unit *u) const;
+        virtual bool hasApproximateRelationTo(Unit *u, bool check_variables = false, bool ignore_high_precision_intervals = false) const;
+        virtual bool containsRelativeTo(Unit *u) const;
+        virtual bool hasNonlinearRelationToBase() const;
+        virtual bool hasApproximateRelationToBase(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
+        /** Converts a value from specified unit and exponent to this unit.
+        * value * (unit^exponent) = new value * (this^new exponent)
+        * This function cannot convert to or from CompositeUnit.
+        *
+        * @param u Unit to convert from.
+        * @param[in,out] mvalue Quantity value.
+        * @param[in,out] exp Exponent.
+        * @returns true if the value was successfully converted.
+        */
+        bool convert(Unit *u, MathStructure &mvalue, MathStructure &exp) const;
+        /** Converts a value from specified unit and exponent to this unit.
+        * value * unit = new value * this
+        * This function cannot convert to or from CompositeUnit.
+        *
+        * @param u Unit to convert from.
+        * @param[in,out] mvalue Quantity value.
+        * @returns true if the value was successfully converted.
+        */
+        bool convert(Unit *u, MathStructure &mvalue) const;
+        MathStructure convert(Unit *u, bool *converted = NULL) const;
 
 };
 
@@ -173,61 +173,61 @@ class AliasUnit : public Unit {
 
   protected:
 
-	string svalue, sinverse, suncertainty;
-	bool b_relative_uncertainty;
-	int i_exp, i_mix, i_mix_min;
-	Unit *o_unit;
+        string svalue, sinverse, suncertainty;
+        bool b_relative_uncertainty;
+        int i_exp, i_mix, i_mix_min;
+        Unit *o_unit;
 
   public:
 
-	AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp = 1, string inverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
-	AliasUnit(const AliasUnit *unit);		
-	AliasUnit();			
-	virtual ~AliasUnit();
+        AliasUnit(string cat_, string name_, string plural_, string singular_, string title_, Unit *alias, string relation = "1", int exp = 1, string inverse = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+        AliasUnit(const AliasUnit *unit);
+        AliasUnit();
+        virtual ~AliasUnit();
 
-	virtual ExpressionItem *copy() const;
-	virtual void set(const ExpressionItem *item);
-	
-	virtual Unit* baseUnit() const;
-	virtual Unit* firstBaseUnit() const;
-	virtual void setBaseUnit(Unit *alias);
-	virtual string expression() const;
-	virtual string inverseExpression() const;
-	virtual string uncertainty(bool *is_relative = NULL) const;
-	/**
-	* Sets the relation expression.
-	*/
-	virtual void setExpression(string relation);
-	/**
-	* Sets the inverse relation expression.
-	*/
-	virtual void setInverseExpression(string inverse);
-	virtual void setUncertainty(string standard_uncertainty, bool is_relative = false);
-	virtual MathStructure &convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
-	virtual MathStructure &convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
-	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
-	virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
-	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue) const;
-	virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue) const;
-	virtual MathStructure convertToBaseUnit() const;
-	virtual MathStructure convertFromBaseUnit() const;
-	virtual int baseExponent(int exp = 1) const;
-	virtual void setExponent(int exp);
-	virtual int firstBaseExponent() const;
-	virtual int mixWithBase() const;
-	virtual int mixWithBaseMinimum() const;
-	virtual void setMixWithBase(int combine_priority = 1);
-	virtual void setMixWithBaseMinimum(int combine_minimum);
-	virtual int subtype() const;
-	virtual bool isChildOf(Unit *u) const;
-	virtual bool isParentOf(Unit *u) const;
-	virtual bool hasNonlinearExpression() const;
-	virtual bool hasNonlinearRelationTo(Unit *u) const;
-	virtual bool hasApproximateExpression(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
-	virtual bool hasApproximateRelationTo(Unit *u, bool check_variables = false, bool ignore_high_precision_intervals = false) const;
-	virtual bool containsRelativeTo(Unit *u) const;
-	virtual bool hasNonlinearRelationToBase() const;
-	virtual bool hasApproximateRelationToBase(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
+        virtual ExpressionItem *copy() const;
+        virtual void set(const ExpressionItem *item);
+
+        virtual Unit* baseUnit() const;
+        virtual Unit* firstBaseUnit() const;
+        virtual void setBaseUnit(Unit *alias);
+        virtual string expression() const;
+        virtual string inverseExpression() const;
+        virtual string uncertainty(bool *is_relative = NULL) const;
+        /**
+        * Sets the relation expression.
+        */
+        virtual void setExpression(string relation);
+        /**
+        * Sets the inverse relation expression.
+        */
+        virtual void setInverseExpression(string inverse);
+        virtual void setUncertainty(string standard_uncertainty, bool is_relative = false);
+        virtual MathStructure &convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual MathStructure &convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual MathStructure &convertToBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual MathStructure &convertToBaseUnit(MathStructure &mvalue) const;
+        virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue) const;
+        virtual MathStructure convertToBaseUnit() const;
+        virtual MathStructure convertFromBaseUnit() const;
+        virtual int baseExponent(int exp = 1) const;
+        virtual void setExponent(int exp);
+        virtual int firstBaseExponent() const;
+        virtual int mixWithBase() const;
+        virtual int mixWithBaseMinimum() const;
+        virtual void setMixWithBase(int combine_priority = 1);
+        virtual void setMixWithBaseMinimum(int combine_minimum);
+        virtual int subtype() const;
+        virtual bool isChildOf(Unit *u) const;
+        virtual bool isParentOf(Unit *u) const;
+        virtual bool hasNonlinearExpression() const;
+        virtual bool hasNonlinearRelationTo(Unit *u) const;
+        virtual bool hasApproximateExpression(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
+        virtual bool hasApproximateRelationTo(Unit *u, bool check_variables = false, bool ignore_high_precision_intervals = false) const;
+        virtual bool containsRelativeTo(Unit *u) const;
+        virtual bool hasNonlinearRelationToBase() const;
+        virtual bool hasApproximateRelationToBase(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
 
 };
 
@@ -239,23 +239,23 @@ class AliasUnit_Composite : public AliasUnit {
 
   protected:
 
-	Prefix *prefixv;
+        Prefix *prefixv;
 
   public:
 
-	AliasUnit_Composite(Unit *alias, int exp = 1, Prefix *prefix_ = NULL);
-	AliasUnit_Composite(const AliasUnit_Composite *unit);			
-	virtual ~AliasUnit_Composite();
+        AliasUnit_Composite(Unit *alias, int exp = 1, Prefix *prefix_ = NULL);
+        AliasUnit_Composite(const AliasUnit_Composite *unit);
+        virtual ~AliasUnit_Composite();
 
-	virtual ExpressionItem *copy() const;
-	virtual void set(const ExpressionItem *item);
-	
-	virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	virtual Prefix *prefix() const;
-	virtual int prefixExponent() const;	
-	virtual void set(Unit *u, int exp = 1, Prefix *prefix_ = NULL);
-	virtual MathStructure &convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
-	virtual MathStructure &convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual ExpressionItem *copy() const;
+        virtual void set(const ExpressionItem *item);
+
+        virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+        virtual Prefix *prefix() const;
+        virtual int prefixExponent() const;
+        virtual void set(Unit *u, int exp = 1, Prefix *prefix_ = NULL);
+        virtual MathStructure &convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
+        virtual MathStructure &convertFromFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
 
 };
 
@@ -273,56 +273,56 @@ class AliasUnit_Composite : public AliasUnit {
 * parsed from an expression (ex. "cm^3/g) with setBaseExpression().
 */
 class CompositeUnit : public Unit {
-	
-	protected:
-	
-		string sshort;
-		vector<AliasUnit_Composite*> units;
 
-	public:
+        protected:
 
-		CompositeUnit(string cat_, string name_, string title_ = "", string base_expression_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
-		CompositeUnit(const CompositeUnit *unit);
-		virtual ~CompositeUnit();
-		virtual ExpressionItem *copy() const;
-		virtual void set(const ExpressionItem *item);
-		/** Adds a sub/base unit with specified exponent and an optional prefix.
-		*
-		* @param u Unit.
-		* @param exp Exponent.
-		* @param prefix Prefix.
-		*/
-		virtual void add(Unit *u, int exp = 1, Prefix *prefix = NULL);
-		/** Retrieves information about a sub/base unit 
-		*
-		* @param index Index starting at 1.
-		* @param[out] exp Exponent.
-		* @param[out] prefix Prefix.
-		* @returns Sub/base unit (AliasUnit_Composite::firstBaseUnit()).
-		*/
-		virtual Unit *get(size_t index, int *exp = NULL, Prefix **prefix = NULL) const;
-		virtual void setExponent(size_t index, int exp);
-		virtual void setPrefix(size_t index, Prefix *prefix);
-		/** Returns the number of sub/base units */
-		virtual size_t countUnits() const;
-		virtual size_t find(Unit *u) const;
-		virtual void del(size_t index);
-		/** Prints out the sub/base units with prefixes and exponents.
-		* This is the representation of the unit in expressions.
-		*/
-		virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-		virtual int subtype() const;
-		/** If this unit contains a sub/base unit with a relation to the specified unit.
-		 */
-		virtual bool containsRelativeTo(Unit *u) const;
-		virtual bool hasNonlinearRelationToBase() const;
-		virtual bool hasApproximateRelationToBase(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
-		/** Creates a MathStructure with the sub/base units of the unit.
-		*/
-		virtual MathStructure generateMathStructure(bool make_division = false, bool set_null_prefixes = false) const;
-		virtual void setBaseExpression(string base_expression_);
-		/** Removes all sub/base units. */
-		virtual void clear();
+                string sshort;
+                vector<AliasUnit_Composite*> units;
+
+        public:
+
+                CompositeUnit(string cat_, string name_, string title_ = "", string base_expression_ = "", bool is_local = true, bool is_builtin = false, bool is_active = true);
+                CompositeUnit(const CompositeUnit *unit);
+                virtual ~CompositeUnit();
+                virtual ExpressionItem *copy() const;
+                virtual void set(const ExpressionItem *item);
+                /** Adds a sub/base unit with specified exponent and an optional prefix.
+                *
+                * @param u Unit.
+                * @param exp Exponent.
+                * @param prefix Prefix.
+                */
+                virtual void add(Unit *u, int exp = 1, Prefix *prefix = NULL);
+                /** Retrieves information about a sub/base unit
+                *
+                * @param index Index starting at 1.
+                * @param[out] exp Exponent.
+                * @param[out] prefix Prefix.
+                * @returns Sub/base unit (AliasUnit_Composite::firstBaseUnit()).
+                */
+                virtual Unit *get(size_t index, int *exp = NULL, Prefix **prefix = NULL) const;
+                virtual void setExponent(size_t index, int exp);
+                virtual void setPrefix(size_t index, Prefix *prefix);
+                /** Returns the number of sub/base units */
+                virtual size_t countUnits() const;
+                virtual size_t find(Unit *u) const;
+                virtual void del(size_t index);
+                /** Prints out the sub/base units with prefixes and exponents.
+                * This is the representation of the unit in expressions.
+                */
+                virtual string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+                virtual int subtype() const;
+                /** If this unit contains a sub/base unit with a relation to the specified unit.
+                 */
+                virtual bool containsRelativeTo(Unit *u) const;
+                virtual bool hasNonlinearRelationToBase() const;
+                virtual bool hasApproximateRelationToBase(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
+                /** Creates a MathStructure with the sub/base units of the unit.
+                */
+                virtual MathStructure generateMathStructure(bool make_division = false, bool set_null_prefixes = false) const;
+                virtual void setBaseExpression(string base_expression_);
+                /** Removes all sub/base units. */
+                virtual void clear();
 };
 
 

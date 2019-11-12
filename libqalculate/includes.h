@@ -73,12 +73,12 @@ class DataObject;
 
 /// Type of ExpressionItem
 typedef enum {
-	/// class Variable
-	TYPE_VARIABLE,
-	/// class MathFunction
-	TYPE_FUNCTION,
-	/// class Unit
-	TYPE_UNIT
+        /// class Variable
+        TYPE_VARIABLE,
+        /// class MathFunction
+        TYPE_FUNCTION,
+        /// class Unit
+        TYPE_UNIT
 } ExpressionItemType;
 
 #define COMPARISON_MIGHT_BE_LESS_OR_GREATER(i)	(i >= COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_NOT_EQUAL)
@@ -163,22 +163,22 @@ static const long int PRIMES[] = {
 #define NR_OF_SQUARE_PRIMES 170
 
 static const long int SQUARE_PRIMES[] = {
-4L, 9L, 25L, 49L, 121L, 169L, 289L, 361L, 529L, 841L, 
-961L, 1369L, 1681L, 1849L, 2209L, 2809L, 3481L, 3721L, 4489L, 5041L, 
-5329L, 6241L, 6889L, 7921L, 9409L, 10201L, 10609L, 11449L, 11881L, 12769L, 
-16129L, 17161L, 18769L, 19321L, 22201L, 22801L, 24649L, 26569L, 27889L, 29929L, 
-32041L, 32761L, 36481L, 37249L, 38809L, 39601L, 44521L, 49729L, 51529L, 52441L, 
-54289L, 57121L, 58081L, 63001L, 66049L, 69169L, 72361L, 73441L, 76729L, 78961L, 
-80089L, 85849L, 94249L, 96721L, 97969L, 100489L, 109561L, 113569L, 120409L, 121801L, 
-124609L, 128881L, 134689L, 139129L, 143641L, 146689L, 151321L, 157609L, 160801L, 167281L, 
-175561L, 177241L, 185761L, 187489L, 192721L, 196249L, 201601L, 208849L, 212521L, 214369L, 
-218089L, 229441L, 237169L, 241081L, 249001L, 253009L, 259081L, 271441L, 273529L, 292681L, 
-299209L, 310249L, 316969L, 323761L, 326041L, 332929L, 344569L, 351649L, 358801L, 361201L, 
-368449L, 375769L, 380689L, 383161L, 398161L, 410881L, 413449L, 418609L, 426409L, 434281L, 
-436921L, 452929L, 458329L, 466489L, 477481L, 491401L, 502681L, 516961L, 528529L, 537289L, 
-546121L, 552049L, 564001L, 573049L, 579121L, 591361L, 597529L, 619369L, 635209L, 654481L, 
-657721L, 674041L, 677329L, 683929L, 687241L, 703921L, 727609L, 734449L, 737881L, 744769L, 
-769129L, 776161L, 779689L, 786769L, 822649L, 829921L, 844561L, 863041L, 877969L, 885481L, 
+4L, 9L, 25L, 49L, 121L, 169L, 289L, 361L, 529L, 841L,
+961L, 1369L, 1681L, 1849L, 2209L, 2809L, 3481L, 3721L, 4489L, 5041L,
+5329L, 6241L, 6889L, 7921L, 9409L, 10201L, 10609L, 11449L, 11881L, 12769L,
+16129L, 17161L, 18769L, 19321L, 22201L, 22801L, 24649L, 26569L, 27889L, 29929L,
+32041L, 32761L, 36481L, 37249L, 38809L, 39601L, 44521L, 49729L, 51529L, 52441L,
+54289L, 57121L, 58081L, 63001L, 66049L, 69169L, 72361L, 73441L, 76729L, 78961L,
+80089L, 85849L, 94249L, 96721L, 97969L, 100489L, 109561L, 113569L, 120409L, 121801L,
+124609L, 128881L, 134689L, 139129L, 143641L, 146689L, 151321L, 157609L, 160801L, 167281L,
+175561L, 177241L, 185761L, 187489L, 192721L, 196249L, 201601L, 208849L, 212521L, 214369L,
+218089L, 229441L, 237169L, 241081L, 249001L, 253009L, 259081L, 271441L, 273529L, 292681L,
+299209L, 310249L, 316969L, 323761L, 326041L, 332929L, 344569L, 351649L, 358801L, 361201L,
+368449L, 375769L, 380689L, 383161L, 398161L, 410881L, 413449L, 418609L, 426409L, 434281L,
+436921L, 452929L, 458329L, 466489L, 477481L, 491401L, 502681L, 516961L, 528529L, 537289L,
+546121L, 552049L, 564001L, 573049L, 579121L, 591361L, 597529L, 619369L, 635209L, 654481L,
+657721L, 674041L, 677329L, 683929L, 687241L, 703921L, 727609L, 734449L, 737881L, 744769L,
+769129L, 776161L, 779689L, 786769L, 822649L, 829921L, 844561L, 863041L, 877969L, 885481L,
 896809L, 908209L, 935089L, 942841L, 954529L, 966289L, 982081L, 994009L, 1018081L, 1026169L
 };
 
@@ -190,7 +190,7 @@ static const long int RAISED_PRIMES[][49] = {
 389017L, 493039L, 571787L, 704969L, 912673L, 1030301L, 1092727L, 1225043L, 1295029, 1442897,
 2048383L, 2248091L, 2571353L, 2685619L, 3307949L, 3442951L, 3869893L, 4330747L, 4657463L, 5177717L,
 5735339L, 5929741L, 6967871L, 7189057L, 7645373L, 7880599L, 9393931L, 11089567L, 0},
-{16L, 81L, 625L, 2401L, 14641L, 28561L, 83521L, 130321L, 279841L, 707281L, 
+{16L, 81L, 625L, 2401L, 14641L, 28561L, 83521L, 130321L, 279841L, 707281L,
 923521L, 1874161L, 2825761L, 3418801L, 4879681L, 7890481L, 12117361L,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 {32L, 243L, 3125L, 16807L, 161051L, 371293L, 1419857L, 2476099L, 6436343L, 20511149L,
@@ -206,102 +206,102 @@ static const long int RAISED_PRIMES[][49] = {
 {1024L, 59049L, 9765625L, 282475249L,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
- 
+
 /// The result of a comparison of two values
 typedef enum {
-	COMPARISON_RESULT_EQUAL,
-	COMPARISON_RESULT_GREATER,
-	COMPARISON_RESULT_LESS,
-	COMPARISON_RESULT_EQUAL_OR_GREATER,
-	COMPARISON_RESULT_EQUAL_OR_LESS,
-	COMPARISON_RESULT_NOT_EQUAL,
-	COMPARISON_RESULT_UNKNOWN,
-	COMPARISON_RESULT_EQUAL_LIMITS,
-	COMPARISON_RESULT_CONTAINS,
-	COMPARISON_RESULT_CONTAINED,
-	COMPARISON_RESULT_OVERLAPPING_LESS,
-	COMPARISON_RESULT_OVERLAPPING_GREATER
+        COMPARISON_RESULT_EQUAL,
+        COMPARISON_RESULT_GREATER,
+        COMPARISON_RESULT_LESS,
+        COMPARISON_RESULT_EQUAL_OR_GREATER,
+        COMPARISON_RESULT_EQUAL_OR_LESS,
+        COMPARISON_RESULT_NOT_EQUAL,
+        COMPARISON_RESULT_UNKNOWN,
+        COMPARISON_RESULT_EQUAL_LIMITS,
+        COMPARISON_RESULT_CONTAINS,
+        COMPARISON_RESULT_CONTAINED,
+        COMPARISON_RESULT_OVERLAPPING_LESS,
+        COMPARISON_RESULT_OVERLAPPING_GREATER
 } ComparisonResult;
 
 /// Placement of legend
 typedef enum {
-	PLOT_LEGEND_NONE,
-	PLOT_LEGEND_TOP_LEFT,
-	PLOT_LEGEND_TOP_RIGHT,
-	PLOT_LEGEND_BOTTOM_LEFT,
-	PLOT_LEGEND_BOTTOM_RIGHT,
-	PLOT_LEGEND_BELOW,
-	PLOT_LEGEND_OUTSIDE
+        PLOT_LEGEND_NONE,
+        PLOT_LEGEND_TOP_LEFT,
+        PLOT_LEGEND_TOP_RIGHT,
+        PLOT_LEGEND_BOTTOM_LEFT,
+        PLOT_LEGEND_BOTTOM_RIGHT,
+        PLOT_LEGEND_BELOW,
+        PLOT_LEGEND_OUTSIDE
 } PlotLegendPlacement;
 
 /// Plot type/style
 typedef enum {
-	PLOT_STYLE_LINES,
-	PLOT_STYLE_POINTS,
-	PLOT_STYLE_POINTS_LINES,
-	PLOT_STYLE_BOXES,
-	PLOT_STYLE_HISTOGRAM,
-	PLOT_STYLE_STEPS,
-	PLOT_STYLE_CANDLESTICKS,
-	PLOT_STYLE_DOTS
+        PLOT_STYLE_LINES,
+        PLOT_STYLE_POINTS,
+        PLOT_STYLE_POINTS_LINES,
+        PLOT_STYLE_BOXES,
+        PLOT_STYLE_HISTOGRAM,
+        PLOT_STYLE_STEPS,
+        PLOT_STYLE_CANDLESTICKS,
+        PLOT_STYLE_DOTS
 } PlotStyle;
 
 /// Smoothing a plotted lines
 typedef enum {
-	PLOT_SMOOTHING_NONE,
-	PLOT_SMOOTHING_UNIQUE,
-	PLOT_SMOOTHING_CSPLINES,
-	PLOT_SMOOTHING_BEZIER,
-	PLOT_SMOOTHING_SBEZIER
+        PLOT_SMOOTHING_NONE,
+        PLOT_SMOOTHING_UNIQUE,
+        PLOT_SMOOTHING_CSPLINES,
+        PLOT_SMOOTHING_BEZIER,
+        PLOT_SMOOTHING_SBEZIER
 } PlotSmoothing;
 
 /// File type for saving plot to image
 typedef enum {
-	PLOT_FILETYPE_AUTO,
-	PLOT_FILETYPE_PNG,
-	PLOT_FILETYPE_PS,
-	PLOT_FILETYPE_EPS,
-	PLOT_FILETYPE_LATEX,
-	PLOT_FILETYPE_SVG,
-	PLOT_FILETYPE_FIG,
-	PLOT_FILETYPE_PDF
+        PLOT_FILETYPE_AUTO,
+        PLOT_FILETYPE_PNG,
+        PLOT_FILETYPE_PS,
+        PLOT_FILETYPE_EPS,
+        PLOT_FILETYPE_LATEX,
+        PLOT_FILETYPE_SVG,
+        PLOT_FILETYPE_FIG,
+        PLOT_FILETYPE_PDF
 } PlotFileType;
 
 /// Mathematical operations
 typedef enum {
-	OPERATION_MULTIPLY,
-	OPERATION_DIVIDE,
-	OPERATION_ADD,
-	OPERATION_SUBTRACT,
-	OPERATION_RAISE,
-	OPERATION_EXP10,
-	OPERATION_LOGICAL_AND,
-	OPERATION_LOGICAL_OR,
-	OPERATION_LOGICAL_XOR,
-	OPERATION_BITWISE_AND,
-	OPERATION_BITWISE_OR,
-	OPERATION_BITWISE_XOR,
-	OPERATION_LESS,
-	OPERATION_GREATER,
-	OPERATION_EQUALS_LESS,
-	OPERATION_EQUALS_GREATER,
-	OPERATION_EQUALS,
-	OPERATION_NOT_EQUALS
+        OPERATION_MULTIPLY,
+        OPERATION_DIVIDE,
+        OPERATION_ADD,
+        OPERATION_SUBTRACT,
+        OPERATION_RAISE,
+        OPERATION_EXP10,
+        OPERATION_LOGICAL_AND,
+        OPERATION_LOGICAL_OR,
+        OPERATION_LOGICAL_XOR,
+        OPERATION_BITWISE_AND,
+        OPERATION_BITWISE_OR,
+        OPERATION_BITWISE_XOR,
+        OPERATION_LESS,
+        OPERATION_GREATER,
+        OPERATION_EQUALS_LESS,
+        OPERATION_EQUALS_GREATER,
+        OPERATION_EQUALS,
+        OPERATION_NOT_EQUALS
 } MathOperation;
 
 /// Comparison signs for comparison structures
 typedef enum {
-	COMPARISON_LESS,
-	COMPARISON_GREATER,
-	COMPARISON_EQUALS_LESS,
-	COMPARISON_EQUALS_GREATER,
-	COMPARISON_EQUALS,
-	COMPARISON_NOT_EQUALS
+        COMPARISON_LESS,
+        COMPARISON_GREATER,
+        COMPARISON_EQUALS_LESS,
+        COMPARISON_EQUALS_GREATER,
+        COMPARISON_EQUALS,
+        COMPARISON_NOT_EQUALS
 } ComparisonType;
 
 typedef enum {
-	SORT_DEFAULT				= 1 << 0,
-	SORT_SCIENTIFIC				= 1 << 1
+        SORT_DEFAULT				= 1 << 0,
+        SORT_SCIENTIFIC				= 1 << 1
 } SortFlags;
 
 #define BASE_ROMAN_NUMERALS	-1
@@ -328,390 +328,390 @@ typedef enum {
 #define EXP_SCIENTIFIC		3
 
 typedef enum {
-	/// Display numbers in decimal, not fractional, format (ex. 0.333333)
-	FRACTION_DECIMAL,
-	/// Display as fraction if necessary to get an exact display of the result (ex. 1/3, but 0.25)
-	FRACTION_DECIMAL_EXACT,
-	/// Display as fraction (ex. 4/3)
-	FRACTION_FRACTIONAL,
-	/// Display as an integer and a fraction (ex. 3 + 1/2)
-	FRACTION_COMBINED
+        /// Display numbers in decimal, not fractional, format (ex. 0.333333)
+        FRACTION_DECIMAL,
+        /// Display as fraction if necessary to get an exact display of the result (ex. 1/3, but 0.25)
+        FRACTION_DECIMAL_EXACT,
+        /// Display as fraction (ex. 4/3)
+        FRACTION_FRACTIONAL,
+        /// Display as an integer and a fraction (ex. 3 + 1/2)
+        FRACTION_COMBINED
 } NumberFractionFormat;
 
 /// Options for ordering the parts of a mathematical expression/result before display
 static const struct SortOptions {
-	/// Put currency units before quantity. Default: true
-	bool prefix_currencies;
-	/// If true, avoid placing negative terms first. Default: true
-	bool minus_last;
-	SortOptions() : prefix_currencies(true), minus_last(true) {}
+        /// Put currency units before quantity. Default: true
+        bool prefix_currencies;
+        /// If true, avoid placing negative terms first. Default: true
+        bool minus_last;
+        SortOptions() : prefix_currencies(true), minus_last(true) {}
 } default_sort_options;
 
 typedef enum {
-	MULTIPLICATION_SIGN_ASTERISK,
-	MULTIPLICATION_SIGN_DOT,
-	MULTIPLICATION_SIGN_X,
-	MULTIPLICATION_SIGN_ALTDOT
+        MULTIPLICATION_SIGN_ASTERISK,
+        MULTIPLICATION_SIGN_DOT,
+        MULTIPLICATION_SIGN_X,
+        MULTIPLICATION_SIGN_ALTDOT
 } MultiplicationSign;
 
 typedef enum {
-	DIVISION_SIGN_SLASH,
-	DIVISION_SIGN_DIVISION_SLASH,
-	DIVISION_SIGN_DIVISION
+        DIVISION_SIGN_SLASH,
+        DIVISION_SIGN_DIVISION_SLASH,
+        DIVISION_SIGN_DIVISION
 } DivisionSign;
 
 typedef enum {
-	BASE_DISPLAY_NONE,
-	BASE_DISPLAY_NORMAL,
-	BASE_DISPLAY_ALTERNATIVE
+        BASE_DISPLAY_NONE,
+        BASE_DISPLAY_NORMAL,
+        BASE_DISPLAY_ALTERNATIVE
 } BaseDisplay;
 
 typedef enum {
-	INTERVAL_DISPLAY_SIGNIFICANT_DIGITS,
-	INTERVAL_DISPLAY_INTERVAL,
-	INTERVAL_DISPLAY_PLUSMINUS,
-	INTERVAL_DISPLAY_MIDPOINT,
-	INTERVAL_DISPLAY_LOWER,
-	INTERVAL_DISPLAY_UPPER
+        INTERVAL_DISPLAY_SIGNIFICANT_DIGITS,
+        INTERVAL_DISPLAY_INTERVAL,
+        INTERVAL_DISPLAY_PLUSMINUS,
+        INTERVAL_DISPLAY_MIDPOINT,
+        INTERVAL_DISPLAY_LOWER,
+        INTERVAL_DISPLAY_UPPER
 } IntervalDisplay;
 
 typedef enum {
-	DIGIT_GROUPING_NONE,
-	DIGIT_GROUPING_STANDARD,
-	DIGIT_GROUPING_LOCALE
+        DIGIT_GROUPING_NONE,
+        DIGIT_GROUPING_STANDARD,
+        DIGIT_GROUPING_LOCALE
 } DigitGrouping;
 
 typedef enum {
-	DATE_TIME_FORMAT_ISO,
-	DATE_TIME_FORMAT_LOCALE
+        DATE_TIME_FORMAT_ISO,
+        DATE_TIME_FORMAT_LOCALE
 } DateTimeFormat;
 
 typedef enum {
-	TIME_ZONE_UTC,
-	TIME_ZONE_LOCAL,
-	TIME_ZONE_CUSTOM
+        TIME_ZONE_UTC,
+        TIME_ZONE_LOCAL,
+        TIME_ZONE_CUSTOM
 } TimeZone;
 
 /// Options for formatting and display of mathematical structures/results.
 static const struct PrintOptions {
-	int min_exp;
-	/// Number base for displaying numbers. Default: 10
-	int base;
-	/// How prefixes for numbers in non-decimal bases will be displayed
-	BaseDisplay base_display;
-	/// Use lower case for non-numeric characters for bases > 10. Default: false
-	bool lower_case_numbers;
-	/// Use lower case e for base-10 exponent (ex. 1.2e8 instead of 1.2E8). Default: false
-	bool lower_case_e;
-	/// If rational numbers will be displayed with decimals, as a fraction, or something in between. Default: FRACTION_DECIMAL
-	NumberFractionFormat number_fraction_format;
-	/// Show that the digit series of a number continues forever with three dots, instead of rounding (ex. 2/3 displays as 0.666666... instead of 0.666667). Default: false
-	bool indicate_infinite_series;
-	/// Show ending zeroes for approximate numbers to indicate precision (ex.1.2300000 instead of 1.23) . Default: false
-	bool show_ending_zeroes;
-	/// Prefer abbreviated names of variables, units, functions etc. Default: true
-	bool abbreviate_names;
-	/// Prefer reference names of variables, units, functions etc. Default: false
-	bool use_reference_names;
-	/// Isolate units at the end of the displayed expression (ex. x/y m/s instead of (x m)/(y s)). Default: true
-	bool place_units_separately;
-	/// Use prefixes for units when appropriate. Default: true
-	bool use_unit_prefixes;
-	/// Use prefixes for currencies if unit prefixes are om. Default: false
-	bool use_prefixes_for_all_units;
-	/// Use all decimal SI prefixes. If false, prefixes which is not a multiple of thousand (centi, deci, deka, hekto) will not be used automatically. Default: false
-	bool use_prefixes_for_currencies;
-	/// Use prefixes for all units (even imperial and similar ones). Default: false
-	bool use_all_prefixes;
-	/// If set to true, prefixes will be split between numerator and denominator in a unit expression (millimeter per kilogram instead of micrometer per gram). Default: true
-	bool use_denominator_prefix;
-	/// If true, negative exponents will be used instead of division (ex. 5/x^2 becomes 5*x^-2). Default: false
-	bool negative_exponents;
-	/// Avoid using multiplication sign, when appropriate. Default: true
-	bool short_multiplication;
-	/// Use a format compatible with ParseOptions::limit_implicit_multiplication. Default: false
-	bool limit_implicit_multiplication;
-	/// If it is not necessary that the displayed expression can be parsed correctly. Default: false
-	bool allow_non_usable;
-	/// If unicode signs can be displayed. Default: false
-	bool use_unicode_signs;
-	/// Sign used for display of multiplication. Default: MULTIPLICATION_SIGN_DOT
-	MultiplicationSign multiplication_sign;
-	/// Sign used for display of division. Default: DIVISION_SIGN_DIVISION_SLASH
-	DivisionSign division_sign;
-	/// If space will be used to make the output look nicer. Default: true
-	bool spacious;
-	/// Use parentheses even when not necessary. Default: false
-	bool excessive_parenthesis;
-	/// Transform raised to 1/2 to square root function. Default: true
-	bool halfexp_to_sqrt;
-	/// Minimum number of decimals to display for numbers. Default: 0
-	int min_decimals;
-	/// Maximum number of decimals to display for numbers. A negative value disables the limit. Default: -1
-	int max_decimals;
-	/// Enable use of min_decimals. False is equivalent to a min_decimals value of zero. Default: true
-	bool use_min_decimals;
-	/// Enable use of max_decimals. False is equivalent to a negative max_decimals value. Default: true
-	bool use_max_decimals;
-	/// If true round halfway numbers to nearest even number, otherwise round upwards. Default: false
-	bool round_halfway_to_even;
-	/// Multiply numerator and denominator to get integers (ex. (6x+y)/2z instead of (3x+0.5y)/z). Default: true
-	bool improve_division_multipliers;
-	/// Force use of a specific prefix for units if not NULL. Default: NULL
-	Prefix *prefix;
-	/// If not NULL will be set to true if the output is approximate. Default: NULL
-	bool *is_approximate;
-	/// Options for the order of values in the displayed expression. Default: default_sort_options
-	SortOptions sort_options;
-	/// Comma sign or empty string to use default comma sign. Default: empty string
-	string comma_sign;
-	/// Decimal sign or empty string to use default decimal sign. Default: empty string
-	string decimalpoint_sign;
-	/// Function that returns true if a text string with unicode signs can be properly displayed. Default: NULL
-	bool (*can_display_unicode_string_function) (const char*, void*);
-	/// Argument passed to can_display_unicode_string_function. Default: NULL
-	void *can_display_unicode_string_arg;
-	/// Replace underscores in names with spaces, unless name has suffix. Default: false
-	bool hide_underscore_spaces;
-	/// Preserves the format of the structure (no sorting, no changed prefixes, no improved division multipliers, etc.). Default: false
-	bool preserve_format;
-	/// Allows factorization to occur in the output (should be set to true if the structure has been factorized). Default: false
-	bool allow_factorization;
-	/// If logical operators will be spelled as AND and OR instead of && and ||. Default: false
-	bool spell_out_logical_operators;
-	/// Displays children of the structure with no higher precision than the parent. Default: true
-	bool restrict_to_parent_precision;
-	/// Restrict the length of numerators and demonitor as integers in decimal mode for fractional display of numbers. Default: false
-	bool restrict_fraction_length;
-	/// Transform exponentiation positive base and unit fraction exponent (if denominator < 10) to root function. Default: false
-	bool exp_to_root;
-	/// Use the internal precision of each number instead of global precision. Default: false
-	bool preserve_precision;
-	/// How number intervals will be displayed. Default: INTERVAL_DISPLAY_INTERVAL
-	IntervalDisplay interval_display;
-	/// Digit grouping separator. Default: DIGIT_GROUPING_NONE
-	DigitGrouping digit_grouping;
-	/// Format for time and date. Default: DATE_TIME_FORMAT_ISO
-	DateTimeFormat date_time_format;
-	/// Time zone for time and date. Default: TIME_ZONE_LOCAL
-	TimeZone time_zone;
-	/// Offset in minute for custom time zone. Default: 0
-	int custom_time_zone;
-	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are negative. Default: true
-	bool twos_complement;
-	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are negative. Default: false
-	bool hexadecimal_twos_complement;
-	/// Number of bits used for binary numbers. Set to 0 for automatic. Default: 0
-	unsigned int binary_bits;
-	PrintOptions();
-	/// Returns the comma sign used (default sign or comma_sign)
-	const string &comma() const;
-	/// Returns the decimal sign used (default sign or decimalpoint_sign)
-	const string &decimalpoint() const;
-	/// Returns the digit grouping separator used
+        int min_exp;
+        /// Number base for displaying numbers. Default: 10
+        int base;
+        /// How prefixes for numbers in non-decimal bases will be displayed
+        BaseDisplay base_display;
+        /// Use lower case for non-numeric characters for bases > 10. Default: false
+        bool lower_case_numbers;
+        /// Use lower case e for base-10 exponent (ex. 1.2e8 instead of 1.2E8). Default: false
+        bool lower_case_e;
+        /// If rational numbers will be displayed with decimals, as a fraction, or something in between. Default: FRACTION_DECIMAL
+        NumberFractionFormat number_fraction_format;
+        /// Show that the digit series of a number continues forever with three dots, instead of rounding (ex. 2/3 displays as 0.666666... instead of 0.666667). Default: false
+        bool indicate_infinite_series;
+        /// Show ending zeroes for approximate numbers to indicate precision (ex.1.2300000 instead of 1.23) . Default: false
+        bool show_ending_zeroes;
+        /// Prefer abbreviated names of variables, units, functions etc. Default: true
+        bool abbreviate_names;
+        /// Prefer reference names of variables, units, functions etc. Default: false
+        bool use_reference_names;
+        /// Isolate units at the end of the displayed expression (ex. x/y m/s instead of (x m)/(y s)). Default: true
+        bool place_units_separately;
+        /// Use prefixes for units when appropriate. Default: true
+        bool use_unit_prefixes;
+        /// Use prefixes for currencies if unit prefixes are om. Default: false
+        bool use_prefixes_for_all_units;
+        /// Use all decimal SI prefixes. If false, prefixes which is not a multiple of thousand (centi, deci, deka, hekto) will not be used automatically. Default: false
+        bool use_prefixes_for_currencies;
+        /// Use prefixes for all units (even imperial and similar ones). Default: false
+        bool use_all_prefixes;
+        /// If set to true, prefixes will be split between numerator and denominator in a unit expression (millimeter per kilogram instead of micrometer per gram). Default: true
+        bool use_denominator_prefix;
+        /// If true, negative exponents will be used instead of division (ex. 5/x^2 becomes 5*x^-2). Default: false
+        bool negative_exponents;
+        /// Avoid using multiplication sign, when appropriate. Default: true
+        bool short_multiplication;
+        /// Use a format compatible with ParseOptions::limit_implicit_multiplication. Default: false
+        bool limit_implicit_multiplication;
+        /// If it is not necessary that the displayed expression can be parsed correctly. Default: false
+        bool allow_non_usable;
+        /// If unicode signs can be displayed. Default: false
+        bool use_unicode_signs;
+        /// Sign used for display of multiplication. Default: MULTIPLICATION_SIGN_DOT
+        MultiplicationSign multiplication_sign;
+        /// Sign used for display of division. Default: DIVISION_SIGN_DIVISION_SLASH
+        DivisionSign division_sign;
+        /// If space will be used to make the output look nicer. Default: true
+        bool spacious;
+        /// Use parentheses even when not necessary. Default: false
+        bool excessive_parenthesis;
+        /// Transform raised to 1/2 to square root function. Default: true
+        bool halfexp_to_sqrt;
+        /// Minimum number of decimals to display for numbers. Default: 0
+        int min_decimals;
+        /// Maximum number of decimals to display for numbers. A negative value disables the limit. Default: -1
+        int max_decimals;
+        /// Enable use of min_decimals. False is equivalent to a min_decimals value of zero. Default: true
+        bool use_min_decimals;
+        /// Enable use of max_decimals. False is equivalent to a negative max_decimals value. Default: true
+        bool use_max_decimals;
+        /// If true round halfway numbers to nearest even number, otherwise round upwards. Default: false
+        bool round_halfway_to_even;
+        /// Multiply numerator and denominator to get integers (ex. (6x+y)/2z instead of (3x+0.5y)/z). Default: true
+        bool improve_division_multipliers;
+        /// Force use of a specific prefix for units if not NULL. Default: NULL
+        Prefix *prefix;
+        /// If not NULL will be set to true if the output is approximate. Default: NULL
+        bool *is_approximate;
+        /// Options for the order of values in the displayed expression. Default: default_sort_options
+        SortOptions sort_options;
+        /// Comma sign or empty string to use default comma sign. Default: empty string
+        string comma_sign;
+        /// Decimal sign or empty string to use default decimal sign. Default: empty string
+        string decimalpoint_sign;
+        /// Function that returns true if a text string with unicode signs can be properly displayed. Default: NULL
+        bool (*can_display_unicode_string_function) (const char*, void*);
+        /// Argument passed to can_display_unicode_string_function. Default: NULL
+        void *can_display_unicode_string_arg;
+        /// Replace underscores in names with spaces, unless name has suffix. Default: false
+        bool hide_underscore_spaces;
+        /// Preserves the format of the structure (no sorting, no changed prefixes, no improved division multipliers, etc.). Default: false
+        bool preserve_format;
+        /// Allows factorization to occur in the output (should be set to true if the structure has been factorized). Default: false
+        bool allow_factorization;
+        /// If logical operators will be spelled as AND and OR instead of && and ||. Default: false
+        bool spell_out_logical_operators;
+        /// Displays children of the structure with no higher precision than the parent. Default: true
+        bool restrict_to_parent_precision;
+        /// Restrict the length of numerators and demonitor as integers in decimal mode for fractional display of numbers. Default: false
+        bool restrict_fraction_length;
+        /// Transform exponentiation positive base and unit fraction exponent (if denominator < 10) to root function. Default: false
+        bool exp_to_root;
+        /// Use the internal precision of each number instead of global precision. Default: false
+        bool preserve_precision;
+        /// How number intervals will be displayed. Default: INTERVAL_DISPLAY_INTERVAL
+        IntervalDisplay interval_display;
+        /// Digit grouping separator. Default: DIGIT_GROUPING_NONE
+        DigitGrouping digit_grouping;
+        /// Format for time and date. Default: DATE_TIME_FORMAT_ISO
+        DateTimeFormat date_time_format;
+        /// Time zone for time and date. Default: TIME_ZONE_LOCAL
+        TimeZone time_zone;
+        /// Offset in minute for custom time zone. Default: 0
+        int custom_time_zone;
+        /// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are negative. Default: true
+        bool twos_complement;
+        /// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are negative. Default: false
+        bool hexadecimal_twos_complement;
+        /// Number of bits used for binary numbers. Set to 0 for automatic. Default: 0
+        unsigned int binary_bits;
+        PrintOptions();
+        /// Returns the comma sign used (default sign or comma_sign)
+        const string &comma() const;
+        /// Returns the decimal sign used (default sign or decimalpoint_sign)
+        const string &decimalpoint() const;
+        /// Returns the digit grouping separator used
 } default_print_options;
 
 static const struct InternalPrintStruct {
-	int depth, power_depth, division_depth;
-	bool wrap;
-	string *num, *den, *re, *im, *exp;
-	bool *minus, *exp_minus;
-	bool parent_approximate;
-	int parent_precision;
-	long int *iexp;
-	InternalPrintStruct();
+        int depth, power_depth, division_depth;
+        bool wrap;
+        string *num, *den, *re, *im, *exp;
+        bool *minus, *exp_minus;
+        bool parent_approximate;
+        int parent_precision;
+        long int *iexp;
+        InternalPrintStruct();
 } top_ips;
 
 typedef enum {
-	/// Allow only exact results
-	APPROXIMATION_EXACT,
-	/// Try to make the result as exact as possible
-	APPROXIMATION_TRY_EXACT,
-	/// Calculate the result approximately directly
-	APPROXIMATION_APPROXIMATE,
-	/// Used internally
-	APPROXIMATION_EXACT_VARIABLES
+        /// Allow only exact results
+        APPROXIMATION_EXACT,
+        /// Try to make the result as exact as possible
+        APPROXIMATION_TRY_EXACT,
+        /// Calculate the result approximately directly
+        APPROXIMATION_APPROXIMATE,
+        /// Used internally
+        APPROXIMATION_EXACT_VARIABLES
 } ApproximationMode;
 
 #define STRUCTURING_SIMPLIFY STRUCTURING_EXPAND
 
 typedef enum {
-	/// Do not do any factorization or additional simplifications
-	STRUCTURING_NONE,
-	/// Simplify the result as much as possible and expand (minimal factorization, normally the same as STRUCTURING_NONE)
-	STRUCTURING_EXPAND,
-	/// Factorize the result
-	STRUCTURING_FACTORIZE,
-	/// Deprecated: use STRUCTURING_SIMPLIFY instead
-	STRUCTURING_HYBRID
+        /// Do not do any factorization or additional simplifications
+        STRUCTURING_NONE,
+        /// Simplify the result as much as possible and expand (minimal factorization, normally the same as STRUCTURING_NONE)
+        STRUCTURING_EXPAND,
+        /// Factorize the result
+        STRUCTURING_FACTORIZE,
+        /// Deprecated: use STRUCTURING_SIMPLIFY instead
+        STRUCTURING_HYBRID
 } StructuringMode;
 
 typedef enum {
-	/// Do not do any conversion of units in addition to syncing
-	POST_CONVERSION_NONE,
-	/// Convert to the least amount of units. Non-SI units are converted to SI units.
-	POST_CONVERSION_OPTIMAL_SI,
-	/// Convert to base units
-	POST_CONVERSION_BASE,
-	/// Convert to the the least amount of units. Non-SI units is kept (if optimal), but for conversion only SI units are used.
-	POST_CONVERSION_OPTIMAL
+        /// Do not do any conversion of units in addition to syncing
+        POST_CONVERSION_NONE,
+        /// Convert to the least amount of units. Non-SI units are converted to SI units.
+        POST_CONVERSION_OPTIMAL_SI,
+        /// Convert to base units
+        POST_CONVERSION_BASE,
+        /// Convert to the the least amount of units. Non-SI units is kept (if optimal), but for conversion only SI units are used.
+        POST_CONVERSION_OPTIMAL
 } AutoPostConversion;
 
 #define POST_CONVERSION_BEST POST_CONVERSION_OPTIMAL_SI
 
 typedef enum {
-	MIXED_UNITS_CONVERSION_NONE,
-	MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP,
-	MIXED_UNITS_CONVERSION_DOWNWARDS,
-	MIXED_UNITS_CONVERSION_DEFAULT,
-	MIXED_UNITS_CONVERSION_FORCE_INTEGER,
-	MIXED_UNITS_CONVERSION_FORCE_ALL
+        MIXED_UNITS_CONVERSION_NONE,
+        MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP,
+        MIXED_UNITS_CONVERSION_DOWNWARDS,
+        MIXED_UNITS_CONVERSION_DEFAULT,
+        MIXED_UNITS_CONVERSION_FORCE_INTEGER,
+        MIXED_UNITS_CONVERSION_FORCE_ALL
 } MixedUnitsConversion;
 
 typedef enum {
-	DONT_READ_PRECISION,
-	ALWAYS_READ_PRECISION,
-	READ_PRECISION_WHEN_DECIMALS
+        DONT_READ_PRECISION,
+        ALWAYS_READ_PRECISION,
+        READ_PRECISION_WHEN_DECIMALS
 } ReadPrecisionMode;
 
 typedef enum {
-	ANGLE_UNIT_NONE,
-	ANGLE_UNIT_RADIANS,
-	ANGLE_UNIT_DEGREES,
-	ANGLE_UNIT_GRADIANS
+        ANGLE_UNIT_NONE,
+        ANGLE_UNIT_RADIANS,
+        ANGLE_UNIT_DEGREES,
+        ANGLE_UNIT_GRADIANS
 } AngleUnit;
 
 typedef enum {
-	COMPLEX_NUMBER_FORM_RECTANGULAR,
-	COMPLEX_NUMBER_FORM_EXPONENTIAL,
-	COMPLEX_NUMBER_FORM_POLAR,
-	COMPLEX_NUMBER_FORM_CIS
+        COMPLEX_NUMBER_FORM_RECTANGULAR,
+        COMPLEX_NUMBER_FORM_EXPONENTIAL,
+        COMPLEX_NUMBER_FORM_POLAR,
+        COMPLEX_NUMBER_FORM_CIS
 } ComplexNumberForm;
 
 typedef enum {
-	/// The default adaptive mode works as the "parse implicit multiplication first" mode, unless spaces are found (<quote>1/5x = 1/(5*x)</quote>, but <quote>1/5 x = (1/5)*x</quote>). In the adaptive mode unit expressions are parsed separately (<quote>5 m/5 m/s = (5*m)/(5*(m/s)) = 1 s</quote>).
-	PARSING_MODE_ADAPTIVE,
-	/// In the "parse implicit multiplication first" mode, implicit multiplication is parsed before explicit multiplication (<quote>12/2(1+2) = 12/(2*3) = 2</quote>, <quote>5x/5y = (5*x)/(5*y) = x/y</quote>).
-	PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST,
-	/// In the conventional mode implicit multiplication does not differ from explicit multiplication (<quote>12/2(1+2) = 12/2*3 = 18</quote>, <quote>5x/5y = 5*x/5*y = xy</quote>).
-	PARSING_MODE_CONVENTIONAL
+        /// The default adaptive mode works as the "parse implicit multiplication first" mode, unless spaces are found (<quote>1/5x = 1/(5*x)</quote>, but <quote>1/5 x = (1/5)*x</quote>). In the adaptive mode unit expressions are parsed separately (<quote>5 m/5 m/s = (5*m)/(5*(m/s)) = 1 s</quote>).
+        PARSING_MODE_ADAPTIVE,
+        /// In the "parse implicit multiplication first" mode, implicit multiplication is parsed before explicit multiplication (<quote>12/2(1+2) = 12/(2*3) = 2</quote>, <quote>5x/5y = (5*x)/(5*y) = x/y</quote>).
+        PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST,
+        /// In the conventional mode implicit multiplication does not differ from explicit multiplication (<quote>12/2(1+2) = 12/2*3 = 18</quote>, <quote>5x/5y = 5*x/5*y = xy</quote>).
+        PARSING_MODE_CONVENTIONAL
 } ParsingMode;
 
 typedef enum {
-	/// Ignores uncertainties and uses the middle value of intervals
-	INTERVAL_CALCULATION_NONE,
-	INTERVAL_CALCULATION_VARIANCE_FORMULA,
-	INTERVAL_CALCULATION_INTERVAL_ARITHMETIC,
-	/// Treats all intervals as uncorrelated
-	INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC
+        /// Ignores uncertainties and uses the middle value of intervals
+        INTERVAL_CALCULATION_NONE,
+        INTERVAL_CALCULATION_VARIANCE_FORMULA,
+        INTERVAL_CALCULATION_INTERVAL_ARITHMETIC,
+        /// Treats all intervals as uncorrelated
+        INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC
 } IntervalCalculation;
 
 /// Options for parsing expressions.
 static const struct ParseOptions {
-	/// If variables will be parsed. Default: true
-	bool variables_enabled;
-	/// If functions will be parsed. Default: true
-	bool functions_enabled;
-	/// If left-over characters will be parsed as symbols. Default: true
-	bool unknowns_enabled;
-	/// If units will be parsed. Default: true
-	bool units_enabled;
-	/// If Reverse Polish Notation syntax will be used. Default: false
-	bool rpn;
-	/// Base of parsed numbers. Default: 10
-	int base;
-	/// When implicit multiplication is limited variables, functions and units must be separated by a space, operator or parenthesis ("xy" does not equal "x * y").  Default: false
-	/**
-	* If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and "integrte(5x)" is accidently typed instead of "integrate(5x)", the expression is interpreted as "int(e * e * (5 * x) * gr * t)". If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that "integrte" is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be "5 'integrate' * x".
-	*/
-	bool limit_implicit_multiplication;
-	/// If and when precisions will be read from number of digits in a number. Default: DONT_READ_PRECISION
-	ReadPrecisionMode read_precision;
-	/// If true dots will ignored if another character is the default decimal sign, to allow dots to be used as thousand separator. Default: false
-	bool dot_as_separator;
-	/// If true commas will ignored if another character is the default decimal sign, to allow commas to be used as thousand separator. You should also call CALCULATOR->useDecimalPoint(true). Default: false
-	bool comma_as_separator;
-	///Interpret square brackets equally to parentheses (not only for vectors/matrices). Default; false
-	bool brackets_as_parentheses;
-	/// Default angle unit for trigonometric functions. Default: ANGLE_UNIT_NONE
-	AngleUnit angle_unit;
-	/// If non-NULL will be set to unfinished function at the end of the expression (if there is one). Default: NULL
-	MathStructure *unended_function;
-	/// Preserve the expression structure as much as possible. Default: false
-	bool preserve_format;
-	/// Default dataset. Used for object.property syntax without a preceeding data set. Default: NULL
-	DataSet *default_dataset;
-	/// Parsing mode. Default: PARSING_MODE_ADAPTIVE
-	ParsingMode parsing_mode;
-	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative. Default: false
-	bool twos_complement;
-	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are assumed to be negative. Default: false
-	bool hexadecimal_twos_complement;
+        /// If variables will be parsed. Default: true
+        bool variables_enabled;
+        /// If functions will be parsed. Default: true
+        bool functions_enabled;
+        /// If left-over characters will be parsed as symbols. Default: true
+        bool unknowns_enabled;
+        /// If units will be parsed. Default: true
+        bool units_enabled;
+        /// If Reverse Polish Notation syntax will be used. Default: false
+        bool rpn;
+        /// Base of parsed numbers. Default: 10
+        int base;
+        /// When implicit multiplication is limited variables, functions and units must be separated by a space, operator or parenthesis ("xy" does not equal "x * y").  Default: false
+        /**
+        * If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and "integrte(5x)" is accidently typed instead of "integrate(5x)", the expression is interpreted as "int(e * e * (5 * x) * gr * t)". If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that "integrte" is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be "5 'integrate' * x".
+        */
+        bool limit_implicit_multiplication;
+        /// If and when precisions will be read from number of digits in a number. Default: DONT_READ_PRECISION
+        ReadPrecisionMode read_precision;
+        /// If true dots will ignored if another character is the default decimal sign, to allow dots to be used as thousand separator. Default: false
+        bool dot_as_separator;
+        /// If true commas will ignored if another character is the default decimal sign, to allow commas to be used as thousand separator. You should also call CALCULATOR->useDecimalPoint(true). Default: false
+        bool comma_as_separator;
+        ///Interpret square brackets equally to parentheses (not only for vectors/matrices). Default; false
+        bool brackets_as_parentheses;
+        /// Default angle unit for trigonometric functions. Default: ANGLE_UNIT_NONE
+        AngleUnit angle_unit;
+        /// If non-NULL will be set to unfinished function at the end of the expression (if there is one). Default: NULL
+        MathStructure *unended_function;
+        /// Preserve the expression structure as much as possible. Default: false
+        bool preserve_format;
+        /// Default dataset. Used for object.property syntax without a preceeding data set. Default: NULL
+        DataSet *default_dataset;
+        /// Parsing mode. Default: PARSING_MODE_ADAPTIVE
+        ParsingMode parsing_mode;
+        /// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative. Default: false
+        bool twos_complement;
+        /// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are assumed to be negative. Default: false
+        bool hexadecimal_twos_complement;
 
-	ParseOptions();
+        ParseOptions();
 
 } default_parse_options;
 
 /// Options for calculation.
 static const struct EvaluationOptions {
-	/// How exact the result must be. Default: TRY_EXACT
-	ApproximationMode approximation;
-	/// If units will be synced/converted to allow evaluation (ex. 1 min + 1 s=60 s+ 1 s = 61 s). Default: true
-	bool sync_units;
-	/// If units with complex/non-linear relations (ex. degress celsius and fahrenheit) will synced/converted. Default: true
-	bool sync_nonlinear_unit_relations;
-	/// If unit prefixes in original expression will be kept. Default: false
-	bool keep_prefixes;
-	/// If known variables will be replaced by their value. Default: true
-	bool calculate_variables;
-	/// If functions will be calculated. Default: true
-	bool calculate_functions;
-	/// If comparisons will be evaluated (ex. 5>2 => 1). Default: true
-	int test_comparisons;
-	/// If a varaible will be isolated to the left side in equations/comparisons (ex. x+y=2 => x=2-y). Default: true
-	bool isolate_x;
-	/// If factors (and bases) containing addition will be expanded (ex. z(x+y)=zx+zy). Default: true
-	int expand;
-	/// Use behaviour from version <= 0.9.12 which returns (x+y)/z instead of x/y+y/z if expand = true
-	bool combine_divisions;
-	/// If non-numerical parts of a fraction will be reduced (ex. (5x)/(3xy) =5/(3y) .  Default: true
-	bool reduce_divisions;
-	/// If complex numbers will be used for evaluation. Default: true
-	bool allow_complex;
-	/// If infinite numbers will be used for evaluation. Default: true
-	bool allow_infinite;
-	/// If simplification will be made easier by assuming that denominators with unknown value not is zero. Default: false
-	int assume_denominators_nonzero;
-	/// Warn if a denominator with unknown value was assumed non-zero (with assume_denominators_nonzero set to true) to allow simplification. Default: true
-	bool warn_about_denominators_assumed_nonzero;
-	/// If powers with exponent 1/2 that only have an approximate result will be split to the least base (sqrt(8) = 2 * sqrt(2)). Default: true
-	bool split_squares;
-	/// If units with zero quantity will be preserved. Default: true
-	bool keep_zero_units;
-	/// If and how units will be automatically converted. Does not affect syncing of units. Default: POST_CONVERSION_OPTIMAL
-	AutoPostConversion auto_post_conversion;
-	/// Shows time as h + min + s, imperial length as ft + in, etc. Default: MIXED_UNITS_CONVERSION_DEFAULT
-	MixedUnitsConversion mixed_units_conversion;
-	/// If the evaluation result will be expanded or factorized Default: STRUCTURING_NONE
-	StructuringMode structuring;
-	/// Options for parsing of expression. Default: default_parse_options
-	ParseOptions parse_options;
-	/// If set will decide which variable to isolate in an equation. Default: NULL
-	const MathStructure *isolate_var;
-	/// Use polynomial division to simplify the result. Default: true
-	bool do_polynomial_division;
-	/// Do not calculate the specified function. Default: NULL
-	MathFunction *protected_function;
-	/// Complex number form. Default: COMPLEX_NUMBER_FORM_RECTANGULAR
-	ComplexNumberForm complex_number_form;
-	/// Convert to local currency when optimal conversion is enabled
-	bool local_currency_conversion;
-	/// Mainly for internal use. Default: true
-	bool transform_trigonometric_functions;
-	/// Algorithm used for calculation of uncertainty propagation / intervals. This does not affect calculation of the high precision intervals produced by approximate functions or irrational numbers. Default: INTERVAL_CALCULATION_VARIANCE_FORMULA
-	IntervalCalculation interval_calculation;
+        /// How exact the result must be. Default: TRY_EXACT
+        ApproximationMode approximation;
+        /// If units will be synced/converted to allow evaluation (ex. 1 min + 1 s=60 s+ 1 s = 61 s). Default: true
+        bool sync_units;
+        /// If units with complex/non-linear relations (ex. degress celsius and fahrenheit) will synced/converted. Default: true
+        bool sync_nonlinear_unit_relations;
+        /// If unit prefixes in original expression will be kept. Default: false
+        bool keep_prefixes;
+        /// If known variables will be replaced by their value. Default: true
+        bool calculate_variables;
+        /// If functions will be calculated. Default: true
+        bool calculate_functions;
+        /// If comparisons will be evaluated (ex. 5>2 => 1). Default: true
+        int test_comparisons;
+        /// If a varaible will be isolated to the left side in equations/comparisons (ex. x+y=2 => x=2-y). Default: true
+        bool isolate_x;
+        /// If factors (and bases) containing addition will be expanded (ex. z(x+y)=zx+zy). Default: true
+        int expand;
+        /// Use behaviour from version <= 0.9.12 which returns (x+y)/z instead of x/y+y/z if expand = true
+        bool combine_divisions;
+        /// If non-numerical parts of a fraction will be reduced (ex. (5x)/(3xy) =5/(3y) .  Default: true
+        bool reduce_divisions;
+        /// If complex numbers will be used for evaluation. Default: true
+        bool allow_complex;
+        /// If infinite numbers will be used for evaluation. Default: true
+        bool allow_infinite;
+        /// If simplification will be made easier by assuming that denominators with unknown value not is zero. Default: false
+        int assume_denominators_nonzero;
+        /// Warn if a denominator with unknown value was assumed non-zero (with assume_denominators_nonzero set to true) to allow simplification. Default: true
+        bool warn_about_denominators_assumed_nonzero;
+        /// If powers with exponent 1/2 that only have an approximate result will be split to the least base (sqrt(8) = 2 * sqrt(2)). Default: true
+        bool split_squares;
+        /// If units with zero quantity will be preserved. Default: true
+        bool keep_zero_units;
+        /// If and how units will be automatically converted. Does not affect syncing of units. Default: POST_CONVERSION_OPTIMAL
+        AutoPostConversion auto_post_conversion;
+        /// Shows time as h + min + s, imperial length as ft + in, etc. Default: MIXED_UNITS_CONVERSION_DEFAULT
+        MixedUnitsConversion mixed_units_conversion;
+        /// If the evaluation result will be expanded or factorized Default: STRUCTURING_NONE
+        StructuringMode structuring;
+        /// Options for parsing of expression. Default: default_parse_options
+        ParseOptions parse_options;
+        /// If set will decide which variable to isolate in an equation. Default: NULL
+        const MathStructure *isolate_var;
+        /// Use polynomial division to simplify the result. Default: true
+        bool do_polynomial_division;
+        /// Do not calculate the specified function. Default: NULL
+        MathFunction *protected_function;
+        /// Complex number form. Default: COMPLEX_NUMBER_FORM_RECTANGULAR
+        ComplexNumberForm complex_number_form;
+        /// Convert to local currency when optimal conversion is enabled
+        bool local_currency_conversion;
+        /// Mainly for internal use. Default: true
+        bool transform_trigonometric_functions;
+        /// Algorithm used for calculation of uncertainty propagation / intervals. This does not affect calculation of the high precision intervals produced by approximate functions or irrational numbers. Default: INTERVAL_CALCULATION_VARIANCE_FORMULA
+        IntervalCalculation interval_calculation;
 
-	EvaluationOptions();
+        EvaluationOptions();
 
 } default_evaluation_options;
 
@@ -812,9 +812,9 @@ extern Calculator *calculator;
 #define	NOT_CH			'!'
 #define EQUALS_CH		'='
 
-#define ID_WRAP_LEFT		"{"	
-#define ID_WRAP_RIGHT		"}"	
-#define ID_WRAPS		"{}"	
+#define ID_WRAP_LEFT		"{"
+#define ID_WRAP_RIGHT		"}"
+#define ID_WRAPS		"{}"
 #define DOT			"."
 #define SEXADOT			":"
 #define COMMA			","
@@ -856,6 +856,6 @@ extern Calculator *calculator;
 //#define SNAN			"NAN"
 #define UNDERSCORE		"_"
 
-#define NOT_IN_NAMES 	RESERVED OPERATORS SPACES SEXADOT DOT VECTOR_WRAPS PARENTHESISS COMMAS
+#define NOT_IN_NAMES    RESERVED OPERATORS SPACES SEXADOT DOT VECTOR_WRAPS PARENTHESISS COMMAS
 
 #endif
