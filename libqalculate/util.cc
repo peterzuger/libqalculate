@@ -54,8 +54,6 @@ bool eqstr::operator()(const char *s1, const char *s2) const {
         UCaseMap *ucm = NULL;
 #endif
 
-char buffer[20000];
-
 void sleep_ms(int milliseconds) {
 #ifdef _WIN32
         Sleep(milliseconds);
@@ -139,6 +137,7 @@ string& remove_parenthesis(string &str) {
 
 string d2s(double value, int precision) {
         // qgcvt(value, precision, buffer);
+        char buffer[200];
         sprintf(buffer, "%.*G", precision, value);
         string stmp = buffer;
         // gsub("e", "E", stmp);
@@ -146,16 +145,19 @@ string d2s(double value, int precision) {
 }
 
 string p2s(void *o) {
+        char buffer[80];
         sprintf(buffer, "%p", o);
         string stmp = buffer;
         return stmp;
 }
 string i2s(long int value) {
+        char buffer[80];
         sprintf(buffer, "%li", value);
         string stmp = buffer;
         return stmp;
 }
 string u2s(unsigned long int value) {
+        char buffer[80];
         sprintf(buffer, "%lu", value);
         string stmp = buffer;
         return stmp;
